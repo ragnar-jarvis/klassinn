@@ -1,5 +1,5 @@
 /* Klassinn preview SW — network-first HTML, never return null. */
-const CACHE = 'klassinn-preview-v16';
+const CACHE = 'klassinn-preview-v20';
 const PRECACHE = [
   './manifest.webmanifest',
   './icon-192.png',
@@ -42,6 +42,18 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  // Firebase-pakkinn (gstatic): geymdur svo appið opnist líka án nets
+  if (url.hostname === 'www.gstatic.com' && url.pathname.startsWith('/firebasejs/')) {
+    event.respondWith(
+      caches.open(CACHE).then((cache) =>
+        cache.match(req).then((hit) => hit || fetch(req).then((res) => {
+          if (res && res.ok) cache.put(req, res.clone()).catch(() => {});
+          return res;
+        })),
+      ),
+    );
+    return;
+  }
   if (url.origin !== self.location.origin) return;
 
   const isHtml =

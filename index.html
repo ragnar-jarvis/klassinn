@@ -574,7 +574,8 @@ textarea.field.grow{resize:none;overflow:hidden;min-height:46px;line-height:1.4;
 .springs .lbl{font-size:.72rem;letter-spacing:.08em;color:var(--purple)}
 .springs .dots{display:inline-flex;gap:4px}
 /* Aðgerðir neðst á tíma */
-.bottomActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0 8px}
+.bottomActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:22px 0 8px}
+.bottomActions .btnGhost{padding:12px 6px;font-size:.88rem}
 .bottomActions .btnGhost{margin:0}
 .btnRow{display:flex;gap:8px;margin-top:4px}
 .btnRow .btnGhost{flex:1;margin-top:0}
@@ -606,6 +607,61 @@ details.feedback .comment{font-size:.9rem}
 .toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-bottom));transform:translateX(-50%);background:var(--purple-deep);color:#fff;
   padding:10px 16px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:90;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
+
+
+/* ===== Innskráning ===== */
+body.loginMode .tabbar{display:none}
+body.loginMode{padding-bottom:0}
+.loginWrap{max-width:380px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 28px) 4px 32px;text-align:center}
+.loginWrap .logoMain{width:min(240px,66vw);height:auto;display:block;margin:0 auto 26px}
+.loginTitle{font-size:2rem;margin:0 0 4px;color:var(--purple)}
+.loginLead{margin:0 0 18px}
+.loginWrap form{text-align:left}
+.loginWrap .submit{margin-top:16px}
+.loginWrap .textBtn{display:block;margin:10px auto 0}
+.loginSkip{color:var(--muted)!important;font-weight:600!important;font-size:.9rem}
+.loginFoot{font-size:.8rem;margin:4px 0 0}
+.loginError{background:#F6E3E6;color:#8B3A4A;border-radius:12px;padding:10px 12px;margin:12px 0 0;font-size:.9rem}
+#pfAccount p{margin:0 0 6px}
+
+/* ===== Tölvuútlit (breiður skjár) ===== */
+@media (min-width: 900px){
+  body{padding-bottom:0}
+  .tabbar{left:0;top:0;bottom:0;transform:none;width:232px;max-width:none;height:100vh;
+    display:flex;flex-direction:column;gap:4px;padding:26px 14px;border-top:none;border-right:1px solid var(--line);
+    background:var(--bg);backdrop-filter:none}
+  .tabbar::before{content:"";display:block;height:64px;margin:0 8px 22px;
+    background:url(./logo-klassinn-v2.png) left center/contain no-repeat}
+  .tab{flex-direction:row;justify-content:flex-start;gap:12px;font-size:.98rem;padding:12px 14px;border-radius:12px}
+  .tab:hover{background:rgba(232,224,239,.55)}
+  .tab.on{background:var(--lavender)}
+  .app{max-width:none;margin:0 0 0 232px;padding:32px 48px 48px}
+  .screen.on{max-width:1080px;margin:0 auto}
+  body.loginMode .app{margin-left:0}
+  /* Forsíða: logo er í valmyndinni */
+  #home .brandTop{display:none}
+  .actions{max-width:560px}
+  /* Listar í dálkum */
+  #homeClassList,#exerciseList,#clientList,#notesList,#sessionList{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:start}
+  #homeClassList .card,#exerciseList .card,#clientList .card,#sessionList .card,#notesList .noteCard{margin:0}
+  #homeClassList>p,#exerciseList>p,#clientList>p,#notesList>.noteEmpty,#sessionList>.emptyBox,#clientList>.emptyBox,#homeClassList>.emptyBox{grid-column:1/-1}
+  /* Ritlar og tímaskoðun í lesanlegri breidd */
+  #class-new.on,#exercise-edit.on,#client-edit.on,#session.on,#profile.on,#shared.on,#client.on{max-width:780px}
+  #class.on{max-width:860px}
+  #class-new .moveBox{padding:18px}
+  /* Gluggar fyrir miðju í stað þess að koma neðan frá */
+  .sheetOverlay{align-items:center}
+  .sheetOverlay .sheet,.sheet{border-radius:22px;max-width:560px;padding-bottom:18px}
+  .pickList{max-height:60vh}
+  /* Nóturitill hægra megin við valmynd */
+  #note-edit.screen.on{left:0}
+  .noteEditShell{max-width:780px}
+  .toast{bottom:28px;left:calc(50% + 116px)}
+  .banner#installBanner{display:none!important}
+}
+@media (min-width: 1300px){
+  .app{padding:36px 64px 56px}
+}
 
 </style>
 </head>
@@ -684,6 +740,9 @@ details.feedback .comment{font-size:.9rem}
     <input class="field" id="pfStudio" placeholder="t.d. Hreyfing, World Class…" />
     <p class="profileNote" id="pfSaved">Vistast sjálfkrafa á símanum.</p>
 
+    <div class="profileSection">AÐGANGUR</div>
+    <div class="infoCard" id="pfAccount"></div>
+
     <div class="profileSection">YFIRLIT</div>
     <div class="infoCard" id="pfStats"></div>
 
@@ -723,7 +782,7 @@ details.feedback .comment{font-size:.9rem}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 19</p>
+    <p class="version">KLASSINN · útgáfa 20</p>
   </div>
 
     
@@ -818,6 +877,7 @@ Single leg / hendur</div></div></div>
       <p id="classPlaylist" class="muted"></p>
     </div>
     <div class="bottomActions">
+      <button class="btnGhost" type="button" id="classShareBtn">↗ Deila</button>
       <button class="btnGhost" type="button" id="classDuplicateBtn">⧉ Afrita tíma</button>
       <button class="btnGhost danger" type="button" id="classDeleteBtn">🗑 Eyða tíma</button>
     </div>
@@ -1001,6 +1061,33 @@ Olnbogi í hné</textarea>
       <input type="file" id="noteFileInput" accept="image/*" class="hide" />
     </div>
   </div>
+  <div class="screen" id="login">
+    <div class="loginWrap">
+      <img class="logoMain" src="./logo-klassinn-v2.png" alt="KLASSINN — fyrir þjálfarann" />
+      <h1 class="serif loginTitle">Skrá inn</h1>
+      <p class="muted loginLead">Skráðu þig inn til að hafa tímana þína í síma og tölvu.</p>
+      <form id="loginForm" autocomplete="on">
+        <label class="label" for="liEmail">NETFANG</label>
+        <input class="field" id="liEmail" type="email" inputmode="email" autocomplete="username" required />
+        <label class="label" for="liPassword">LYKILORÐ</label>
+        <input class="field" id="liPassword" type="password" autocomplete="current-password" required />
+        <p class="loginError hide" id="liError" role="alert"></p>
+        <button class="submit" type="submit" id="liSubmit">Skrá inn</button>
+      </form>
+      <button class="textBtn" type="button" id="liForgot">Gleymt lykilorð?</button>
+      <button class="textBtn loginSkip" type="button" id="liSkip">Halda áfram án innskráningar</button>
+      <p class="muted loginFoot">Án innskráningar eru gögnin bara geymd í þessu tæki.</p>
+    </div>
+  </div>
+
+  <div class="screen" id="shared">
+    <div class="head">
+      <button class="iconBtn back" type="button" id="sharedClose" aria-label="Loka">‹</button>
+      <h1 class="serif">Deildur tími</h1>
+      <div style="width:40px"></div>
+    </div>
+    <div id="sharedBody"><p class="muted">Sæki tímann…</p></div>
+  </div>
 </div><!-- /app -->
 
 <div class="sheetOverlay" id="noteSheet" aria-hidden="true">
@@ -1067,7 +1154,7 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then((regs) => {
     Promise.all(regs.map((r) => r.update())).catch(() => {});
   });
-  navigator.serviceWorker.register('./sw.js?v=16').catch(() => {});
+  navigator.serviceWorker.register('./sw.js?v=20').catch(() => {});
 }
 const screens = document.querySelectorAll('.screen');
 const tabs = document.querySelectorAll('.tab');
@@ -1536,6 +1623,7 @@ document.getElementById('exDeleteBtn')?.addEventListener('click', () => {
   if (!id || id === 'new' || !EXERCISES[id]) return;
   if (!confirm(`Eyða æfingunni „${EXERCISES[id].name || 'Ónefnd æfing'}“ úr safninu?\n\nHún helst inni í tímum sem nota hana.`)) return;
   delete EXERCISES[id];
+  recordDeletion('exercise_' + id);
   persistStore();
   toast('Æfingu eytt');
   go('exercises');
@@ -1737,6 +1825,7 @@ function deleteClass(key) {
   if (!c) return;
   if (!confirm(`Eyða tímanum „${c.name || 'Ónefndur tími'}“?\n\nÞetta er ekki hægt að afturkalla.`)) return;
   delete CLASSES[key];
+  recordDeletion('class_' + key);
   editingClassId = null;
   currentClassKey = Object.keys(CLASSES)[0];
   persistStore();
@@ -2517,7 +2606,7 @@ document.getElementById('noteFileInput')?.addEventListener('change', (e) => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = () => { draftImage = reader.result; syncNoteImageUi(); scheduleNoteSave(); };
+  reader.onload = async () => { draftImage = await compressImage(reader.result); syncNoteImageUi(); scheduleNoteSave(); };
   reader.readAsDataURL(file);
   e.target.value = '';
 });
@@ -2534,6 +2623,7 @@ document.getElementById('noteDeleteBtn')?.addEventListener('click', () => {
   document.getElementById('noteTitle').value = '';
   document.getElementById('noteBody').value = '';
   saveNotes(loadNotes().filter((x) => x.id !== id));
+  recordDeletion('note_' + id);
   go('notes');
   renderNotes();
   toast('Nótu eytt');
@@ -2824,6 +2914,7 @@ document.getElementById('clientDeleteBtn').addEventListener('click', () => {
   const n = (c.sessions || []).length;
   if (!confirm(`Eyða „${c.name}“${n ? ' og ' + n + (n === 1 ? ' einkatíma' : ' einkatímum') : ''}?\n\nÞetta er ekki hægt að afturkalla.`)) return;
   saveClients(items.filter((x) => x.id !== c.id));
+  recordDeletion('client_' + c.id);
   currentClientId = null;
   toast('Eytt');
   go('clients');
@@ -2881,7 +2972,9 @@ let profileSaveTimer = null;
     clearTimeout(profileSaveTimer);
     profileSaveTimer = setTimeout(() => {
       const p = { name: document.getElementById('pfName').value.trim(), email: document.getElementById('pfEmail').value.trim(), studio: document.getElementById('pfStudio').value.trim() };
+      p.updatedAt = new Date().toISOString();
       try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
+      scheduleSync();
       document.getElementById('profileAvatar').innerHTML = `<span class="serif" style="font-size:2.6rem;font-weight:700">${escapeHtml(initials(p.name))}</span>`;
       document.getElementById('pfSaved').textContent = 'Vistað ✓';
     }, 400);
@@ -2946,6 +3039,493 @@ document.getElementById('restoreInput').addEventListener('change', (e) => {
   reader.readAsText(file);
 });
 
+// =====================================================================
+// SKÝIÐ: innskráning (Firebase Auth) + samstilling (Firestore) + deiling
+// Appið vistar áfram fyrst í tækinu (localStorage) og virkar án nets.
+// Hvert atriði (tími, æfing, nóta, viðskiptavinur, prófíll) er eitt skjal
+// í users/{uid}/items. Nýrra vinnur ef breytt er á tveimur stöðum.
+// =====================================================================
+const FB_VER = '13.2.0';
+const FB_CONFIG = {
+  apiKey: 'AIzaSyB8pTg015nMqcaszBp4S80RsYZ0VEo7zeA',
+  authDomain: 'klassinn-442d5.firebaseapp.com',
+  projectId: 'klassinn-442d5',
+  storageBucket: 'klassinn-442d5.firebasestorage.app',
+  messagingSenderId: '905499949658',
+  appId: '1:905499949658:web:73c18f9c1d5daf7e9fb663',
+};
+const SYNC_KEY = 'klassinn.preview.sync.v1';
+const TOMB_KEY = 'klassinn.preview.tombstones.v1';
+const LOGIN_SKIP_KEY = 'klassinn.loginSkipped';
+const MEDIA_MAX = 600000;
+let fb = null;              // { auth, db, m: { ...föll } }
+let cloudUser = null;
+let cloudReady = false;
+let applyingRemote = false;
+let syncTimer = null;
+let syncing = false;
+let syncAgain = false;
+let lastSyncAt = null;
+let syncError = '';
+
+function loadFirebase() {
+  if (fb) return Promise.resolve(fb);
+  const base = 'https://www.gstatic.com/firebasejs/' + FB_VER + '/';
+  return Promise.all([
+    import(base + 'firebase-app.js'),
+    import(base + 'firebase-auth.js'),
+    import(base + 'firebase-firestore-lite.js'),
+  ]).then(([appM, authM, fsM]) => {
+    const app = appM.initializeApp(FB_CONFIG);
+    const auth = authM.getAuth(app);
+    try { authM.useDeviceLanguage(auth); } catch (e) {}
+    const db = fsM.getFirestore(app);
+    fb = { auth, db, m: Object.assign({}, authM, fsM) };
+    return fb;
+  });
+}
+
+// ---- Hjálparföll ----
+function hashStr(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(36) + ':' + str.length;
+}
+function readJson(key, fallback) {
+  try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v == null ? fallback : v; } catch (e) { return fallback; }
+}
+function writeJson(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+function toMs(v) { if (!v) return 0; if (typeof v === 'number') return v; const t = Date.parse(v); return Number.isNaN(t) ? 0 : t; }
+function recordDeletion(id) {
+  const t = readJson(TOMB_KEY, {});
+  t[id] = Date.now();
+  writeJson(TOMB_KEY, t);
+  scheduleSync();
+}
+function randomId(n) {
+  const chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const a = new Uint32Array(n); crypto.getRandomValues(a);
+  return [...a].map((x) => chars[x % chars.length]).join('');
+}
+// Minnka mynd (max 1280 px, JPEG) svo hún komist í skýið
+function compressImage(dataUrl) {
+  return new Promise((resolve) => {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        const max = 1280;
+        let { width: w, height: h } = img;
+        if (w > max || h > max) { const r = Math.min(max / w, max / h); w = Math.round(w * r); h = Math.round(h * r); }
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        const out = c.toDataURL('image/jpeg', 0.75);
+        resolve(out.length < dataUrl.length ? out : dataUrl);
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    } catch (e) { resolve(dataUrl); }
+  });
+}
+function noteForSync(n) {
+  const o = JSON.parse(JSON.stringify(n));
+  if ((o.image || '').length > MEDIA_MAX) { o.image = ''; o._imageLocal = true; }
+  if ((o.voice || '').length > MEDIA_MAX) { o.voice = ''; o._voiceLocal = true; }
+  if (JSON.stringify(o).length > 900000) { o.image = ''; o.voice = ''; o._imageLocal = !!n.image; o._voiceLocal = !!n.voice; }
+  return o;
+}
+
+// ---- Öll atriði í tækinu, á því formi sem fer í skýið ----
+function localItemsForSync() {
+  const out = {};
+  const add = (id, data) => {
+    const clean = JSON.parse(JSON.stringify(data));
+    const json = JSON.stringify(clean);
+    out[id] = { data: clean, json, h: hashStr(json), t: toMs(clean.updatedAt) };
+  };
+  Object.entries(CLASSES).forEach(([k, c]) => add('class_' + k, c));
+  Object.entries(EXERCISES).forEach(([k, e]) => { if (k !== 'new') add('exercise_' + k, e); });
+  loadNotes().forEach((n) => { if (n && n.id) add('note_' + n.id, noteForSync(n)); });
+  loadClients().forEach((c) => { if (c && c.id) add('client_' + c.id, c); });
+  if (localStorage.getItem(PROFILE_KEY)) add('profile_me', loadProfile());
+  return out;
+}
+
+// ---- Setja breytingar úr skýinu inn í tækið ----
+function applyRemoteItems(list) {
+  if (!list.length) return;
+  applyingRemote = true;
+  try {
+    let notes = null, clients = null, dataChanged = false;
+    list.forEach(({ id, data, deleted }) => {
+      const i = id.indexOf('_');
+      const kind = id.slice(0, i), key = id.slice(i + 1);
+      if (kind === 'class') { if (deleted) delete CLASSES[key]; else CLASSES[key] = data; dataChanged = true; }
+      else if (kind === 'exercise') { if (deleted) delete EXERCISES[key]; else EXERCISES[key] = data; dataChanged = true; }
+      else if (kind === 'note') {
+        notes = notes || loadNotes();
+        const idx = notes.findIndex((n) => n.id === key);
+        if (deleted) { if (idx >= 0) notes.splice(idx, 1); }
+        else {
+          const cur = idx >= 0 ? notes[idx] : null;
+          const merged = Object.assign({}, data);
+          // Stórar myndir/raddir sem bara eru í þessu tæki haldast
+          if (merged._imageLocal && cur && cur.image) merged.image = cur.image;
+          if (merged._voiceLocal && cur && cur.voice) merged.voice = cur.voice;
+          delete merged._imageLocal; delete merged._voiceLocal;
+          if (idx >= 0) notes[idx] = merged; else notes.unshift(merged);
+        }
+      } else if (kind === 'client') {
+        clients = clients || loadClients();
+        const idx = clients.findIndex((c) => c.id === key);
+        if (deleted) { if (idx >= 0) clients.splice(idx, 1); }
+        else if (idx >= 0) clients[idx] = data; else clients.unshift(data);
+      } else if (kind === 'profile' && !deleted) {
+        writeJson(PROFILE_KEY, data);
+      }
+    });
+    if (dataChanged) persistStore();
+    if (notes) saveNotes(notes);
+    if (clients) saveClients(clients);
+  } finally {
+    applyingRemote = false;
+  }
+}
+
+// ---- Samstilling ----
+function scheduleSync() {
+  if (applyingRemote || !cloudUser) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => syncNow('breyting'), 1500);
+}
+async function syncNow(reason) {
+  if (!fb || !cloudUser) return false;
+  if (syncing) { syncAgain = true; return false; }
+  syncing = true; syncError = ''; renderSyncStatus('Samstilli…');
+  const m = fb.m;
+  try {
+    const uid = cloudUser.uid;
+    let st = readJson(SYNC_KEY, {});
+    if (st.uid !== uid) st = { uid, items: {} };
+    const tombs = readJson(TOMB_KEY, {});
+    const snap = await m.getDocs(m.collection(fb.db, 'users', uid, 'items'));
+    const remote = {};
+    snap.forEach((d) => { remote[d.id] = d.data(); });
+    let local = localItemsForSync();
+    const ids = new Set([...Object.keys(remote), ...Object.keys(local), ...Object.keys(tombs)]);
+    const pushes = [], applies = [];
+    ids.forEach((id) => {
+      const s = st.items[id], L = local[id], R = remote[id], tomb = tombs[id];
+      const rT = R ? (R.updatedAt || 0) : 0;
+      const localChanged = L ? (!s || s.h !== L.h || !R) : (!!tomb && !(s && s.d && R && R.deleted));
+      const remoteChanged = R ? (!s || rT > (s.t || 0)) : false;
+      if (localChanged && remoteChanged) {
+        const lT = L ? L.t : tomb || 0;
+        if (lT > rT) pushes.push(id); else applies.push(id);
+      } else if (localChanged) pushes.push(id);
+      else if (remoteChanged) applies.push(id);
+    });
+    // 1) Úr skýinu í tækið
+    if (applies.length) {
+      applyRemoteItems(applies.map((id) => {
+        const R = remote[id];
+        let data = null;
+        try { data = R.deleted ? null : JSON.parse(R.json); } catch (e) { data = null; }
+        return { id, deleted: !!R.deleted || !data, data };
+      }));
+      local = localItemsForSync();
+      applies.forEach((id) => {
+        const R = remote[id];
+        st.items[id] = R.deleted ? { h: 'DEL', t: R.updatedAt || 0, d: true } : { h: local[id] ? local[id].h : 'DEL', t: R.updatedAt || 0 };
+        if (tombs[id] && !R.deleted) delete tombs[id];
+      });
+    }
+    // 2) Úr tækinu í skýið
+    for (const id of pushes) {
+      const L = local[id];
+      const now = Date.now();
+      const kind = id.slice(0, id.indexOf('_'));
+      const ref = m.doc(fb.db, 'users', uid, 'items', id);
+      if (L) {
+        await m.setDoc(ref, { kind, json: L.json, updatedAt: now, deleted: false });
+        st.items[id] = { h: L.h, t: now };
+      } else {
+        await m.setDoc(ref, { kind, json: '', updatedAt: now, deleted: true });
+        st.items[id] = { h: 'DEL', t: now, d: true };
+      }
+      delete tombs[id];
+    }
+    writeJson(SYNC_KEY, st);
+    writeJson(TOMB_KEY, tombs);
+    lastSyncAt = new Date();
+    if (applies.length) refreshAfterRemote();
+    renderSyncStatus();
+    return true;
+  } catch (e) {
+    console.warn('Klassinn: samstilling mistókst', e);
+    syncError = (e && e.code === 'permission-denied') ? 'Aðgangi hafnað' : (navigator.onLine ? 'Samstilling mistókst' : 'Engin nettenging');
+    renderSyncStatus();
+    return false;
+  } finally {
+    syncing = false;
+    if (syncAgain) { syncAgain = false; scheduleSync(); }
+  }
+}
+function hasUnsyncedChanges() {
+  const st = readJson(SYNC_KEY, {});
+  if (!cloudUser || st.uid !== cloudUser.uid) return false;
+  if (Object.keys(readJson(TOMB_KEY, {})).length) return true;
+  const local = localItemsForSync();
+  return Object.entries(local).some(([id, L]) => !st.items[id] || st.items[id].h !== L.h);
+}
+function refreshAfterRemote() {
+  const cur = document.querySelector('.screen.on')?.id;
+  try {
+    if (cur === 'home') { renderFilterMenu(); renderHomeClasses(); }
+    else if (cur === 'exercises') renderExercises();
+    else if (cur === 'notes') renderNotes();
+    else if (cur === 'clients') renderClients();
+    else if (cur === 'client') renderClient();
+    else if (cur === 'profile') renderProfile();
+    else if (cur === 'class') { if (CLASSES[currentClassKey]) fillClass(currentClassKey); else go('home'); }
+  } catch (e) {}
+}
+
+// Senda breytingar sjálfkrafa þegar vistað er í tækinu
+const _persistStoreLocal = persistStore;
+persistStore = function () { _persistStoreLocal(); scheduleSync(); };
+const _saveNotesLocal = saveNotes;
+saveNotes = function (items) { const ok = _saveNotesLocal(items); scheduleSync(); return ok; };
+const _saveClientsLocal = saveClients;
+saveClients = function (items) { const ok = _saveClientsLocal(items); scheduleSync(); return ok; };
+
+// ---- Staða í prófíl ----
+function renderSyncStatus(text) {
+  const el = document.getElementById('pfSyncStatus');
+  if (!el) return;
+  if (text) { el.textContent = text; return; }
+  if (syncError) { el.textContent = '⚠️ ' + syncError + ' — breytingar bíða í tækinu'; return; }
+  el.textContent = lastSyncAt
+    ? '✓ Samstillt kl. ' + lastSyncAt.toLocaleTimeString('is-IS', { hour: '2-digit', minute: '2-digit' })
+    : 'Samstilli…';
+}
+function renderAccount() {
+  const box = document.getElementById('pfAccount');
+  if (!box) return;
+  if (cloudUser) {
+    box.innerHTML = `<div class="hint">SKRÁÐ INN SEM</div><p><strong>${escapeHtml(cloudUser.email || '')}</strong></p>
+      <p class="muted" id="pfSyncStatus" style="margin-bottom:8px"></p>
+      <div class="btnRow">
+        <button class="btnGhost" type="button" id="pfSyncNow">↻ Samstilla</button>
+        <button class="btnGhost" type="button" id="pfPassword">🔑 Nýtt lykilorð</button>
+      </div>
+      <button class="btnGhost danger" type="button" id="pfLogout">Skrá út</button>`;
+    renderSyncStatus();
+  } else {
+    box.innerHTML = `<p class="muted">${cloudReady ? 'Ekki skráð inn. Gögnin eru bara geymd í þessu tæki.' : 'Tengist skýinu…'}</p>
+      <button class="submit" type="button" id="pfLogin">Skrá inn</button>`;
+  }
+}
+document.getElementById('pfAccount').addEventListener('click', async (e) => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.id === 'pfLogin') go('login');
+  else if (t.id === 'pfSyncNow') { await syncNow('handvirkt'); if (!syncError) toast('Samstillt ✓'); }
+  else if (t.id === 'pfPassword') {
+    try {
+      await fb.m.sendPasswordResetEmail(fb.auth, cloudUser.email);
+      alert('Við sendum þér tölvupóst á ' + cloudUser.email + ' með hlekk til að velja nýtt lykilorð.');
+    } catch (err) { alert('Gat ekki sent póst. Athugaðu nettenginguna.'); }
+  } else if (t.id === 'pfLogout') {
+    const ok = await syncNow('útskráning');
+    if (!ok && hasUnsyncedChanges()
+        && !confirm('Ekki tókst að samstilla. Breytingar sem ekki eru komnar í skýið týnast ef þú skráir þig út. Skrá samt út?')) return;
+    if (ok && !confirm('Skrá út? Gögnin eru örugg í skýinu og fjarlægð úr þessu tæki.')) return;
+    try { await fb.m.signOut(fb.auth); } catch (err) {}
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('klassinn.preview.')) keys.push(k); }
+    keys.forEach((k) => localStorage.removeItem(k));
+    try { localStorage.setItem(LOGIN_SKIP_KEY, '0'); } catch (err) {}
+    location.replace(location.pathname);
+  }
+});
+
+// ---- Innskráningarskjár ----
+function authErrorText(code) {
+  switch (code) {
+    case 'auth/invalid-credential': case 'auth/wrong-password': case 'auth/user-not-found': case 'auth/invalid-login-credentials':
+      return 'Rangt netfang eða lykilorð.';
+    case 'auth/invalid-email': return 'Ógilt netfang.';
+    case 'auth/too-many-requests': return 'Of margar tilraunir. Bíddu aðeins og reyndu aftur.';
+    case 'auth/network-request-failed': return 'Engin nettenging. Reyndu aftur þegar netið er komið.';
+    case 'auth/user-disabled': return 'Þessi aðgangur hefur verið gerður óvirkur.';
+    default: return 'Innskráning mistókst (' + (code || 'óþekkt villa') + ').';
+  }
+}
+function showLoginError(msg) {
+  const el = document.getElementById('liError');
+  el.textContent = msg || '';
+  el.classList.toggle('hide', !msg);
+}
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  showLoginError('');
+  const email = document.getElementById('liEmail').value.trim();
+  const pw = document.getElementById('liPassword').value;
+  const btn = document.getElementById('liSubmit');
+  btn.disabled = true; btn.textContent = 'Skrái inn…';
+  try {
+    await loadFirebase();
+    await fb.m.signInWithEmailAndPassword(fb.auth, email, pw);
+    document.getElementById('liPassword').value = '';
+  } catch (err) {
+    showLoginError(err && err.code ? authErrorText(err.code) : 'Gat ekki tengst skýinu. Athugaðu nettenginguna.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Skrá inn';
+  }
+});
+document.getElementById('liForgot').addEventListener('click', async () => {
+  const email = document.getElementById('liEmail').value.trim();
+  if (!email) { showLoginError('Skrifaðu netfangið þitt fyrst, svo „Gleymt lykilorð?“.'); return; }
+  try {
+    await loadFirebase();
+    await fb.m.sendPasswordResetEmail(fb.auth, email);
+    showLoginError('');
+    alert('Ef aðgangur er til fyrir ' + email + ' færðu tölvupóst með hlekk til að velja nýtt lykilorð.');
+  } catch (err) { showLoginError(err && err.code ? authErrorText(err.code) : 'Gat ekki sent póst.'); }
+});
+document.getElementById('liSkip').addEventListener('click', () => {
+  try { localStorage.setItem(LOGIN_SKIP_KEY, '1'); } catch (e) {}
+  go('home');
+});
+
+// ---- Deila tíma ----
+function classPreviewHtml(c) {
+  const moves = (c.moves || []).map((m, i) => {
+    const steps = m.steps || (m.layers || []).map((l) => (typeof l === 'string' ? l : l.text)).filter(Boolean);
+    return `<div class="flow">
+      <div class="flowHead"><span class="num">${i + 1}</span><h3 class="flowTitle serif">${escapeText(m.name || 'Ónefnd æfing')}</h3></div>
+      ${springsViewHtml(m.springs)}
+      ${m.setup ? `<div class="setup"><strong>Uppsetning:</strong><p class="pre">${escapeText(m.setup)}</p></div>` : ''}
+      ${m.props ? `<p class="muted">Áhöld: ${escapeText(m.props)}</p>` : ''}
+      ${steps.length ? `<ol class="steps">${steps.map((s) => `<li>${escapeText(s)}</li>`).join('')}</ol>` : ''}
+      ${m.notes ? `<p class="muted">${escapeText(m.notes)}</p>` : ''}
+    </div>`;
+  }).join('');
+  return `<div class="meta">${escapeText(c.meta || '')}</div>
+    <h2 class="serif" style="margin:6px 0;font-size:1.8rem">${escapeText(c.name || 'Tími')}</h2>
+    <p class="muted">${escapeText(c.info || '')}</p>
+    ${(c.props || []).length ? `<h3 class="blockLabel">🎒 ÁHÖLD</h3><div class="chips">${c.props.map((p) => `<span class="chip on" style="cursor:default">${escapeText(p)}</span>`).join('')}</div>` : ''}
+    ${c.warmup && c.warmup !== '—' ? `<h3 class="blockLabel">☀️ UPPHITUN</h3><div class="card" style="cursor:default"><div class="cardBody"><div class="muted pre">${escapeText(c.warmup)}</div></div></div>` : ''}
+    <h3 class="blockLabel">🎯 ÆFINGAR</h3>${moves || '<p class="muted">Engar æfingar.</p>'}
+    ${c.cooldown ? `<h3 class="blockLabel">🌙 NIÐURKÆLING</h3><div class="card" style="cursor:default"><div class="cardBody"><div class="muted pre">${escapeText(c.cooldown)}</div></div></div>` : ''}
+    ${c.description ? `<h3 class="blockLabel">LÝSING</h3><p class="muted">${escapeText(c.description)}</p>` : ''}`;
+}
+document.getElementById('classShareBtn').addEventListener('click', async () => {
+  const c = CLASSES[currentClassKey];
+  if (!c) return;
+  if (!cloudUser) {
+    if (confirm('Til að deila tíma þarftu að vera skráð inn. Skrá inn núna?')) go('login');
+    return;
+  }
+  const btn = document.getElementById('classShareBtn');
+  btn.disabled = true; btn.textContent = 'Bý til hlekk…';
+  try {
+    const id = randomId(20);
+    const p = loadProfile();
+    const fromName = (p.name || '').trim() || (cloudUser.email || '').split('@')[0];
+    const data = JSON.parse(JSON.stringify(c));
+    delete data.id;
+    await fb.m.setDoc(fb.m.doc(fb.db, 'shares', id), {
+      fromUid: cloudUser.uid, fromName, kind: 'class', json: JSON.stringify(data), createdAt: Date.now(),
+    });
+    const url = location.origin + location.pathname + '#deila=' + id;
+    const text = `${fromName} deildi tímanum „${c.name || 'Tími'}“ með þér í Klassanum.`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Klassinn: ' + (c.name || 'Tími'), text, url }); }
+      catch (err) { if (!err || err.name !== 'AbortError') throw err; }
+    } else {
+      try { await navigator.clipboard.writeText(text + '\n' + url); alert('Hlekkurinn er afritaður. Límdu hann í skilaboð til vinkonu þinnar.'); }
+      catch (err) { prompt('Afritaðu hlekkinn:', url); }
+    }
+  } catch (err) {
+    console.warn('Klassinn: deiling mistókst', err);
+    alert('Ekki tókst að deila tímanum. Athugaðu nettenginguna og reyndu aftur.');
+  } finally {
+    btn.disabled = false; btn.textContent = '↗ Deila';
+  }
+});
+let sharedClass = null;
+async function openSharedFromHash() {
+  const m = (location.hash || '').match(/^#deila=([A-Za-z0-9]{10,40})$/);
+  if (!m) return false;
+  go('shared');
+  const body = document.getElementById('sharedBody');
+  body.innerHTML = '<p class="muted">Sæki tímann…</p>';
+  try {
+    await loadFirebase();
+    const snap = await fb.m.getDoc(fb.m.doc(fb.db, 'shares', m[1]));
+    if (!snap.exists()) throw new Error('fannst ekki');
+    const d = snap.data();
+    sharedClass = JSON.parse(d.json);
+    body.innerHTML = `<div class="banner" style="padding-right:14px"><strong>${escapeHtml(d.fromName || 'Þjálfari')} deildi tíma með þér</strong>Skoðaðu hann og bættu honum við þína tíma ef þú vilt.</div>
+      ${classPreviewHtml(sharedClass)}
+      <button class="submit" type="button" id="sharedAdd" style="margin-top:16px">+ Bæta við mína tíma</button>`;
+    document.getElementById('sharedAdd').addEventListener('click', () => {
+      const id = 'c' + Date.now();
+      const copy = Object.assign({}, sharedClass, { id, updatedAt: new Date().toISOString(), sharedFrom: d.fromName || '' });
+      (copy.moves || []).forEach((mv) => { mv.id = uid(); mv.ex = ''; });
+      CLASSES = Object.assign({ [id]: copy }, CLASSES);
+      const added = syncMovesToLibrary(CLASSES[id]);
+      persistStore();
+      history.replaceState(null, '', location.pathname);
+      toast('Tíminn er kominn í þína tíma ✓' + (added ? ` · ${added} ${added === 1 ? 'æfing' : 'æfingar'} í safnið` : ''));
+      go('class', undefined, id);
+    });
+  } catch (err) {
+    console.warn('Klassinn: gat ekki opnað deildan tíma', err);
+    body.innerHTML = '<p class="muted">Ekki tókst að opna tímann. Hlekkurinn gæti verið rangur eða netið niðri.</p>';
+  }
+  return true;
+}
+document.getElementById('sharedClose').addEventListener('click', () => {
+  history.replaceState(null, '', location.pathname);
+  go('home');
+});
+window.addEventListener('hashchange', () => { openSharedFromHash(); });
+
+// ---- Ræsing ----
+async function initCloud() {
+  const sharedOpen = await openSharedFromHash();
+  try {
+    await loadFirebase();
+  } catch (e) {
+    console.warn('Klassinn: gat ekki hlaðið Firebase', e);
+    cloudReady = true; renderAccount();
+    return;
+  }
+  fb.m.onAuthStateChanged(fb.auth, async (user) => {
+    cloudReady = true;
+    cloudUser = user || null;
+    renderAccount();
+    const cur = document.querySelector('.screen.on')?.id;
+    if (user) {
+      try { localStorage.setItem(LOGIN_SKIP_KEY, '0'); } catch (e) {}
+      if (cur === 'login') { go('home'); toast('Velkomin ' + (loadProfile().name || '').split(' ')[0] + ' ✓'); }
+      await syncNow('innskráning');
+    } else {
+      let skipped = false;
+      try { skipped = localStorage.getItem(LOGIN_SKIP_KEY) === '1'; } catch (e) {}
+      if (!skipped && !sharedOpen && cur !== 'shared' && !classFormOpen()) go('login');
+    }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!cloudUser) return;
+    if (document.visibilityState === 'visible') syncNow('opnað');
+    else if (syncTimer) { clearTimeout(syncTimer); syncNow('lokað'); }
+  });
+  window.addEventListener('online', () => { if (cloudUser) syncNow('net komið'); });
+}
+
 // Hook go() for notes + refresh home
 const _goOrig = go;
 go = function(id, exKey, classKey) {
@@ -2955,11 +3535,17 @@ go = function(id, exKey, classKey) {
   }
   _goOrig(id, exKey, classKey);
   document.body.classList.toggle('noteMode', id === 'note-edit');
+  document.body.classList.toggle('loginMode', id === 'login');
+  if (id === 'login') {
+    const em = document.getElementById('liEmail');
+    if (em && !em.value) em.value = loadProfile().email || '';
+    showLoginError('');
+  }
   if (id === 'home') { try { renderFilterMenu(); renderHomeClasses(); } catch (e) {} }
   if (id === 'exercises') { try { renderExercises(); } catch (e) {} }
   if (id === 'clients') renderClients();
   if (id === 'client') renderClient();
-  if (id === 'profile') { renderProfile(); render(); }
+  if (id === 'profile') { renderProfile(); render(); renderAccount(); }
   if (id === 'notes') renderNotes();
   if (id === 'exercise-edit') {
     const eq = document.getElementById('exEquip')?.value || 'Reformer';
@@ -2983,6 +3569,7 @@ try {
 } catch (e) {}
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
 if (restoreClassDraft()) toast('Óvistaði tíminn þinn er kominn aftur');
+initCloud();
 
 </script>
 </body>
