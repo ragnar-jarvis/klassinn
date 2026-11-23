@@ -12,6 +12,17 @@ Kennaraapp fyrir þjálfara: tímar, æfingasafn, einkatímar og nótur. Á ísl
 - **Ný útgáfa:** hækka `CACHE` í `sw.js`, `?v=` við skráningu SW og `klassinn.sw.vNN` efst í `index.html`.
 
 
+## Ský (Firebase)
+
+- Verkefni `klassinn-442d5` (Spark, ókeypis) á Google-aðgangi eigandans. Innskráning: netfang + lykilorð,
+  nýskráning opin í appinu („Búa til aðgang“). Firestore í `eur3`.
+- Gögn: `users/{uid}/items/{kind_id}` = `{ kind, json, updatedAt, deleted }`. Appið vistar fyrst í tækinu
+  (localStorage) og samstillir svo; nýrra vinnur; eyðingar sem `deleted: true`.
+- Deiling: `shares/{id}` = `{ fromUid, fromName, kind, json, createdAt }`, hlekkur `#deila=<id>`.
+- Reglur: notandi les/skrifar bara `users/{eigið uid}`; `shares` má sækja eitt í einu (ekki lista),
+  aðeins eigandi býr til/eyðir.
+- Prufuaðgangur fyrir prófanir er í `.env.prufa` (fer ekki á GitHub).
+
 ## Prófa á Mac
 
 ```bash
