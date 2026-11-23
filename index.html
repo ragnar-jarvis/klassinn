@@ -621,6 +621,8 @@ body.loginMode{padding-bottom:0}
 .loginWrap .textBtn{display:block;margin:10px auto 0}
 .loginSkip{color:var(--muted)!important;font-weight:600!important;font-size:.9rem}
 .loginFoot{font-size:.8rem;margin:4px 0 0}
+.loginSwitch{margin:14px 0 0;color:var(--muted);font-size:.92rem}
+.loginSwitch .textBtn{display:inline;margin:0;padding:4px;min-height:0}
 .loginError{background:#F6E3E6;color:#8B3A4A;border-radius:12px;padding:10px 12px;margin:12px 0 0;font-size:.9rem}
 #pfAccount p{margin:0 0 6px}
 
@@ -1064,17 +1066,23 @@ Olnbogi í hné</textarea>
   <div class="screen" id="login">
     <div class="loginWrap">
       <img class="logoMain" src="./logo-klassinn-v2.png" alt="KLASSINN — fyrir þjálfarann" />
-      <h1 class="serif loginTitle">Skrá inn</h1>
-      <p class="muted loginLead">Skráðu þig inn til að hafa tímana þína í síma og tölvu.</p>
+      <h1 class="serif loginTitle" id="liTitle">Skrá inn</h1>
+      <p class="muted loginLead" id="liLead">Skráðu þig inn til að hafa tímana þína í síma og tölvu.</p>
       <form id="loginForm" autocomplete="on">
+        <div id="liNameWrap" class="hide">
+          <label class="label" for="liName">NAFN</label>
+          <input class="field" id="liName" autocomplete="name" placeholder="Fullt nafn" />
+        </div>
         <label class="label" for="liEmail">NETFANG</label>
         <input class="field" id="liEmail" type="email" inputmode="email" autocomplete="username" required />
         <label class="label" for="liPassword">LYKILORÐ</label>
-        <input class="field" id="liPassword" type="password" autocomplete="current-password" required />
+        <input class="field" id="liPassword" type="password" autocomplete="current-password" required minlength="6" />
+        <p class="muted hide" id="liPwHint" style="font-size:.8rem;margin:6px 2px 0">Minnst 6 stafir.</p>
         <p class="loginError hide" id="liError" role="alert"></p>
         <button class="submit" type="submit" id="liSubmit">Skrá inn</button>
       </form>
       <button class="textBtn" type="button" id="liForgot">Gleymt lykilorð?</button>
+      <p class="loginSwitch"><span id="liSwitchText">Ekki með aðgang?</span> <button class="textBtn" type="button" id="liSwitch">Búa til aðgang</button></p>
       <button class="textBtn loginSkip" type="button" id="liSkip">Halda áfram án innskráningar</button>
       <p class="muted loginFoot">Án innskráningar eru gögnin bara geymd í þessu tæki.</p>
     </div>
@@ -3210,6 +3218,16 @@ async function syncNow(reason) {
     const snap = await m.getDocs(m.collection(fb.db, 'users', uid, 'items'));
     const remote = {};
     snap.forEach((d) => { remote[d.id] = d.data(); });
+    // Fyrsta samstilling í tæki sem aldrei hefur vistað neitt: sýnitímarnir
+    // eru ekki gögn notandans og víkja fyrir því sem er í skýinu
+    if (!Object.keys(st.items).length && Object.keys(remote).length) {
+      let neverSaved = false;
+      try { neverSaved = !localStorage.getItem(STORE_KEY); } catch (e) {}
+      if (neverSaved) {
+        Object.keys(DEFAULT_CLASSES).forEach((k) => { delete CLASSES[k]; });
+        Object.keys(DEFAULT_EXERCISES).forEach((k) => { if (k !== 'new') delete EXERCISES[k]; });
+      }
+    }
     let local = localItemsForSync();
     const ids = new Set([...Object.keys(remote), ...Object.keys(local), ...Object.keys(tombs)]);
     const pushes = [], applies = [];
@@ -3358,6 +3376,10 @@ function authErrorText(code) {
     case 'auth/too-many-requests': return 'Of margar tilraunir. Bíddu aðeins og reyndu aftur.';
     case 'auth/network-request-failed': return 'Engin nettenging. Reyndu aftur þegar netið er komið.';
     case 'auth/user-disabled': return 'Þessi aðgangur hefur verið gerður óvirkur.';
+    case 'auth/email-already-in-use': return 'Það er þegar til aðgangur með þessu netfangi. Veldu „Skrá inn“ í staðinn.';
+    case 'auth/weak-password': return 'Lykilorðið er of veikt. Notaðu minnst 6 stafi.';
+    case 'auth/operation-not-allowed': case 'auth/admin-restricted-operation': return 'Nýskráning er ekki opin núna.';
+    case 'auth/missing-password': return 'Skrifaðu lykilorð.';
     default: return 'Innskráning mistókst (' + (code || 'óþekkt villa') + ').';
   }
 }
@@ -3366,21 +3388,53 @@ function showLoginError(msg) {
   el.textContent = msg || '';
   el.classList.toggle('hide', !msg);
 }
+let loginFormMode = 'signin';
+function setLoginFormMode(mode) {
+  loginFormMode = mode;
+  const up = mode === 'signup';
+  document.getElementById('liTitle').textContent = up ? 'Búa til aðgang' : 'Skrá inn';
+  document.getElementById('liLead').textContent = up
+    ? 'Búðu til aðgang til að geyma tímana þína í skýinu og nota þá í síma og tölvu.'
+    : 'Skráðu þig inn til að hafa tímana þína í síma og tölvu.';
+  document.getElementById('liNameWrap').classList.toggle('hide', !up);
+  document.getElementById('liPwHint').classList.toggle('hide', !up);
+  document.getElementById('liPassword').setAttribute('autocomplete', up ? 'new-password' : 'current-password');
+  document.getElementById('liSubmit').textContent = up ? 'Búa til aðgang' : 'Skrá inn';
+  document.getElementById('liForgot').classList.toggle('hide', up);
+  document.getElementById('liSwitchText').textContent = up ? 'Ertu með aðgang?' : 'Ekki með aðgang?';
+  document.getElementById('liSwitch').textContent = up ? 'Skrá inn' : 'Búa til aðgang';
+  showLoginError('');
+  if (up && !document.getElementById('liName').value) document.getElementById('liName').value = loadProfile().name || '';
+}
+document.getElementById('liSwitch').addEventListener('click', () => setLoginFormMode(loginFormMode === 'signup' ? 'signin' : 'signup'));
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   showLoginError('');
+  const up = loginFormMode === 'signup';
+  const name = document.getElementById('liName').value.trim();
   const email = document.getElementById('liEmail').value.trim();
   const pw = document.getElementById('liPassword').value;
+  if (up && !name) { showLoginError('Skrifaðu nafnið þitt.'); document.getElementById('liName').focus(); return; }
+  if (up && pw.length < 6) { showLoginError('Lykilorðið þarf að vera minnst 6 stafir.'); return; }
   const btn = document.getElementById('liSubmit');
-  btn.disabled = true; btn.textContent = 'Skrái inn…';
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = up ? 'Bý til aðgang…' : 'Skrái inn…';
   try {
     await loadFirebase();
-    await fb.m.signInWithEmailAndPassword(fb.auth, email, pw);
+    if (up) {
+      // Nafn og netfang í prófíl áður en samstilling hefst
+      const p = Object.assign({}, loadProfile(), { name, email, updatedAt: new Date().toISOString() });
+      writeJson(PROFILE_KEY, p);
+      const cred = await fb.m.createUserWithEmailAndPassword(fb.auth, email, pw);
+      try { await fb.m.updateProfile(cred.user, { displayName: name }); } catch (err) {}
+    } else {
+      await fb.m.signInWithEmailAndPassword(fb.auth, email, pw);
+    }
     document.getElementById('liPassword').value = '';
   } catch (err) {
     showLoginError(err && err.code ? authErrorText(err.code) : 'Gat ekki tengst skýinu. Athugaðu nettenginguna.');
   } finally {
-    btn.disabled = false; btn.textContent = 'Skrá inn';
+    btn.disabled = false; btn.textContent = label;
   }
 });
 document.getElementById('liForgot').addEventListener('click', async () => {
@@ -3510,7 +3564,8 @@ async function initCloud() {
     const cur = document.querySelector('.screen.on')?.id;
     if (user) {
       try { localStorage.setItem(LOGIN_SKIP_KEY, '0'); } catch (e) {}
-      if (cur === 'login') { go('home'); toast('Velkomin ' + (loadProfile().name || '').split(' ')[0] + ' ✓'); }
+      if (user.displayName && !loadProfile().name) writeJson(PROFILE_KEY, Object.assign({}, loadProfile(), { name: user.displayName, email: user.email, updatedAt: new Date().toISOString() }));
+      if (cur === 'login') { go('home'); const first = (loadProfile().name || user.displayName || '').split(' ')[0]; toast(first ? 'Velkomin ' + first + ' ✓' : 'Skráð inn ✓'); }
       await syncNow('innskráning');
     } else {
       let skipped = false;
