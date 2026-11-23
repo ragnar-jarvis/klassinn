@@ -715,7 +715,7 @@ details.feedback .comment{font-size:.9rem}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 16</p>
+    <p class="version">KLASSINN · útgáfa 17</p>
   </div>
 
     
@@ -2307,7 +2307,7 @@ function persistCurrentNote(andLeave) {
 function scheduleNoteSave() {
   document.getElementById('noteAutoSave').textContent = 'Vista…';
   clearTimeout(noteSaveTimer);
-  noteSaveTimer = setTimeout(() => persistCurrentNote(false), 450);
+  noteSaveTimer = setTimeout(() => { if (noteEditOpen()) persistCurrentNote(false); }, 450);
 }
 function insertNoteFmt(kind) {
   const ta = document.getElementById('noteBody');
@@ -2367,9 +2367,13 @@ document.querySelectorAll('#noteSheet [data-new]').forEach((btn) => {
   });
 });
 
-window.addEventListener('pagehide', () => { try { clearTimeout(noteSaveTimer); persistCurrentNote(false); } catch (e) {} });
+// Vista opna nótu þegar appinu er lokað — en aðeins ef nóta er opin
+function noteEditOpen() {
+  return document.getElementById('note-edit').classList.contains('on');
+}
+window.addEventListener('pagehide', () => { try { if (noteEditOpen()) { clearTimeout(noteSaveTimer); persistCurrentNote(false); } } catch (e) {} });
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') {
+  if (document.visibilityState === 'hidden' && noteEditOpen()) {
     try { clearTimeout(noteSaveTimer); persistCurrentNote(false); } catch (e) {}
   }
 });
@@ -2427,10 +2431,19 @@ document.getElementById('noteFileInput')?.addEventListener('change', (e) => {
 document.getElementById('noteDeleteBtn')?.addEventListener('click', () => {
   if (!editingNoteId) return;
   if (!confirm('Eyða þessari nótu?')) return;
-  saveNotes(loadNotes().filter((x) => x.id !== editingNoteId));
+  const id = editingNoteId;
+  // Tæma ritilinn ÁÐUR en farið er úr honum; annars vistar sjálfvirka vistunin
+  // nótuna aftur sem nýja nótu (það var ástæðan fyrir því að nótur eyddust ekki).
+  clearTimeout(noteSaveTimer);
   editingNoteId = null;
+  draftImage = '';
+  draftVoice = '';
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteBody').value = '';
+  saveNotes(loadNotes().filter((x) => x.id !== id));
   go('notes');
   renderNotes();
+  toast('Nótu eytt');
 });
 
 
