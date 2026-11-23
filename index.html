@@ -809,6 +809,7 @@ html[lang=da] .tabbar::before{background-image:url(./logo-klassinn-da.png)}
     <div class="profileSection">ÁBENDINGAR</div>
     <details class="feedback" id="comments">
       <summary>Senda ábendingu um appið</summary>
+      <p class="profileNote" style="margin:8px 0 0">Ábendingin berst beint til okkar sem búum til Klassann.</p>
       <form id="form">
         <label for="who">Nafn</label>
         <input id="who" required placeholder="t.d. nafnið þitt" />
@@ -826,14 +827,14 @@ html[lang=da] .tabbar::before{background-image:url(./logo-klassinn-da.png)}
         </select>
         <label for="msg">Athugasemd</label>
         <textarea id="msg" required placeholder="Hvað finnst þér? Hvað mætti laga?"></textarea>
-        <button class="submit" type="submit">Vista ábendingu</button>
+        <button class="submit" type="submit">Senda ábendingu</button>
       </form>
       <div class="list" id="list"></div>
       <button class="submit" type="button" id="export" style="background:var(--purple-deep)">Afrita allar ábendingar</button>
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 23</p>
+    <p class="version">KLASSINN · útgáfa 24</p>
   </div>
 
     
@@ -1370,7 +1371,7 @@ const DA = {
   '⬇︎ Vista afrit': '⬇︎ Gem backup', '⬆︎ Setja inn afrit': '⬆︎ Indlæs backup', 'Æfingar í safni': 'Øvelser i biblioteket',
   'Senda ábendingu um appið': 'Send feedback om appen', 't.d. nafnið þitt': 'fx dit navn', 'Um hvað?': 'Om hvad?', 'Almennt / look': 'Generelt / udseende',
   'Forsíða': 'Forside', 'Litir / logo': 'Farver / logo', 'Athugasemd': 'Kommentar', 'Hvað finnst þér? Hvað mætti laga?': 'Hvad synes du? Hvad kunne være bedre?',
-  'Vista ábendingu': 'Gem feedback', 'Afrita allar ábendingar': 'Kopier al feedback', 'Engar ábendingar enn.': 'Ingen feedback endnu.', 'Engar ábendingar.': 'Ingen feedback.',
+  'Vista ábendingu': 'Send feedback', 'Senda ábendingu': 'Send feedback', 'Bíður nettengingar': 'Venter på internet', 'Sent ✓': 'Sendt ✓', 'Takk! Ábendingin er komin til okkar ✓': 'Tak! Din feedback er sendt til os ✓', 'Vistað í tækinu — sendist þegar netið kemur': 'Gemt på enheden – sendes, når nettet er tilbage', 'Ábendingin berst beint til okkar sem búum til Klassann.': 'Din feedback går direkte til os, der laver Klassinn.', 'Afrita allar ábendingar': 'Kopier al feedback', 'Engar ábendingar enn.': 'Ingen feedback endnu.', 'Engar ábendingar.': 'Ingen feedback.',
   'Ef útlit virðist gamalt:': 'Hvis appen ser gammel ud:', 'Hreinsa skyndiminni': 'Ryd cache',
   '📱 Þú ert í Klassa-appinu á heimaskjánum. Opnaðu Klassann alltaf þaðan, ekki úr Safari, því þar sjást önnur gögn.': '📱 Du er i Klassinn-appen på hjemmeskærmen. Åbn altid Klassinn derfra og ikke fra Safari, for der ses andre data.',
   '🧭 Þú ert í vafranum (Safari). Á iPhone geymir appið á heimaskjánum': '🧭 Du er i browseren (Safari). På iPhone gemmer appen på hjemmeskærmen',
@@ -2780,21 +2781,55 @@ function render() {
   const list = document.getElementById('list');
   list.innerHTML = items.length ? items.map((c) =>
     `<div class="comment"><strong>${escapeHtml(c.who)} · ${escapeHtml(c.about)}</strong>
-     <div class="when">${escapeHtml(c.when)}</div><div>${escapeHtml(c.msg)}</div></div>`
+     <div class="when">${escapeHtml(c.when)} · <span class="${c.sent ? '' : 'muted'}">${c.sent === false ? 'Bíður nettengingar' : 'Sent ✓'}</span></div><div>${escapeHtml(c.msg)}</div></div>`
   ).join('') : '<p class="muted">Engar ábendingar enn.</p>';
 }
-document.getElementById('form').addEventListener('submit', (e) => {
+// Ábendingar fara í Firebase (feedback) svo Díana og Ragnar sjái þær; bíða í tækinu ef ekkert net er
+let flushingFeedback = false;
+async function flushFeedback() {
+  if (flushingFeedback) return 0;
+  const items = load();
+  if (!items.some((c) => c.sent === false)) return 0;
+  flushingFeedback = true;
+  let n = 0;
+  try {
+    await loadFirebase();
+    for (const c of items) {
+      if (c.sent !== false) continue;
+      await fb.m.addDoc(fb.m.collection(fb.db, 'feedback'), {
+        uid: cloudUser ? cloudUser.uid : '',
+        email: cloudUser ? (cloudUser.email || '') : '',
+        name: c.who || '', about: c.about || '', msg: c.msg || '', lang: LANG,
+        version: (document.querySelector('.version')?.textContent || '').replace(/\D+/g, ''),
+        device: (isStandalone ? 'heimaskjár' : 'vafri') + ' · ' + (navigator.userAgent || '').slice(0, 160),
+        createdAt: Date.now(),
+      });
+      c.sent = true; n++;
+      localStorage.setItem(KEY, JSON.stringify(items));
+    }
+  } catch (e) {
+    console.warn('Klassinn: ábending ekki send', e);
+  } finally {
+    flushingFeedback = false;
+    render();
+  }
+  return n;
+}
+document.getElementById('form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const who = document.getElementById('who').value.trim();
   const about = document.getElementById('about').value;
   const msg = document.getElementById('msg').value.trim();
   if (!who || !msg) return;
   const items = load();
-  items.unshift({ who, about, msg, when: new Date().toLocaleString(LOCALE) });
+  items.unshift({ id: 'fb' + Date.now(), who, about, msg, when: new Date().toLocaleString(LOCALE), sent: false });
   localStorage.setItem(KEY, JSON.stringify(items));
   document.getElementById('msg').value = '';
   render();
+  const n = await flushFeedback();
+  toast(n ? 'Takk! Ábendingin er komin til okkar ✓' : 'Vistað í tækinu — sendist þegar netið kemur');
 });
+window.addEventListener('online', () => { flushFeedback(); });
 document.getElementById('export').addEventListener('click', async () => {
   const items = load();
   const text = items.length
@@ -4680,6 +4715,7 @@ async function initCloud() {
     cloudReady = true; renderAccount();
     return;
   }
+  setTimeout(flushFeedback, 4000);
   fb.m.onAuthStateChanged(fb.auth, async (user) => {
     cloudReady = true;
     cloudUser = user || null;
@@ -4725,7 +4761,7 @@ go = function(id, exKey, classKey) {
   if (id === 'exercises') { try { renderExercises(); } catch (e) {} }
   if (id === 'clients') renderClients();
   if (id === 'client') renderClient();
-  if (id === 'profile') { renderProfile(); render(); renderAccount(); }
+  if (id === 'profile') { renderProfile(); render(); renderAccount(); const w = document.getElementById('who'); if (w && !w.value) w.value = loadProfile().name || ''; }
   if (id === 'friends') { friendsForm = null; renderFriends(); if (cloudUser) refreshFriends(false); }
   if (id === 'group') renderGroup();
   if (id === 'notes') renderNotes();
