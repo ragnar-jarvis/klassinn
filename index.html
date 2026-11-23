@@ -695,6 +695,13 @@ body.loginMode{padding-bottom:0}
   #friends.on,#group.on{max-width:780px}
 }
 
+
+/* ===== Tungumál ===== */
+.langSwitch{display:inline-flex;gap:4px;background:var(--lavender);border-radius:999px;padding:4px;margin:0 auto 18px}
+.langSwitch.left{margin:0 0 4px}
+.langSwitch button{border:none;background:transparent;border-radius:999px;padding:8px 14px;font:inherit;font-size:.85rem;font-weight:700;color:var(--purple);cursor:pointer}
+.langSwitch button.on{background:#fff;color:var(--text);box-shadow:0 2px 6px rgba(47,36,56,.08)}
+
 </style>
 </head>
 <body>
@@ -772,6 +779,9 @@ body.loginMode{padding-bottom:0}
     <input class="field" id="pfStudio" placeholder="t.d. Hreyfing, World Class…" />
     <p class="profileNote" id="pfSaved">Vistast sjálfkrafa á símanum.</p>
 
+    <div class="profileSection">TUNGUMÁL</div>
+    <div class="langSwitch left" data-notr><button type="button" data-lang="is">Íslenska</button><button type="button" data-lang="da">Dansk</button></div>
+
     <div class="profileSection">AÐGANGUR</div>
     <div class="infoCard" id="pfAccount"></div>
 
@@ -814,7 +824,7 @@ body.loginMode{padding-bottom:0}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 21</p>
+    <p class="version">KLASSINN · útgáfa 22</p>
   </div>
 
     
@@ -1096,6 +1106,7 @@ Olnbogi í hné</textarea>
   </div>
   <div class="screen" id="login">
     <div class="loginWrap">
+      <div class="langSwitch" data-notr><button type="button" data-lang="is">Íslenska</button><button type="button" data-lang="da">Dansk</button></div>
       <img class="logoMain" src="./logo-klassinn-v2.png" alt="KLASSINN — fyrir þjálfarann" />
       <h1 class="serif loginTitle" id="liTitle">Skrá inn</h1>
       <p class="muted loginLead" id="liLead">Skráðu þig inn til að hafa tímana þína í síma og tölvu.</p>
@@ -1237,6 +1248,271 @@ if ('serviceWorker' in navigator) {
 }
 const screens = document.querySelectorAll('.screen');
 const tabs = document.querySelectorAll('.tab');
+
+// =====================================================================
+// TUNGUMÁL: íslenska (frumtexti) eða danska. Viðmótið er skrifað á íslensku;
+// á dönsku eru textar þýddir þegar þeir birtast (orðasafn + mynstur).
+// Gögn notandans (heiti tíma, nótur o.s.frv.) eru ekki þýdd.
+// =====================================================================
+const LANG_KEY = 'klassinn.lang';
+const LANG = (() => {
+  try { const v = localStorage.getItem(LANG_KEY); if (v === 'is' || v === 'da') return v; } catch (e) {}
+  return /^da\b/i.test(navigator.language || '') ? 'da' : 'is';
+})();
+const LOCALE = LANG === 'da' ? 'da-DK' : 'is-IS';
+document.documentElement.lang = LANG;
+function setLanguage(l) {
+  try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
+  location.reload();
+}
+const DA = {
+  // Valmynd og almennt
+  'Mínir tímar': 'Mine timer', 'MÍNIR TÍMAR': 'MINE TIMER', 'Finna æfingu': 'Find øvelse', 'Finna tíma': 'Find time',
+  'Nótur': 'Noter', 'Prófíll': 'Profil', 'Vinir': 'Venner', 'Einkatímar': 'Privattimer', 'EINKATÍMAR': 'PRIVATTIMER',
+  'Aðalvalmynd': 'Hovedmenu', 'Til baka': 'Tilbage', 'Loka': 'Luk', 'Loka leit': 'Luk søgning', 'Leita': 'Søg', 'Uppfæra': 'Opdater',
+  'Vista': 'Gem', '✓ Vista': '✓ Gem', '✓ Vistað': '✓ Gemt', 'Breyta': 'Rediger', '✎ Breyta': '✎ Rediger', 'Eyða': 'Slet',
+  'Hætta við': 'Annuller', 'Bæta við': 'Tilføj', '+ Bæta við': '+ Tilføj', 'Deila': 'Del', '↗ Deila': '↗ Del', 'Skoða': 'Se',
+  'Fjarlægja': 'Fjern', 'Halda áfram': 'Fortsæt', 'Sæki…': 'Henter…', 'Allt': 'Alle', 'Allar': 'Alle', 'Allir': 'Alle',
+  'Annað': 'Andet', 'Tími': 'Time', 'Tímar': 'Timer', 'Æfing': 'Øvelse', 'Æfingar': 'Øvelser', 'ÆFINGAR': 'ØVELSER',
+  'Nóta': 'Note', 'Hópur': 'Gruppe', 'Þú': 'Dig', 'Þjálfari': 'Træner', 'Ónefndur tími': 'Unavngivet time',
+  'Ónefnd æfing': 'Unavngiven øvelse', 'Ónefnd nóta': 'Unavngiven note', 'Ónefndur': 'Unavngivet', 'óþekkt': 'ukendt',
+  // Heimaskjár
+  'Setja Klassann á heimaskjá': 'Læg Klassinn på hjemmeskærmen', 'Setja á heimaskjá': 'Føj til hjemmeskærm',
+  'Þá opnast hann eins og app. Opnaðu hann svo alltaf þaðan, því Safari geymir gögnin sér.': 'Så åbner den som en app. Åbn den altid derfra, for Safari gemmer data for sig.',
+  'opna í Safari → Deila': 'åbn i Safari → Del', '→ „Bæta við heimaskjá“.': '→ „Føj til hjemmeskærm“.',
+  'Chrome → ⋮ → „Setja á heimaskjá“.': 'Chrome → ⋮ → „Føj til startskærm“.',
+  'KLASSINN — fyrir þjálfarann': 'KLASSINN – for træneren', 'Leita að tíma, æfingu eða áhaldi': 'Søg efter time, øvelse eller redskab',
+  // Stig, tegundir, áhöld (gögnin sjálf haldast á íslensku)
+  'Byrjandi': 'Begynder', 'Byrjendur': 'Begyndere', 'Miðstig': 'Mellem', 'Millistig': 'Mellem', 'Lengra komnir': 'Øvede',
+  'Dýna': 'Måtte', 'Styrktaræfing': 'Styrketræning', 'Hópatími': 'Holdtime',
+  'Bolti': 'Bold', 'Teygja': 'Elastik', 'Lóð': 'Vægte', 'Reformer-kassi': 'Reformer-boks', 'Ökklalóð': 'Ankelvægte', 'Jógakubbur': 'Yogablok',
+  // Tími: ritill og skoðun
+  'Nýr tími': 'Ny time', 'Breyta tíma': 'Rediger time', 'HEITI TÍMA': 'NAVN PÅ TIMEN', 't.d. Reformer tími 9': 'fx Reformer time 9',
+  'STIG': 'NIVEAU', 'LENGD (MÍN)': 'VARIGHED (MIN)', '💙 TEGUND TÍMA': '💙 HOLDTYPE', '🎒 ÁHÖLD': '🎒 REDSKABER',
+  'LÝSING': 'BESKRIVELSE', 'Stutt yfirlit yfir tímann...': 'Kort oversigt over timen...', '🎵 SPILUNARLISTI': '🎵 PLAYLISTE',
+  'Límdu Spotify/Apple Music slóð eða heiti': 'Indsæt Spotify-/Apple Music-link eller navn', '☀️ UPPHITUN': '☀️ OPVARMNING',
+  't.d.\nFootwork\nSingle leg / hendur': 'fx\nFootwork\nSingle leg / arme', '🎯 ÆFINGAR / FLOW': '🎯 ØVELSER / FLOW',
+  '🎯 ÆFINGAR': '🎯 ØVELSER', '+ Ný æfing': '+ Ny øvelse', '+ Úr æfingasafni': '+ Fra øvelsesbiblioteket', '🌙 NIÐURKÆLING': '🌙 NEDKØLING',
+  'Lýstu niðurkælingu...': 'Beskriv nedkølingen...', 'Vista tíma': 'Gem time', '🗑 Eyða tíma': '🗑 Slet time',
+  'Þú varst að vinna í þessum tíma. Allt sem þú skrifaðir er hér. Ýttu á': 'Du var i gang med denne time. Alt, du skrev, er her. Tryk på',
+  'þegar tíminn er tilbúinn.': 'når timen er klar.', 'Heiti æfingar / flow': 'Navn på øvelse / flow', 'Gormar (springs)': 'Fjedre (springs)',
+  'Uppsetning (set up)...': 'Opsætning (set up)...', 'Skref / lög': 'Trin / lag', 'Eyða skrefi': 'Slet trin', '+ Bæta við skrefi': '+ Tilføj trin',
+  'Áhöld (valfrjálst)': 'Redskaber (valgfrit)', 'Nota timer í æfingu': 'Brug timer i øvelsen', '✓ Nota timer í æfingu': '✓ Brug timer i øvelsen',
+  '＋ Nota timer í æfingu': '＋ Brug timer i øvelsen', 'Sekúndur on': 'Sekunder arbejde', 'Sekúndur off': 'Sekunder pause', '▶ Timer': '▶ Timer',
+  'Athugasemdir': 'Bemærkninger', 'Eyða æfingu': 'Slet øvelse', 'Velja úr æfingasafni': 'Vælg fra øvelsesbiblioteket',
+  'Kennsluútlit — haltu þessu opnu á meðan þú kennir. Allur tíminn sést hér að neðan.': 'Undervisningsvisning – hold den åben, mens du underviser. Hele timen ses herunder.',
+  'Uppsetning:': 'Opsætning:', 'GORMAR': 'FJEDRE', '⧉ Afrita tíma': '⧉ Kopier time', 'Engar æfingar skráðar. Ýttu á ✎ Breyta til að bæta við.': 'Ingen øvelser. Tryk på ✎ Rediger for at tilføje.',
+  'VINNA': 'ARBEJDE', 'HVÍLD': 'PAUSE', 'Pása': 'Pause', 'Stöðva': 'Stop',
+  // Æfingasafn
+  'Æfingasafnið': 'Øvelsesbiblioteket', 'Leita að æfingu': 'Søg efter øvelse', 'Ný æfing': 'Ny øvelse', 'Breyta æfingu': 'Rediger øvelse',
+  'HEITI': 'NAVN', 'TEGUND': 'TYPE', 'GORMAR (SPRINGS)': 'FJEDRE (SPRINGS)', 't.d. 1 rauður + 1 blár': 'fx 1 rød + 1 blå',
+  'UPPSETNING': 'OPSÆTNING', 'SKREF (eitt í línu)': 'TRIN (ét pr. linje)', 'ATHUGASEMDIR': 'BEMÆRKNINGER', 'Vista æfingu': 'Gem øvelse',
+  '🗑 Eyða æfingu': '🗑 Slet øvelse', '↗ Deila æfingu': '↗ Del øvelse', '‹ Til baka í safnið': '‹ Tilbage til biblioteket',
+  'Engin lýsing skráð á þessa æfingu.': 'Ingen beskrivelse af denne øvelse.', 'Engin æfing fannst.': 'Ingen øvelse fundet.',
+  'Engar æfingar enn. Ýttu á + til að bæta við.': 'Ingen øvelser endnu. Tryk på + for at tilføje.',
+  'Engin æfing fannst. Bættu æfingum í safnið undir „Finna æfingu“.': 'Ingen øvelse fundet. Tilføj øvelser under „Find øvelse“.',
+  // Tómir listar
+  'Engir tímar enn': 'Ingen timer endnu', 'Búðu til fyrsta tímann þinn.': 'Lav din første time.', '+ Nýr tími': '+ Ny time',
+  'Enginn tími passar við síuna.': 'Ingen timer passer til filteret.', 'Engir tímar.': 'Ingen timer.', 'Engar æfingar.': 'Ingen øvelser.',
+  // Einkatímar
+  'Viðskiptavinur': 'Klient', 'Viðskiptavinir': 'Klienter', 'Nýr viðskiptavinur': 'Ny klient', '+ Nýr viðskiptavinur': '+ Ny klient',
+  'Leita að viðskiptavini': 'Søg efter klient', 'Engir viðskiptavinir enn': 'Ingen klienter endnu',
+  'Skráðu einkaviðskiptavini, markmið þeirra og hvern einkatíma.': 'Registrér private klienter, deres mål og hver privattime.',
+  'Enginn fannst.': 'Ingen fundet.', 'NAFN': 'NAVN', 'Nafn': 'Navn', 'Fullt nafn': 'Fulde navn', 'SÍMI': 'TELEFON', 'NETFANG': 'E-MAIL',
+  'valfrjálst': 'valgfrit', '🎯 MARKMIÐ': '🎯 MÅL', 'Hvað vill viðkomandi ná fram?': 'Hvad vil klienten opnå?',
+  '🩹 MEIÐSLI / HEILSA': '🩹 SKADER / HELBRED', 't.d. bakmeiðsli, meðganga, hné…': 'fx rygskade, graviditet, knæ…',
+  'Annað sem gott er að muna': 'Andet, der er godt at huske', '🗑 Eyða viðskiptavini': '🗑 Slet klient',
+  'Engar upplýsingar skráðar. Ýttu á ✎ Breyta til að bæta við markmiðum og heilsu.': 'Ingen oplysninger. Tryk på ✎ Rediger for at tilføje mål og helbred.',
+  'Nýr einkatími': 'Ny privattime', '+ Nýr einkatími': '+ Ny privattime', 'Einkatími': 'Privattime', 'Enginn einkatími enn': 'Ingen privattimer endnu',
+  'Skráðu fyrsta einkatímann.': 'Registrér den første privattime.', 'DAGSETNING': 'DATO', 'STAÐUR': 'STED', 't.d. Studio 1': 'fx Studie 1',
+  'FÓKUS': 'FOKUS', 't.d. bak og core': 'fx ryg og core', '🎯 ÆFINGAR (ein í línu)': '🎯 ØVELSER (én pr. linje)',
+  'Fótavinna – 1 rauður + 1 blár\nHundraðið': 'Footwork – 1 rød + 1 blå\nThe Hundred', 'HVERNIG GEKK? / NÆST': 'HVORDAN GIK DET? / NÆSTE GANG',
+  'Hvað gekk vel, hvað á að vinna með næst…': 'Hvad gik godt, hvad skal der arbejdes med næste gang…', 'Vista einkatíma': 'Gem privattime',
+  '🗑 Eyða einkatíma': '🗑 Slet privattime',
+  // Nótur
+  'Leita í nótum': 'Søg i noter', 'Hugmyndir': 'Idéer', 'Einkamál': 'Privat', 'Ný nóta': 'Ny note', '+ Ný nóta': '+ Ny note',
+  'Engar nótur enn': 'Ingen noter endnu', 'Skrifaðu hugmyndir, flow eða áminningar — flokkað og auðvelt að finna.': 'Skriv idéer, flows eller påmindelser – sorteret og nemme at finde.',
+  'Titill…': 'Titel…', 'Byrjaðu að skrifa hér…': 'Begynd at skrive her…', 'Stjörnumerkja': 'Stjernemarker', 'Stjarna': 'Stjerne',
+  '• Listi': '• Liste', '1. Listi': '1. Liste', '🖼 Mynd': '🖼 Billede', '🎙 Rödd': '🎙 Lyd', 'Textanóta': 'Tekstnote', 'Ljósmynd': 'Foto',
+  'Mynd úr safni': 'Billede fra galleri', 'Raddnóta': 'Lydnote', 'Spila': 'Afspil', 'Vista…': 'Gemmer…',
+  'Vistað (mynd/rödd stytt vegna pláss)': 'Gemt (billede/lyd forkortet pga. plads)', 'Gat ekki vistað — pláss á símanum': 'Kunne ikke gemme – ikke plads på telefonen',
+  'Tekur upp… ýttu aftur á Rödd til að stöðva': 'Optager… tryk på Lyd igen for at stoppe',
+  // Prófíll
+  'Prófíllinn minn': 'Min profil', 'Nafnið þitt': 'Dit navn', 'netfang@dæmi.is': 'navn@eksempel.dk', 'STÖÐ / STÚDÍÓ': 'CENTER / STUDIE',
+  't.d. Hreyfing, World Class…': 'fx Fitness World, SATS…', 'Vistast sjálfkrafa á símanum.': 'Gemmes automatisk på telefonen.', 'Vistað ✓': 'Gemt ✓',
+  'AÐGANGUR': 'KONTO', 'YFIRLIT': 'OVERSIGT', 'AFRIT AF GÖGNUM': 'BACKUP AF DATA', 'ÁBENDINGAR': 'FEEDBACK', 'TUNGUMÁL': 'SPROG',
+  'Allt er geymt í þessum síma. Vistaðu afrit reglulega (t.d. í Skrár/iCloud) svo ekkert tapist ef skipt er um síma.': 'Alt gemmes på denne telefon. Gem en backup jævnligt (fx i Filer/iCloud), så intet går tabt, hvis du skifter telefon.',
+  '⬇︎ Vista afrit': '⬇︎ Gem backup', '⬆︎ Setja inn afrit': '⬆︎ Indlæs backup', 'Æfingar í safni': 'Øvelser i biblioteket',
+  'Senda ábendingu um appið': 'Send feedback om appen', 't.d. nafnið þitt': 'fx dit navn', 'Um hvað?': 'Om hvad?', 'Almennt / look': 'Generelt / udseende',
+  'Forsíða': 'Forside', 'Litir / logo': 'Farver / logo', 'Athugasemd': 'Kommentar', 'Hvað finnst þér? Hvað mætti laga?': 'Hvad synes du? Hvad kunne være bedre?',
+  'Vista ábendingu': 'Gem feedback', 'Afrita allar ábendingar': 'Kopier al feedback', 'Engar ábendingar enn.': 'Ingen feedback endnu.', 'Engar ábendingar.': 'Ingen feedback.',
+  'Ef útlit virðist gamalt:': 'Hvis appen ser gammel ud:', 'Hreinsa skyndiminni': 'Ryd cache',
+  '📱 Þú ert í Klassa-appinu á heimaskjánum. Opnaðu Klassann alltaf þaðan, ekki úr Safari, því þar sjást önnur gögn.': '📱 Du er i Klassinn-appen på hjemmeskærmen. Åbn altid Klassinn derfra og ikke fra Safari, for der ses andre data.',
+  '🧭 Þú ert í vafranum (Safari). Á iPhone geymir appið á heimaskjánum': '🧭 Du er i browseren (Safari). På iPhone gemmer appen på hjemmeskærmen',
+  'sín eigin gögn': 'sine egne data', ', aðskilin frá Safari. Notaðu alltaf sama staðinn, helst heimaskjáinn.': ', adskilt fra Safari. Brug altid det samme sted, helst hjemmeskærmen.',
+  'SKRÁÐ INN SEM': 'LOGGET IND SOM', '↻ Samstilla': '↻ Synkroniser', '🔑 Nýtt lykilorð': '🔑 Ny adgangskode', 'Skrá út': 'Log ud',
+  'Ekki skráð inn. Gögnin eru bara geymd í þessu tæki.': 'Ikke logget ind. Data gemmes kun på denne enhed.', 'Tengist skýinu…': 'Forbinder til skyen…',
+  'Samstilli…': 'Synkroniserer…', 'Samstilling mistókst': 'Synkronisering mislykkedes', 'Aðgangi hafnað': 'Adgang nægtet', 'Engin nettenging': 'Ingen internetforbindelse',
+  // Innskráning
+  'Skrá inn': 'Log ind', 'Skráðu þig inn til að hafa tímana þína í síma og tölvu.': 'Log ind for at have dine timer på både telefon og computer.',
+  'Búa til aðgang': 'Opret konto', 'Búðu til aðgang til að geyma tímana þína í skýinu og nota þá í síma og tölvu.': 'Opret en konto for at gemme dine timer i skyen og bruge dem på telefon og computer.',
+  'LYKILORÐ': 'ADGANGSKODE', 'Minnst 6 stafir.': 'Mindst 6 tegn.', 'Gleymt lykilorð?': 'Glemt adgangskode?', 'Ekki með aðgang?': 'Ingen konto?',
+  'Ertu með aðgang?': 'Har du en konto?', 'Halda áfram án innskráningar': 'Fortsæt uden at logge ind',
+  'Án innskráningar eru gögnin bara geymd í þessu tæki.': 'Uden login gemmes dine data kun på denne enhed.', 'Skrái inn…': 'Logger ind…', 'Bý til aðgang…': 'Opretter konto…',
+  'Rangt netfang eða lykilorð.': 'Forkert e-mail eller adgangskode.', 'Ógilt netfang.': 'Ugyldig e-mail.',
+  'Of margar tilraunir. Bíddu aðeins og reyndu aftur.': 'For mange forsøg. Vent lidt, og prøv igen.',
+  'Engin nettenging. Reyndu aftur þegar netið er komið.': 'Ingen internetforbindelse. Prøv igen, når nettet er tilbage.',
+  'Þessi aðgangur hefur verið gerður óvirkur.': 'Denne konto er deaktiveret.',
+  'Það er þegar til aðgangur með þessu netfangi. Veldu „Skrá inn“ í staðinn.': 'Der findes allerede en konto med denne e-mail. Vælg „Log ind“ i stedet.',
+  'Lykilorðið er of veikt. Notaðu minnst 6 stafi.': 'Adgangskoden er for svag. Brug mindst 6 tegn.', 'Nýskráning er ekki opin núna.': 'Det er ikke muligt at oprette konto lige nu.',
+  'Skrifaðu lykilorð.': 'Skriv en adgangskode.', 'Skrifaðu nafnið þitt.': 'Skriv dit navn.', 'Lykilorðið þarf að vera minnst 6 stafir.': 'Adgangskoden skal være mindst 6 tegn.',
+  'Skrifaðu netfangið þitt fyrst, svo „Gleymt lykilorð?“.': 'Skriv din e-mail først, og tryk så på „Glemt adgangskode?“.',
+  'Gat ekki tengst skýinu. Athugaðu nettenginguna.': 'Kunne ikke forbinde til skyen. Tjek internetforbindelsen.', 'Gat ekki sent póst.': 'Kunne ikke sende e-mail.',
+  'Gat ekki sent póst. Athugaðu nettenginguna.': 'Kunne ikke sende e-mail. Tjek internetforbindelsen.', 'Skráð inn ✓': 'Logget ind ✓',
+  'Skrá út? Gögnin eru örugg í skýinu og fjarlægð úr þessu tæki.': 'Log ud? Dine data er sikre i skyen og fjernes fra denne enhed.',
+  'Ekki tókst að samstilla. Breytingar sem ekki eru komnar í skýið týnast ef þú skráir þig út. Skrá samt út?': 'Synkronisering mislykkedes. Ændringer, der ikke er nået op i skyen, går tabt, hvis du logger ud. Log ud alligevel?',
+  // Deiling og vinir
+  'Deildur tími': 'Delt time', 'Sæki tímann…': 'Henter timen…', '+ Bæta við mína tíma': '+ Tilføj til mine timer', '+ Bæta við æfingasafnið': '+ Tilføj til øvelsesbiblioteket',
+  'Skoðaðu hann og bættu við þína tíma ef þú vilt.': 'Se den, og tilføj den til dine timer, hvis du vil.',
+  'Skoðaðu hana og bættu við æfingasafnið þitt ef þú vilt.': 'Se den, og tilføj den til dit øvelsesbibliotek, hvis du vil.',
+  'Ekki tókst að opna þetta.': 'Det kunne ikke åbnes.', 'Ekki tókst að opna þetta. Hlekkurinn gæti verið rangur eða netið niðri.': 'Det kunne ikke åbnes. Linket kan være forkert, eller nettet er nede.',
+  'Til að deila þarftu að vera skráð inn. Skrá inn núna?': 'Du skal være logget ind for at dele. Log ind nu?',
+  'Hlekkurinn er afritaður. Límdu hann í skilaboð.': 'Linket er kopieret. Indsæt det i en besked.', 'Afritaðu hlekkinn:': 'Kopier linket:',
+  'Ekki tókst að deila. Athugaðu nettenginguna og reyndu aftur.': 'Deling mislykkedes. Tjek internetforbindelsen, og prøv igen.',
+  'Sæki vini og hópa…': 'Henter venner og grupper…', 'SENDA Á ÞJÁLFARAVIN': 'SEND TIL TRÆNERVEN', 'SENDA Í HÓP': 'SEND TIL GRUPPE', 'EÐA': 'ELLER',
+  '🔗 Senda hlekk': '🔗 Send link', 'T.d. í skilaboðum, líka til þeirra sem eru ekki í Klassanum': 'Fx i en besked – også til dem, der ikke bruger Klassinn',
+  'Engir þjálfaravinir enn. Bættu við undir „Vinir“.': 'Ingen trænervenner endnu. Tilføj under „Venner“.', 'Engir þjálfaravinir enn.': 'Ingen trænervenner endnu.',
+  'Engir hópar enn.': 'Ingen grupper endnu.', 'BERST ÞÉR': 'TIL DIG', 'Ekkert nýtt.': 'Intet nyt.', 'HÓPAR': 'GRUPPER', '+ Nýr hópur': '+ Ny gruppe',
+  'ÞJÁLFARAVINIR': 'TRÆNERVENNER', '+ Bæta við vini': '+ Tilføj ven', 'Samþykkja': 'Godkend', 'Hafna': 'Afvis', 'Bíður samþykkis': 'Afventer godkendelse',
+  'Fjarlægja vin': 'Fjern ven', 'Þjálfaravinir': 'Trænervenner', 'Skráðu þig inn til að eignast þjálfaravini, senda þeim tíma og æfingar og stofna hópa.': 'Log ind for at få trænervenner, sende dem timer og øvelser og oprette grupper.',
+  'HEITI HÓPS': 'GRUPPENS NAVN', 't.d. Reformer-kennarar': 'fx Reformer-instruktører', 'ÞJÁLFARAVINIR Í HÓPINN': 'TRÆNERVENNER I GRUPPEN',
+  'Bættu fyrst við þjálfaravinum. Þú getur líka stofnað hópinn núna og bætt við seinna.': 'Tilføj først trænervenner. Du kan også oprette gruppen nu og tilføje senere.',
+  'Stofna hóp': 'Opret gruppe', 'NETFANG ÞJÁLFARAVINAR': 'TRÆNERVENS E-MAIL', 'netfang sem hún notar í Klassanum': 'e-mail, hun bruger i Klassinn',
+  'Hún þarf að vera komin með aðgang að Klassanum. Hún fær beiðni sem hún samþykkir.': 'Hun skal have en konto i Klassinn. Hun får en anmodning, som hun godkender.',
+  'Senda beiðni': 'Send anmodning', 'vill verða þjálfaravinur þinn': 'vil være din trænerven', 'BÆTA ÞJÁLFARAVINUM Í HÓPINN': 'TILFØJ TRÆNERVENNER TIL GRUPPEN',
+  'Allir þjálfaravinir þínir eru þegar í hópnum.': 'Alle dine trænervenner er allerede i gruppen.', '+ Senda tíma eða æfingu í hópinn': '+ Send time eller øvelse til gruppen',
+  'Ekkert sent í hópinn enn. Byrjaðu á að senda tíma eða æfingu.': 'Intet sendt til gruppen endnu. Start med at sende en time eller øvelse.',
+  'Yfirgefa hópinn': 'Forlad gruppen', 'Hópurinn fannst ekki.': 'Gruppen blev ikke fundet.', 'Senda í hópinn': 'Send til gruppen',
+  'Hún hefur ekki samþykkt vinabeiðnina þína ennþá.': 'Hun har ikke godkendt din venneanmodning endnu.',
+  'Ekki tókst að klára þetta. Athugaðu nettenginguna.': 'Det lykkedes ikke. Tjek internetforbindelsen.',
+  'Ekki tókst að senda vinabeiðnina. Athugaðu nettenginguna.': 'Venneanmodningen kunne ikke sendes. Tjek internetforbindelsen.',
+  'Ekki tókst að senda í hópinn. Athugaðu nettenginguna.': 'Kunne ikke sende til gruppen. Tjek internetforbindelsen.',
+  'Ekki tókst að stofna hópinn. Athugaðu nettenginguna.': 'Gruppen kunne ikke oprettes. Tjek internetforbindelsen.',
+  'Fjarlægja úr hópnum?': 'Fjern fra gruppen?', 'Skrifaðu netfang': 'Skriv en e-mail', 'Þetta er þitt eigið netfang': 'Det er din egen e-mail',
+  'Hún er þegar á listanum': 'Hun er allerede på listen', 'Gat ekki sótt vini': 'Kunne ikke hente venner', 'Gefðu hópnum heiti': 'Giv gruppen et navn',
+  'Veldu þjálfaravin': 'Vælg en trænerven', 'Bætt í hópinn ✓': 'Tilføjet til gruppen ✓', 'Sent í hópinn ✓': 'Sendt til gruppen ✓',
+  'Þið eruð nú þjálfaravinir ✓': 'I er nu trænervenner ✓', 'Beiðni hafnað': 'Anmodning afvist', 'Eytt': 'Slettet',
+  // Tilkynningar og staðfestingar
+  'Tími vistaður ✓': 'Time gemt ✓', 'Tími afritaður ✓': 'Time kopieret ✓', 'Tíma eytt': 'Time slettet', 'Æfing vistuð ✓': 'Øvelse gemt ✓',
+  'Æfingu eytt': 'Øvelse slettet', 'Nótu eytt': 'Note slettet', 'Einkatími vistaður ✓': 'Privattime gemt ✓', 'Einkatíma eytt': 'Privattime slettet',
+  'Samstillt ✓': 'Synkroniseret ✓', 'Afrit tilbúið ✓': 'Backup klar ✓', 'Afrit vistað ✓': 'Backup gemt ✓',
+  'Óvistaði tíminn þinn er kominn aftur': 'Din ikke-gemte time er tilbage', 'Tíminn er kominn í þína tíma ✓': 'Timen er tilføjet til dine timer ✓',
+  'Æfingin er komin í æfingasafnið ✓': 'Øvelsen er tilføjet til øvelsesbiblioteket ✓', 'Eyða þessari nótu?': 'Slet denne note?',
+  'Eyða þessum einkatíma?': 'Slet denne privattime?', 'Skrifaðu nafn.': 'Skriv et navn.',
+  'Afrit sett inn. Appið endurhleðst.': 'Backup indlæst. Appen genindlæses.', 'Þetta er ekki gilt Klassinn-afrit.': 'Dette er ikke en gyldig Klassinn-backup.',
+  'Afritað — límdu í skilaboð.': 'Kopieret – indsæt i en besked.', 'Afritaðu:': 'Kopier:', 'Gat ekki spilað upptöku.': 'Kunne ikke afspille optagelsen.',
+  'Raddupptaka er ekki studd í þessum vafrara.': 'Lydoptagelse understøttes ikke i denne browser.',
+  'Gat ekki opnað hljóðnema. Athugaðu leyfi í stillingum.': 'Kunne ikke åbne mikrofonen. Tjek tilladelser i indstillinger.',
+  'Gat ekki vistað — pláss á símanum.': 'Kunne ikke gemme – ikke plads på telefonen.',
+};
+const DA_RX = [
+  [/^(\d+) mín • (.+)$/, (m, n, l) => `${n} min • ${trText(l)}`],
+  [/^(\d+) mín$/, (m, n) => `${n} min`],
+  [/^✨ (.+)$/, (m, t) => '✨ ' + t.split(' • ').map(trText).join(' • ')],
+  [/^≡ ÆFING (\d+)$/, (m, n) => `≡ ØVELSE ${n}`],
+  [/^Skref (\d+)$/, (m, n) => `Trin ${n}`],
+  [/^Nota í æfingu (\d+)$/, (m, n) => `Brug i øvelse ${n}`],
+  [/^\+ Bæta við tímann$/, () => '+ Tilføj til timen'],
+  [/^\+ Bæta við einkatímann$/, () => '+ Tilføj til privattimen'],
+  [/^Gormar: (.+)$/, (m, t) => `Fjedre: ${t}`],
+  [/^Áhöld: (.+)$/, (m, t) => `Redskaber: ${t}`],
+  [/^síðast (.+)$/, (m, t) => `sidst ${t}`],
+  [/^(\d+) einkatím(?:i|ar)$/, (m, n) => `${n} ${n === '1' ? 'privattime' : 'privattimer'}`],
+  [/^(\d+) í hópnum$/, (m, n) => `${n} i gruppen`],
+  [/^(\d+) sek on$/, (m, n) => `${n} sek arbejde`],
+  [/^(\d+) sek off$/, (m, n) => `${n} sek pause`],
+  [/^umferð (\d+)$/, (m, n) => `runde ${n}`],
+  [/^▶ Ræsa timer \((\d+)\/(\d+)\)$/, (m, a, b) => `▶ Start timer (${a}/${b})`],
+  [/^(.+) ▾$/, (m, t) => `${trText(t)} ▾`],
+  [/^KLASSINN · útgáfa (\d+)$/, (m, n) => `KLASSINN · version ${n}`],
+  [/^Vistað · (.+)$/, (m, t) => `Gemt · ${t}`],
+  [/^✓ Samstillt kl\. (.+)$/, (m, t) => `✓ Synkroniseret kl. ${t}`],
+  [/^⚠️ (.+) — breytingar bíða í tækinu$/, (m, t) => `⚠️ ${trText(t)} – ændringerne venter på enheden`],
+  [/^Sent á (.+) ✓$/, (m, t) => `Sendt til ${t} ✓`],
+  [/^Sent í (.+) ✓$/, (m, t) => `Sendt til ${t} ✓`],
+  [/^Vinabeiðni send á (.+) ✓$/, (m, t) => `Venneanmodning sendt til ${t} ✓`],
+  [/^Bætt við: (.+)$/, (m, t) => `Tilføjet: ${t}`],
+  [/^Velkomin (.+) ✓$/, (m, t) => `Velkommen ${t} ✓`],
+  [/^(.+) samþykkti vinabeiðnina ✓$/, (m, t) => `${t} godkendte venneanmodningen ✓`],
+  [/^Hópurinn „(.+)“ er stofnaður ✓$/, (m, t) => `Gruppen „${t}“ er oprettet ✓`],
+  [/^Tími vistaður ✓ · (\d+) (?:æfing|æfingar) í safnið$/, (m, n) => `Time gemt ✓ · ${n} ${n === '1' ? 'øvelse' : 'øvelser'} i biblioteket`],
+  [/^Tíminn er kominn í þína tíma ✓ · (\d+) (?:æfing|æfingar) í safnið$/, (m, n) => `Timen er tilføjet ✓ · ${n} ${n === '1' ? 'øvelse' : 'øvelser'} i biblioteket`],
+  [/^Deila „(.+)“$/, (m, t) => `Del „${t}“`],
+  [/^(.+) (deildi|sendi í hópinn|sendi) (tíma|æfingu) með þér$/, (m, who, v, w) => `${who} ${{ 'deildi': 'delte', 'sendi': 'sendte', 'sendi í hópinn': 'sendte til gruppen' }[v]} ${w === 'tíma' ? 'en time' : 'en øvelse'} med dig`],
+  [/^sendi þér tímann „(.+)“$/, (m, t) => `sendte dig timen „${t}“`],
+  [/^sendi þér æfinguna „(.+)“$/, (m, t) => `sendte dig øvelsen „${t}“`],
+  [/^Enginn tími fannst fyrir „(.+)“\.$/, (m, t) => `Ingen time fundet for „${t}“.`],
+  [/^Eyða tímanum „(.+)“\?\n\nÞetta er ekki hægt að afturkalla\.$/, (m, t) => `Slet timen „${t}“?\n\nDet kan ikke fortrydes.`],
+  [/^Eyða æfingunni „(.+)“ úr safninu\?\n\nHún helst inni í tímum sem nota hana\.$/, (m, t) => `Slet øvelsen „${t}“ fra biblioteket?\n\nDen forbliver i de timer, der bruger den.`],
+  [/^Eyða „(.+)“ úr tímanum\?$/, (m, t) => `Fjern „${t}“ fra timen?`],
+  [/^Skipta „(.+)“ út fyrir „(.+)“\?$/, (m, a, b) => `Erstat „${a}“ med „${b}“?`],
+  [/^Eyða „(.+?)“(?: og (\d+) einkatím(?:a|um))?\?\n\nÞetta er ekki hægt að afturkalla\.$/, (m, t, n) => `Slet „${t}“${n ? ` og ${n} ${n === '1' ? 'privattime' : 'privattimer'}` : ''}?\n\nDet kan ikke fortrydes.`],
+  [/^Fjarlægja (.+) af listanum\?$/, (m, t) => `Fjern ${t} fra listen?`],
+  [/^Yfirgefa hópinn „(.*)“\?$/, (m, t) => `Forlad gruppen „${t}“?`],
+  [/^Setja inn afrit frá (.+)\?\n\nÞað kemur í stað núverandi gagna í þessum síma\.$/, (m, t) => `Indlæs backup fra ${t}?\n\nDen erstatter de nuværende data på denne telefon.`],
+  [/^Enginn þjálfari með netfangið (.+) er kominn með aðgang að Klassanum\.\n\nSendu henni hlekkinn á appið svo hún geti búið til aðgang, og reyndu svo aftur\.$/, (m, t) => `Ingen træner med e-mailen ${t} har en konto i Klassinn.\n\nSend hende linket til appen, så hun kan oprette en konto, og prøv så igen.`],
+  [/^Ef aðgangur er til fyrir (.+) færðu tölvupóst með hlekk til að velja nýtt lykilorð\.$/, (m, t) => `Hvis der findes en konto for ${t}, får du en e-mail med et link til at vælge en ny adgangskode.`],
+  [/^Við sendum þér tölvupóst á (.+) með hlekk til að velja nýtt lykilorð\.$/, (m, t) => `Vi har sendt en e-mail til ${t} med et link til at vælge en ny adgangskode.`],
+  [/^Innskráning mistókst \((.+)\)\.$/, (m, t) => `Login mislykkedes (${t}).`],
+  [/^(.+) deildi (tímanum|æfingunni) „(.+)“ með þér í Klassanum\.$/, (m, who, w, t) => `${who} har delt ${w === 'tímanum' ? 'timen' : 'øvelsen'} „${t}“ med dig i Klassinn.`],
+];
+const IS_CHARS = /[ðþáíúóéýÐÞÁÍÚÓÉÝ]/;
+function trText(s) {
+  if (LANG !== 'da' || !s) return s;
+  const core = s.trim();
+  if (!core) return s;
+  let out = null;
+  if (Object.prototype.hasOwnProperty.call(DA, core)) out = DA[core];
+  else {
+    for (const [rx, fn] of DA_RX) { const m = core.match(rx); if (m) { out = fn(...m); break; } }
+    // Samsettur texti, t.d. „Reformer • Miðstig“ eða „Þú · 23. nóv. · Æfing“
+    if (out == null && / [•·] /.test(core)) {
+      const parts = core.split(/( [•·] )/);
+      const tp = parts.map((p) => (/^ [•·] $/.test(p) ? p : trText(p)));
+      if (tp.join('') !== core) out = tp.join('');
+    }
+  }
+  if (out == null || out === core) return s;
+  return s.replace(core, out);
+}
+function translateNode(root) {
+  if (LANG !== 'da' || !root) return;
+  if (root.nodeType === 3) {
+    const p = root.parentElement;
+    if (p && !p.closest('script,style,textarea,[data-notr]')) { const t = trText(root.data); if (t !== root.data) root.data = t; }
+    return;
+  }
+  if (root.nodeType !== 1 || root.closest('[data-notr]')) return;
+  ['placeholder', 'aria-label', 'title', 'alt'].forEach((a) => {
+    const v = root.getAttribute && root.getAttribute(a);
+    if (v) { const t = trText(v); if (t !== v) root.setAttribute(a, t); }
+  });
+  if (root.matches('script,style,textarea')) return;
+  for (const c of root.childNodes) translateNode(c);
+}
+if (LANG === 'da') {
+  const nativeAlert = window.alert.bind(window), nativeConfirm = window.confirm.bind(window), nativePrompt = window.prompt.bind(window);
+  window.alert = (m) => nativeAlert(trText(String(m)));
+  window.confirm = (m) => nativeConfirm(trText(String(m)));
+  window.prompt = (m, d) => nativePrompt(trText(String(m)), d);
+  translateNode(document.body);
+  new MutationObserver((muts) => {
+    for (const mu of muts) {
+      if (mu.type === 'attributes') translateNode(mu.target);
+      else mu.addedNodes.forEach((n) => translateNode(n));
+    }
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['placeholder', 'aria-label', 'title', 'alt'] });
+}
 
 const STORE_KEY = 'klassinn.preview.data.v1';
 // Upphafstími fyrir nýja notendur: tími sem Díana bjó til (nóv. 2026), svo allir sjái hvernig þetta virkar
@@ -1441,8 +1717,200 @@ const DEFAULT_EXERCISES = {
   }
 };
 
-let CLASSES = JSON.parse(JSON.stringify(DEFAULT_CLASSES));
-let EXERCISES = JSON.parse(JSON.stringify(DEFAULT_EXERCISES));
+// Sami upphafstími á dönsku fyrir notendur sem velja dönsku
+const DEFAULT_CLASSES_DA = {
+  "byrjun_reformer_loft": {
+    "id": "byrjun_reformer_loft",
+    "title": "Tími",
+    "meta": "✨ Reformer",
+    "name": "Reformer Løft",
+    "info": "55 mín • Miðstig",
+    "level": "Miðstig",
+    "duration": 55,
+    "types": [
+      "Reformer"
+    ],
+    "props": [
+      "Reformer-kassi"
+    ],
+    "warmup": "Footwork single leg 💙💛\nArme i stropper core 💙💛",
+    "cooldown": "Stræk i stropperne",
+    "description": "Eksempeltime fra Diana. Sådan ser en time ud i Klassinn: opvarmning, øvelser med fjedre, opsætning og trin, og nedkøling. Tryk på ✎ Rediger for at se, hvordan den er bygget, eller lav din egen med +.",
+    "notes": "",
+    "playlist": "",
+    "moves": [
+      {
+        "id": "byrjun_m1",
+        "ex": "byrjun_curtseys",
+        "meta": "1 · Curtseys",
+        "name": "Curtseys",
+        "setup": "Kasse ved siden af bænken. Foden nærmest vognen står på kassen, den anden ved skulderpuden.",
+        "props": "Boks",
+        "springs": "💙",
+        "notes": "",
+        "useTimer": false,
+        "timerOn": 45,
+        "timerOff": 15,
+        "layers": [
+          {
+            "id": "byrjun_m1_0",
+            "text": "Curtseys"
+          },
+          {
+            "id": "byrjun_m1_1",
+            "text": "+ scooter"
+          },
+          {
+            "id": "byrjun_m1_2",
+            "text": "Kun scooter"
+          },
+          {
+            "id": "byrjun_m1_3",
+            "text": "Vend væk fra vognen, samme fod ved skulderpuden. Side squat"
+          },
+          {
+            "id": "byrjun_m1_4",
+            "text": "+ scooter"
+          },
+          {
+            "id": "byrjun_m1_5",
+            "text": "Kun scooter"
+          },
+          {
+            "id": "byrjun_m1_6",
+            "text": "Shortbox. Sid med front mod hovedstøtten. Swing"
+          },
+          {
+            "id": "byrjun_m1_7",
+            "text": "Swing / triceps"
+          },
+          {
+            "id": "byrjun_m1_8",
+            "text": "Kun triceps"
+          },
+          {
+            "id": "byrjun_m1_9",
+            "text": "Halv verden"
+          },
+          {
+            "id": "byrjun_m1_10",
+            "text": "Stop i midten. Cirkler"
+          },
+          {
+            "id": "byrjun_m1_11",
+            "text": "Den anden cirkel"
+          },
+          {
+            "id": "byrjun_m1_12",
+            "text": "Curtseys på den anden side"
+          }
+        ],
+        "steps": [
+          "Curtseys",
+          "+ scooter",
+          "Kun scooter",
+          "Vend væk fra vognen, samme fod ved skulderpuden. Side squat",
+          "+ scooter",
+          "Kun scooter",
+          "Shortbox. Sid med front mod hovedstøtten. Swing",
+          "Swing / triceps",
+          "Kun triceps",
+          "Halv verden",
+          "Stop i midten. Cirkler",
+          "Den anden cirkel",
+          "Curtseys på den anden side"
+        ]
+      },
+      {
+        "id": "byrjun_m2",
+        "ex": "byrjun_longbox_core",
+        "meta": "2 · Longbox Core",
+        "name": "Longbox Core",
+        "setup": "Sid på boksen med fødderne på hovedstøtten",
+        "props": "Boks",
+        "springs": "💛",
+        "notes": "",
+        "useTimer": false,
+        "timerOn": 45,
+        "timerOff": 15,
+        "layers": [
+          {
+            "id": "byrjun_m2_0",
+            "text": "Rul ned / op"
+          },
+          {
+            "id": "byrjun_m2_1",
+            "text": "Rul ned / løft ét ben ad gangen / op"
+          },
+          {
+            "id": "byrjun_m2_2",
+            "text": "Rul ned – hold. Cykel"
+          },
+          {
+            "id": "byrjun_m2_3",
+            "text": "Rul ned / op"
+          },
+          {
+            "id": "byrjun_m2_4",
+            "text": "Rul ned / begge op og ned / op"
+          },
+          {
+            "id": "byrjun_m2_5",
+            "text": "Rul ned – hold. Ben ud og ind"
+          },
+          {
+            "id": "byrjun_m2_6",
+            "text": "Rul ned / op"
+          },
+          {
+            "id": "byrjun_m2_7",
+            "text": "Rul ned / biceps"
+          },
+          {
+            "id": "byrjun_m2_8",
+            "text": "Rul ned – hold. Biceps"
+          }
+        ],
+        "steps": [
+          "Rul ned / op",
+          "Rul ned / løft ét ben ad gangen / op",
+          "Rul ned – hold. Cykel",
+          "Rul ned / op",
+          "Rul ned / begge op og ned / op",
+          "Rul ned – hold. Ben ud og ind",
+          "Rul ned / op",
+          "Rul ned / biceps",
+          "Rul ned – hold. Biceps"
+        ]
+      }
+    ]
+  }
+};
+const DEFAULT_EXERCISES_DA = Object.assign({
+  "byrjun_curtseys": {
+    "title": "Breyta æfingu",
+    "name": "Curtseys",
+    "level": "Miðstig",
+    "equip": "Reformer",
+    "springs": "💙",
+    "setup": "Kasse ved siden af bænken. Foden nærmest vognen står på kassen, den anden ved skulderpuden.",
+    "steps": "Curtseys\n+ scooter\nKun scooter\nVend væk fra vognen, samme fod ved skulderpuden. Side squat\n+ scooter\nKun scooter\nShortbox. Sid med front mod hovedstøtten. Swing\nSwing / triceps\nKun triceps\nHalv verden\nStop i midten. Cirkler\nDen anden cirkel\nCurtseys på den anden side",
+    "notes": ""
+  },
+  "byrjun_longbox_core": {
+    "title": "Breyta æfingu",
+    "name": "Longbox Core",
+    "level": "Miðstig",
+    "equip": "Reformer",
+    "springs": "💛",
+    "setup": "Sid på boksen med fødderne på hovedstøtten",
+    "steps": "Rul ned / op\nRul ned / løft ét ben ad gangen / op\nRul ned – hold. Cykel\nRul ned / op\nRul ned / begge op og ned / op\nRul ned – hold. Ben ud og ind\nRul ned / op\nRul ned / biceps\nRul ned – hold. Biceps",
+    "notes": ""
+  }
+}, { new: DEFAULT_EXERCISES.new });
+
+let CLASSES = JSON.parse(JSON.stringify(LANG === 'da' ? DEFAULT_CLASSES_DA : DEFAULT_CLASSES));
+let EXERCISES = JSON.parse(JSON.stringify(LANG === 'da' ? DEFAULT_EXERCISES_DA : DEFAULT_EXERCISES));
 let currentClassKey = 'byrjun_reformer_loft';
 let currentExerciseKey = 'byrjun_curtseys';
 
@@ -2233,6 +2701,12 @@ function addPickedExercise(key) {
 }
 document.getElementById('cfPickMove').addEventListener('click', () => openPickSheet('class'));
 
+// ---- Tungumálaval ----
+document.querySelectorAll('.langSwitch [data-lang]').forEach((b) => {
+  b.classList.toggle('on', b.dataset.lang === LANG);
+  b.addEventListener('click', () => { if (b.dataset.lang !== LANG) setLanguage(b.dataset.lang); });
+});
+
 // ---- Litlar tilkynningar ----
 let toastTimer = null;
 function toast(text) {
@@ -2290,7 +2764,7 @@ document.getElementById('form').addEventListener('submit', (e) => {
   const msg = document.getElementById('msg').value.trim();
   if (!who || !msg) return;
   const items = load();
-  items.unshift({ who, about, msg, when: new Date().toLocaleString('is-IS') });
+  items.unshift({ who, about, msg, when: new Date().toLocaleString(LOCALE) });
   localStorage.setItem(KEY, JSON.stringify(items));
   document.getElementById('msg').value = '';
   render();
@@ -2519,7 +2993,7 @@ function saveNotes(items) {
 function formatNoteDate(iso) {
   try {
     const d = new Date(iso);
-    if (!Number.isNaN(d.getTime())) return d.toLocaleDateString('is-IS', { day: 'numeric', month: 'short' });
+    if (!Number.isNaN(d.getTime())) return d.toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' });
   } catch {}
   return '';
 }
@@ -2666,7 +3140,7 @@ function persistCurrentNote(andLeave) {
   }
   const items = loadNotes();
   const nowIso = new Date().toISOString();
-  const nowLabel = new Date().toLocaleString('is-IS');
+  const nowLabel = new Date().toLocaleString(LOCALE);
   const payload = {
     title, body, category: draftCat, starred: draftStar,
     image: draftImage, voice: draftVoice, updated: nowLabel, updatedAt: nowIso,
@@ -2946,12 +3420,13 @@ function initials(name) {
   return String(name || '?').trim().split(/\s+/).slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join('') || '?';
 }
 const IS_MONTHS = ['jan.', 'feb.', 'mars', 'apríl', 'maí', 'júní', 'júlí', 'ágúst', 'sept.', 'okt.', 'nóv.', 'des.'];
+const DA_MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'];
 function fmtDate(d) {
   if (!d) return '';
   const t = new Date(d + (String(d).length === 10 ? 'T12:00:00' : ''));
   if (Number.isNaN(t.getTime())) return String(d);
   const y = t.getFullYear() === new Date().getFullYear() ? '' : ' ' + t.getFullYear();
-  return t.getDate() + '. ' + IS_MONTHS[t.getMonth()] + y;
+  return t.getDate() + '. ' + (LANG === 'da' ? DA_MONTHS : IS_MONTHS)[t.getMonth()] + y;
 }
 function todayIso() {
   const d = new Date();
@@ -3223,7 +3698,7 @@ document.getElementById('restoreInput').addEventListener('change', (e) => {
         b = { app: 'klassinn', savedAt: null, data: b };
       }
       if (!b || b.app !== 'klassinn' || !b.data) throw new Error('ekki Klassinn-afrit');
-      const when = b.savedAt ? new Date(b.savedAt).toLocaleString('is-IS') : 'óþekkt';
+      const when = b.savedAt ? new Date(b.savedAt).toLocaleString(LOCALE) : 'óþekkt';
       if (!confirm(`Setja inn afrit frá ${when}?\n\nÞað kemur í stað núverandi gagna í þessum síma.`)) return;
       const old = [];
       for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('klassinn.preview.')) old.push(k); }
@@ -3514,7 +3989,7 @@ function renderSyncStatus(text) {
   if (text) { el.textContent = text; return; }
   if (syncError) { el.textContent = '⚠️ ' + syncError + ' — breytingar bíða í tækinu'; return; }
   el.textContent = lastSyncAt
-    ? '✓ Samstillt kl. ' + lastSyncAt.toLocaleTimeString('is-IS', { hour: '2-digit', minute: '2-digit' })
+    ? '✓ Samstillt kl. ' + lastSyncAt.toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' })
     : 'Samstilli…';
 }
 function renderAccount() {
@@ -3676,7 +4151,7 @@ async function shareLink(type, data, title) {
   });
   const url = location.origin + location.pathname + '#deila=' + id;
   const what = type === 'class' ? 'tímanum' : 'æfingunni';
-  const text = `${fromName} deildi ${what} „${title}“ með þér í Klassanum.`;
+  const text = trText(`${fromName} deildi ${what} „${title}“ með þér í Klassanum.`);
   if (navigator.share) {
     try { await navigator.share({ title: 'Klassinn: ' + title, text, url }); }
     catch (err) { if (!err || err.name !== 'AbortError') throw err; }
