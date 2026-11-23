@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>KLASSINN — hreinsa</title>
+</head>
+<body style="font-family:system-ui;padding:28px;background:#FAF7F2;color:#2F2438;max-width:420px;margin:0 auto;line-height:1.45">
+<h1 style="color:#5B4B6E">Hreinsa Klassinn</h1>
+<p id="msg">Eyði gömlu skyndiminni…</p>
+<p style="color:#8A7F92;font-size:.9rem">Þetta hreinsar aðeins skyndiminni (ekki vistaða tíma/æfingar/nótur). Ef appið er á heimaskjá: eyðið því og bætið við aftur eftir þetta.</p>
+<script>
+(async () => {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+    try { localStorage.removeItem('klassinn.sw.v12'); } catch (e) {}
+    try { localStorage.removeItem('klassinn.sw.v13'); } catch (e) {}
+    try { localStorage.removeItem('klassinn.sw.v14'); } catch (e) {}
+    try { localStorage.removeItem('klassinn.sw.v15'); } catch (e) {}
+    try { localStorage.removeItem('klassinn.sw.v16'); } catch (e) {}
+    document.getElementById('msg').textContent = 'Tilbúið. Opna Klassinn…';
+  } catch (e) {
+    document.getElementById('msg').textContent = 'Opna samt…';
+  }
+  setTimeout(() => { location.replace('./index.html?v=16&t=' + Date.now()); }, 600);
+})();
+</script>
+</body>
+</html>

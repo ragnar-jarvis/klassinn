@@ -1,0 +1,2874 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#5B4B6E" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Klassinn" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>KLASSINN</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#FAF7F2;
+  --card:#FFFFFF;
+  --lavender:#E8E0EF;
+  --purple:#5B4B6E;
+  --purple-deep:#4A3B5C;
+  --text:#2F2438;
+  --muted:#8A7F92;
+  --line:#E7E1EC;
+  --r:18px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);
+  font-family:'DM Sans',system-ui,sans-serif;line-height:1.45}
+body{padding-bottom:calc(72px + var(--safe-bottom))}
+.serif{font-family:'Cormorant Garamond',Georgia,serif}
+.app{max-width:430px;margin:0 auto;min-height:100vh;position:relative;padding:12px 16px 24px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-top:4px}
+.iconBtn.back{font-size:2rem;font-weight:300;line-height:1}
+.iconBtn{width:48px;height:48px;min-width:48px;min-height:48px;border:none;background:transparent;display:grid;place-items:center;position:relative;z-index:5;
+  color:var(--purple);cursor:pointer;padding:0;border-radius:12px}
+.logoWord{flex:1;text-align:center;margin:0;font-size:1.35rem;font-weight:700;letter-spacing:.26em;
+  color:var(--purple);text-transform:uppercase}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 26px;text-align:center}
+.action{background:none;border:none;padding:0;cursor:pointer;color:var(--text);font:inherit}
+.markCircle img{width:34px;height:34px;object-fit:contain;display:block}
+.actionCircle{width:74px;height:74px;margin:0 auto 8px;border-radius:999px;background:var(--lavender);
+  color:var(--purple);display:grid;place-items:center}
+.action span{font-size:.78rem;font-weight:500;color:var(--text)}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.row h2{margin:0;font-size:1.35rem;font-weight:600;letter-spacing:.02em}
+.badge{background:var(--purple);color:#fff;min-width:28px;height:28px;border-radius:999px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;padding:0 8px}
+.spacer{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;font-weight:600;font-size:.9rem;color:var(--text);cursor:pointer;touch-action:manipulation}.chip.on{background:var(--purple);color:#fff;border-color:var(--purple)}.filter{border:none;background:var(--lavender);color:var(--purple);border-radius:999px;
+  padding:8px 14px;font-weight:600;font-size:.85rem;cursor:pointer}
+.fab{width:52px;height:52px;min-width:52px;min-height:52px;border-radius:999px;border:none;background:var(--purple);color:#fff;position:relative;z-index:6;font-size:1.75rem;line-height:1;touch-action:manipulation;
+  font-size:1.5rem;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px rgba(91,75,110,.28)}
+.card{width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;cursor:pointer;
+  box-shadow:0 4px 16px rgba(47,36,56,.04)}
+.cardBody{flex:1;min-width:0}
+.meta{color:var(--purple);font-size:.78rem;font-weight:500;margin-bottom:2px}
+.card h3{margin:0 0 4px;font-size:1.35rem;font-weight:600}
+.muted{color:var(--muted);font-size:.9rem}
+.chev{color:var(--muted);font-size:1.2rem}
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;
+  background:rgba(250,247,242,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px calc(8px + var(--safe-bottom));z-index:20}
+.tab{background:none;border:none;padding:6px 4px;color:var(--muted);font-size:.72rem;font-weight:500;
+  display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.tab.on{color:var(--purple);font-weight:600}
+.tab svg{width:22px;height:22px}
+.screen{display:none}.screen.on{display:block}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.head h1{flex:1;text-align:center;margin:0;font-size:1.4rem}
+.avatar{width:110px;height:110px;margin:10px auto 20px;border-radius:999px;border:1.5px solid var(--purple);
+  color:var(--purple);display:grid;place-items:center;background:#fff}
+.field{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);
+  border-radius:var(--r);padding:14px;margin-bottom:10px}
+.hint{font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--purple)}
+.val{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700}
+.btnGhost{width:100%;padding:14px;margin-top:8px;border-radius:var(--r);border:1px solid var(--line);
+  background:#fff;color:var(--purple);font-weight:600;cursor:pointer}
+.btnGhost.danger{color:#B56B7A;border-color:#E8C8CF}
+.banner{background:var(--lavender);border-radius:14px;padding:12px 14px;margin-bottom:16px;font-size:.88rem;color:var(--purple-deep)}
+.banner strong{display:block;margin-bottom:4px}
+.comments{max-width:430px;margin:0 auto;padding:8px 16px 28px}
+.comments h2{margin:0 0 8px;font-size:1.25rem}
+label{display:block;font-weight:600;margin:12px 0 6px;font-size:.9rem}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  background:#fff;font:inherit;color:inherit}
+textarea{min-height:100px;resize:vertical}
+.submit{margin-top:12px;width:100%;border:none;border-radius:12px;background:var(--purple);color:#fff;
+  padding:14px;font-weight:700;font-size:1rem;cursor:pointer}
+.list{margin-top:14px}
+.comment{border-top:1px solid var(--line);padding:12px 0}
+.comment strong{display:block;margin-bottom:4px}
+.when{color:var(--muted);font-size:.8rem;margin-bottom:6px}
+.howto{background:#fff;border:1px dashed var(--purple);border-radius:14px;padding:12px 14px;margin:12px 0 18px;font-size:.88rem}
+.howto ol{margin:8px 0 0;padding-left:18px}
+.label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--purple);margin:12px 0 6px}
+.field,.area{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;font:inherit;color:inherit}
+.area{min-height:90px;resize:vertical}
+.hide{display:none !important}
+
+.noteEmpty{
+  text-align:center;padding:36px 18px;background:#fff;border:1.5px dashed var(--line);
+  border-radius:var(--r);color:var(--muted);margin-top:8px
+}
+.noteEmpty h3{margin:0 0 8px;color:var(--purple);font-size:1.35rem}
+.noteEmpty p{margin:0 0 16px}
+.noteEmpty .submit{max-width:260px;margin:0 auto}
+.notesHead{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.notesHead h1{flex:1;margin:0;text-align:left;font-size:2rem;color:var(--purple);font-weight:700}
+.notesSearch{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;margin-bottom:12px}
+.notesSearch svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
+.notesSearch input{border:none;outline:none;background:transparent;padding:0;font:inherit;width:100%}
+.noteFilters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.noteFilters .chip{flex:0 0 auto;white-space:nowrap}
+.noteCard{
+  display:flex;width:100%;text-align:left;background:#fff;border:1px solid var(--line);
+  border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;gap:10px;align-items:flex-start
+}
+.noteCardMain{flex:1;min-width:0}
+.noteCard h3{margin:0 0 6px;font-size:1.05rem;font-family:'DM Sans',system-ui,sans-serif;font-weight:700}
+.noteCardMeta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.noteCard .preview{color:var(--muted);font-size:.88rem;line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.noteStar{border:none;background:transparent;color:var(--purple);font-size:1.25rem;padding:4px;
+  cursor:pointer;line-height:1;flex-shrink:0}
+.noteTag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;
+  font-size:.72rem;font-weight:600}
+.tag-aefingar{background:#D9CBE3;color:#5B4B6E}
+.tag-hugmyndir{background:#E8E0EF;color:#6B5A7C}
+.tag-vidskiptavinir{background:#E8DFD2;color:#7A6550}
+.tag-einkamal{background:#F0D5D8;color:#8B5A63}
+.noteDate{color:var(--muted);font-size:.78rem;margin-left:auto}
+#note-edit.appTight,.app.noteMode{padding-top:4px}
+#note-edit .head{margin-bottom:8px}
+#note-edit .head h1{font-size:1.15rem}
+.docEditor{background:transparent;border:none;border-radius:0;padding:0;margin-top:0}
+.docMetaRow{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.docTitle{
+  width:100%;border:none;outline:none;background:transparent;font:inherit;
+  font-family:'DM Sans',system-ui,sans-serif;font-size:1.45rem;font-weight:700;
+  color:var(--text);padding:2px 0 8px;margin:0
+}
+.docBody{
+  width:100%;border:none;outline:none;background:transparent;font:inherit;
+  min-height:0;resize:none;line-height:1.55;color:var(--text);padding:0
+}
+.noteImage{width:100%;border-radius:16px;margin:10px 0;max-height:240px;object-fit:cover;display:block}
+.noteFmtBar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}
+.noteFmtBar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;
+  min-height:40px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.autoSave{font-size:.78rem;color:var(--muted);text-align:right;min-height:1.2em;margin:6px 0 0}
+.sheetOverlay{position:fixed;inset:0;background:rgba(47,36,56,.4);z-index:40;display:none;align-items:flex-end;justify-content:center}
+.sheetOverlay.open{display:flex}
+.sheet{width:100%;max-width:430px;background:#fff;border-radius:22px 22px 0 0;padding:10px 16px calc(18px + var(--safe-bottom))}
+.sheetHandle{width:40px;height:4px;border-radius:999px;background:#ddd;margin:4px auto 14px}
+.sheetBtn{display:flex;align-items:center;gap:12px;width:100%;border:none;background:#FAF7F2;
+  border-radius:14px;padding:14px;margin-bottom:8px;font:inherit;font-weight:600;color:var(--text);cursor:pointer;text-align:left}
+.sheetBtn span.icon{width:36px;height:36px;border-radius:10px;background:var(--lavender);color:var(--purple);
+  display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+.sheetCancel{width:100%;border:none;background:transparent;padding:14px;font:inherit;font-weight:700;
+  color:var(--purple);cursor:pointer;margin-top:4px}
+.tabbar.hide{display:none}
+.timerRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;padding:10px 12px;
+  background:var(--lavender);border-radius:14px}
+.timerRow label{margin:0;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--purple)}
+.timerRow input{width:64px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);text-align:center}
+.timerStart{border:none;background:var(--purple);color:#fff;border-radius:12px;padding:10px 14px;
+  font:inherit;font-weight:700;cursor:pointer;margin-left:auto}
+.timerFab{margin-top:8px;width:100%;border:1.5px dashed var(--purple);background:#fff;color:var(--purple);
+  border-radius:14px;padding:12px;font:inherit;font-weight:700;cursor:pointer}
+.timerOverlay{position:fixed;inset:0;background:rgba(47,36,56,.55);z-index:50;display:none;
+  align-items:center;justify-content:center;padding:20px}
+.timerOverlay.open{display:flex}
+.timerCard{width:100%;max-width:320px;background:#fff;border-radius:24px;padding:28px 22px;text-align:center;
+  box-shadow:0 20px 50px rgba(47,36,56,.25)}
+.timerPhase{font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.timerDigits{font-family:'Cormorant Garamond',Georgia,serif;font-size:4.2rem;font-weight:700;line-height:1;color:var(--text)}
+.timerSub{color:var(--muted);margin:10px 0 18px;font-size:.9rem}
+.timerActions{display:flex;gap:8px}
+.timerActions button{flex:1;border:none;border-radius:14px;padding:14px;font:inherit;font-weight:700;cursor:pointer}
+.timerActions .primary{background:var(--purple);color:#fff}
+.timerActions .ghost{background:var(--lavender);color:var(--purple)}
+.timerOnPhase .timerCard{background:linear-gradient(180deg,#F3EDF7,#fff)}
+.timerOffPhase .timerCard{background:linear-gradient(180deg,#F7F1E8,#fff)}
+
+
+/* aliases — match HTML class names from Notes redesign */
+.notesHead{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.notesHead h1{flex:1;margin:0;text-align:left;font-size:2rem;color:var(--purple);font-weight:700}
+.notesSearch{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;margin-bottom:12px}
+.notesSearch svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
+.notesSearch input{border:none;outline:none;background:transparent;padding:0;font:inherit;width:100%}
+.noteFilters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.noteFilters .chip{flex:0 0 auto;white-space:nowrap}
+.noteTag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:600}
+.tag-aefingar,.tag-Æfingar{background:#D9CBE3;color:#5B4B6E}
+.tag-hugmyndir,.tag-Hugmyndir{background:#E8E0EF;color:#6B5A7C}
+.tag-vidskiptavinir,.tag-Viðskiptavinir{background:#E8DFD2;color:#7A6550}
+.tag-einkamal,.tag-Einkamál{background:#F0D5D8;color:#8B5A63}
+.noteStar{border:none;background:transparent;color:var(--purple);font-size:1.25rem;padding:4px;cursor:pointer;line-height:1;flex-shrink:0}
+.docEditor{background:transparent;border:none;padding:0;margin:0}
+.docMetaRow{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.docTitle{width:100%;border:none;outline:none;background:transparent;font:inherit;font-size:1.45rem;font-weight:700;padding:2px 0 8px;margin:0}
+.docBody{width:100%;border:none;outline:none;background:transparent;font:inherit;min-height:0;resize:none;line-height:1.55;padding:0}
+.noteFmtBar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}
+.noteFmtBar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;min-height:40px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.noteImage{width:100%;border-radius:16px;margin:10px 0;max-height:240px;object-fit:cover;display:block}
+.autoSave{font-size:.78rem;color:var(--muted);min-height:1.2em}
+#note-edit .head{margin-bottom:8px}
+#note-edit .head h1{font-size:1.15rem}
+.app.noteMode{padding-top:4px}
+.app.noteMode .tabbar,.app.noteMode .tabbar,.app.noteMode nav.tabbar{display:none}
+.btnGhost{width:100%;padding:14px;margin-top:8px;border-radius:var(--r);border:1px solid var(--line);background:#fff;color:var(--purple);font-weight:600;cursor:pointer}
+.btnGhost.danger,.btnGhost.danger{color:#B56B7A;border-color:#E8C8CF}
+.voiceBar{display:flex;align-items:center;gap:10px;background:#FAF7F2;border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0}
+.voiceBar .play{width:40px;height:40px;border-radius:999px;border:none;background:var(--purple);color:#fff;font-size:1rem;cursor:pointer}
+.voiceWave{flex:1;height:28px;border-radius:8px;background:linear-gradient(90deg,#E8E0EF 0%,#D9CBE3 40%,#E8E0EF 100%)}
+
+.brandHead{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:0}
+.brandHead img.logoHeader{height:84px;width:auto;max-width:min(320px,78vw);object-fit:contain;display:block}
+.brandTag{margin:0;font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+@media (min-width:400px){
+  .brandHead img.logoHeader{height:92px;max-width:360px}
+}
+.thumb{width:56px;height:56px;border-radius:14px;background:var(--lavender);object-fit:cover;flex-shrink:0;display:block}
+.card.hasThumb{align-items:center}
+.filterMenu{position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 10px 30px rgba(47,36,56,.12);min-width:180px;z-index:30;padding:6px;display:none}
+.filterMenu.open{display:block}
+.filterWrap{position:relative}
+.filterMenu button{display:block;width:100%;text-align:left;border:none;background:transparent;
+  padding:12px 14px;border-radius:10px;font:inherit;font-weight:600;color:var(--text);cursor:pointer}
+.filterMenu button.on,.filterMenu button:active{background:var(--lavender);color:var(--purple)}
+.tabbar{grid-template-columns:repeat(4,1fr)}
+.teachBanner{background:var(--lavender);border-radius:14px;padding:10px 12px;margin:0 0 14px;font-size:.88rem;color:var(--purple-deep)}
+.commentsIntro{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:.9rem}
+.commentsIntro strong{display:block;color:var(--purple);margin-bottom:4px}
+
+.moveBox{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0 14px}
+.moveHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;
+  font-size:.78rem;font-weight:700;letter-spacing:.06em;color:var(--purple)}
+.moveHeadActions{display:flex;gap:4px;align-items:center}
+.textBtn{border:none;background:transparent;color:var(--purple);font:inherit;font-weight:700;
+  padding:8px 10px;min-height:44px;cursor:pointer;touch-action:manipulation}
+.textBtn.danger{color:#B56B7A}
+.layerRow{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.layerRow .field{flex:1;margin:0}
+.blockLabel{font-size:.85rem;letter-spacing:.06em;color:var(--purple);margin:18px 0 8px}
+.pre{white-space:pre-line;margin:0}
+.flow{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.flowHead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.num{width:28px;height:28px;border-radius:999px;background:var(--lavender);color:var(--purple);
+  display:grid;place-items:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.flowTitle{margin:0;flex:1;font-size:1.2rem;color:var(--purple);font-weight:700}
+.setup{background:var(--lavender);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:.9rem}
+.setup strong{display:block;margin-bottom:4px;color:var(--purple)}
+.steps{margin:8px 0 0;padding-left:18px}
+.steps li{margin-bottom:4px}
+
+
+/* Notes UI (wife mockup) */
+.notesHead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.notesHead h1{flex:1;margin:0;text-align:left;font-size:2rem;color:var(--purple);font-weight:700}
+.notesSearch{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;margin:0 0 12px}
+.notesSearch svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
+.notesSearch input{border:none;outline:none;background:transparent;padding:0;width:100%;font:inherit}
+.noteFilters{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+.noteFilters .chip{flex:0 0 auto;white-space:nowrap}
+.noteCard{display:flex;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);
+  border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;align-items:flex-start}
+.noteCardMain{flex:1;min-width:0}
+.noteCard h3{margin:0 0 6px;font-size:1.05rem;font-family:'DM Sans',system-ui,sans-serif;font-weight:700}
+.noteCardMeta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.noteCard .preview{color:var(--muted);font-size:.88rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.noteTag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:600;border:none;cursor:pointer;font:inherit}
+.tag-aefingar{background:#D9CBE3;color:#5B4B6E}
+.tag-hugmyndir{background:#E8E0EF;color:#6B5A7C}
+.tag-vidskiptavinir{background:#E8DFD2;color:#7A6550}
+.tag-einkamal{background:#F0D5D8;color:#8B5A63}
+.noteDate{color:var(--muted);font-size:.78rem;margin-left:auto}
+.noteStar{border:none;background:transparent;color:var(--purple);font-size:1.25rem;padding:4px;cursor:pointer;line-height:1;flex-shrink:0}
+.docEditor{background:transparent;border:none;padding:0;margin:0}
+.docMetaRow{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.docTitle{width:100%;border:none;outline:none;background:transparent;font:inherit;font-size:1.45rem;font-weight:700;padding:2px 0 8px;margin:0}
+.docBody{width:100%;border:none;outline:none;background:transparent;font:inherit;min-height:30vh;resize:none;line-height:1.55;padding:0}
+.noteFmtBar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}
+.noteFmtBar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;min-height:40px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.noteImage{width:100%;border-radius:16px;margin:8px 0;max-height:240px;object-fit:cover;display:block}
+.autoSave{font-size:.78rem;color:var(--muted);min-height:1.2em}
+#note-edit .head{margin-bottom:6px}
+#note-edit .head h1{font-size:1.15rem}
+body.noteMode{padding-top:0}
+body.noteMode .tabbar{display:none}
+.sheetOverlay{position:fixed;inset:0;background:rgba(47,36,56,.4);z-index:40;display:none;align-items:flex-end;justify-content:center}
+.sheetOverlay.open{display:flex}
+.sheetOverlay .sheet{width:100%;max-width:430px;background:#fff;border-radius:22px 22px 0 0;padding:10px 16px calc(18px + var(--safe-bottom))}
+.sheetHandle{width:40px;height:4px;border-radius:999px;background:#ddd;margin:4px auto 14px}
+.sheetBtn{display:flex;align-items:center;gap:12px;width:100%;border:none;background:#FAF7F2;border-radius:14px;padding:14px;margin-bottom:8px;font:inherit;font-weight:600;color:var(--text);cursor:pointer;text-align:left}
+.sheetBtn .icon{width:36px;height:36px;border-radius:10px;background:var(--lavender);color:var(--purple);display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+.sheetCancel{width:100%;border:none;background:transparent;padding:14px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.timerOverlay{position:fixed;inset:0;background:rgba(47,36,56,.55);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.timerOverlay.open{display:flex}
+.timerCard{width:100%;max-width:320px;background:#fff;border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 20px 50px rgba(47,36,56,.25)}
+.timerPhase{font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.timerDigits{font-family:'Cormorant Garamond',Georgia,serif;font-size:4.2rem;font-weight:700;line-height:1;color:var(--text)}
+.timerSub{color:var(--muted);margin:10px 0 18px;font-size:.9rem}
+.timerActions{display:flex;gap:8px}
+.timerActions button{flex:1;border:none;border-radius:14px;padding:14px;font:inherit;font-weight:700;cursor:pointer}
+.timerActions .primary{background:var(--purple);color:#fff}
+.timerActions .ghost{background:var(--lavender);color:var(--purple)}
+.timerOnPhase .timerCard{background:linear-gradient(180deg,#F3EDF7,#fff)}
+.timerOffPhase .timerCard{background:linear-gradient(180deg,#F7F1E8,#fff)}
+.timerToggle{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:0}
+.timerToggle button{flex:1;border:1.5px solid var(--line);background:#fff;color:var(--purple);border-radius:12px;padding:12px 14px;font:inherit;font-weight:700;cursor:pointer;text-align:left}
+.timerToggle button.on{border-color:var(--purple);background:var(--lavender)}
+.timerRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;padding:10px 12px;background:var(--lavender);border-radius:14px}
+.timerRow label{margin:0;font-size:.78rem;font-weight:700;color:var(--purple)}
+.timerRow input{width:64px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);text-align:center;font:inherit}
+.timerStart{border:none;background:var(--purple);color:#fff;border-radius:12px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer;margin-left:auto}
+.timerFab{margin-top:8px;width:100%;border:1.5px dashed var(--purple);background:#fff;color:var(--purple);border-radius:14px;padding:12px;font:inherit;font-weight:700;cursor:pointer}
+.btnGhost{width:100%;padding:14px;margin-top:8px;border-radius:var(--r);border:1px solid var(--line);background:#fff;color:var(--purple);font-weight:600;cursor:pointer}
+.btnGhost.danger{color:#B56B7A;border-color:#E8C8CF}
+.voiceBar{display:flex;align-items:center;gap:10px;background:#FAF7F2;border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0}
+.voiceBar button{width:40px;height:40px;border-radius:999px;border:none;background:var(--purple);color:#fff;cursor:pointer}
+.voiceWave{flex:1;height:28px;border-radius:8px;background:linear-gradient(90deg,#E8E0EF,#D9CBE3,#E8E0EF)}
+
+/* NOTES_MOCKUP_CSS */
+.notesHead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.notesHead h1{flex:1;margin:0;text-align:left;font-size:2rem;color:var(--purple)}
+.notesSearch{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:12px}
+.notesSearch svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
+.notesSearch input{border:none;outline:none;width:100%;background:transparent;padding:0;font:inherit}
+.noteFilters{display:flex;gap:8px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px}
+.noteFilters .chip{flex:0 0 auto;white-space:nowrap}
+.docEditor{background:transparent;border:none;padding:0}
+.docMetaRow{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.docTitle{width:100%;border:none;outline:none;background:transparent;font:inherit;font-size:1.45rem;font-weight:700;padding:2px 0 8px}
+.docBody{width:100%;border:none;outline:none;background:transparent;font:inherit;min-height:30vh;resize:none;line-height:1.55;padding:0}
+.noteFmtBar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}
+.noteFmtBar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;min-height:40px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.noteTag{display:inline-flex;align-items:center;border:none;border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:600;cursor:pointer}
+.tag-hugmyndir{background:#E8E0EF;color:#6B5A7C}
+.autoSave{font-size:.78rem;color:var(--muted)}
+.noteImage{width:100%;border-radius:16px;margin:8px 0;max-height:240px;object-fit:cover}
+
+
+.sheetOverlay{position:fixed;inset:0;background:rgba(47,36,56,.42);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.sheetOverlay.open{display:flex}
+.sheetOverlay .sheet{width:100%;max-width:430px;background:#fff;border-radius:22px 22px 0 0;padding:10px 16px calc(18px + var(--safe-bottom,0px))}
+.sheetHandle{width:40px;height:4px;border-radius:999px;background:#ddd;margin:6px auto 14px}
+.sheetBtn{display:flex;align-items:center;gap:12px;width:100%;border:none;background:#FAF7F2;border-radius:14px;padding:14px;margin-bottom:8px;font:inherit;font-weight:600;cursor:pointer;text-align:left;color:var(--text)}
+.sheetBtn .icon{width:36px;height:36px;border-radius:10px;background:var(--lavender);color:var(--purple);display:grid;place-items:center;flex-shrink:0}
+.sheetCancel{width:100%;border:none;background:transparent;padding:14px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.timerOverlay{position:fixed;inset:0;background:rgba(47,36,56,.55);z-index:70;display:none;align-items:center;justify-content:center;padding:20px}
+.timerOverlay.open{display:flex}
+.timerCard{width:100%;max-width:320px;background:#fff;border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 20px 50px rgba(47,36,56,.25)}
+.timerPhase{font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.timerDigits{font-family:'Cormorant Garamond',Georgia,serif;font-size:4.2rem;font-weight:700;line-height:1}
+.timerSub{color:var(--muted);margin:10px 0 18px;font-size:.9rem}
+.timerActions{display:flex;gap:8px}
+.timerActions button{flex:1;border:none;border-radius:14px;padding:14px;font:inherit;font-weight:700;cursor:pointer}
+.timerActions .primary{background:var(--purple);color:#fff}
+.timerActions .ghost{background:var(--lavender);color:var(--purple)}
+.timerOverlay.onPhase .timerCard{background:linear-gradient(180deg,#F3EDF7,#fff)}
+.timerOverlay.offPhase .timerCard{background:linear-gradient(180deg,#F7F1E8,#fff)}
+body.noteMode .tabbar{display:none}
+#note-edit .head{margin-bottom:6px}
+#note-edit .head h1,#note-edit .head .serif{font-size:1.15rem}
+.notesHead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.notesHead h1{flex:1;margin:0;text-align:left;font-size:2rem;color:var(--purple)}
+.notesSearch{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:12px}
+.notesSearch svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
+.notesSearch input{border:none;outline:none;background:transparent;padding:0;width:100%;font:inherit}
+.noteFilters{display:flex;gap:8px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.noteFilters .chip{flex:0 0 auto}
+.noteCard{display:flex;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;align-items:flex-start}
+.noteCardMain{flex:1;min-width:0}
+.noteCard h3{margin:0 0 6px;font-size:1.05rem;font-family:'DM Sans',system-ui,sans-serif;font-weight:700}
+.noteCardMeta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.noteCard .preview{color:var(--muted);font-size:.88rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.noteTag,.noteTag{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:600;border:none;cursor:pointer}
+.tag-aefingar,.tag-Æfingar{background:#D9CBE3;color:#5B4B6E}
+.tag-hugmyndir,.tag-Hugmyndir{background:#E8E0EF;color:#6B5A7C}
+.tag-vidskiptavinir,.tag-Viðskiptavinir{background:#E8DFD2;color:#7A6550}
+.tag-einkamal,.tag-Einkamál{background:#F0D5D8;color:#8B5A63}
+.noteDate{color:var(--muted);font-size:.78rem;margin-left:auto}
+.noteStar{border:none;background:transparent;color:var(--purple);font-size:1.25rem;padding:4px;cursor:pointer;line-height:1}
+.docEditor{padding:0;margin:0;background:transparent;border:none}
+.docMetaRow{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.docTitle{width:100%;border:none;outline:none;background:transparent;font:inherit;font-size:1.45rem;font-weight:700;padding:2px 0 8px}
+.docBody{width:100%;border:none;outline:none;background:transparent;font:inherit;min-height:30vh;resize:none;line-height:1.55;padding:0}
+.noteFmtBar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);margin-top:8px}
+.noteFmtBar button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;min-height:40px;font:inherit;font-weight:700;color:var(--purple);cursor:pointer}
+.noteImage{width:100%;border-radius:16px;margin:8px 0;max-height:240px;object-fit:cover;display:block}
+.autoSave{font-size:.78rem;color:var(--muted);min-height:1.2em}
+.btnGhost{width:100%;padding:14px;margin-top:8px;border-radius:var(--r);border:1px solid var(--line);background:#fff;color:var(--purple);font-weight:600;cursor:pointer}
+.btnGhost.danger{color:#B56B7A;border-color:#E8C8CF}
+.timerRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;padding:10px 12px;background:var(--lavender);border-radius:14px}
+.timerRow label{margin:0;font-size:.78rem;font-weight:700;color:var(--purple)}
+.timerRow input{width:64px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);text-align:center;font:inherit}
+.timerStart,.timerFab{border:none;background:var(--purple);color:#fff;border-radius:12px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}
+.timerFab{width:100%;margin-top:8px;background:#fff;color:var(--purple);border:1.5px dashed var(--purple)}
+.voiceBar{display:flex;align-items:center;gap:10px;background:#FAF7F2;border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0}
+.voiceBar button{width:40px;height:40px;border-radius:999px;border:none;background:var(--purple);color:#fff;cursor:pointer}
+.voiceWave{flex:1;height:28px;border-radius:8px;background:linear-gradient(90deg,#E8E0EF,#D9CBE3,#E8E0EF)}
+.noteEmpty{text-align:center;padding:36px 18px;background:#fff;border:1.5px dashed var(--line);border-radius:var(--r);color:var(--muted)}
+.noteEmpty h3{margin:0 0 8px;color:var(--purple)}
+
+/* END_NOTES_MOCKUP_CSS */
+
+/* OVERLAY_OPEN_FIX */
+.sheetOverlay.open{display:flex}
+.timerOverlay.open{display:flex}
+.timerOverlay.onPhase .timerCard{background:linear-gradient(180deg,#F3EDF7,#fff)}
+.timerOverlay.offPhase .timerCard{background:linear-gradient(180deg,#F7F1E8,#fff)}
+body.noteMode .tabbar{display:none}
+
+
+
+
+/* NOTE_EDITOR_V12 — full bleed, no transform, no giant empty body */
+body.noteMode{
+  padding:0 !important;
+  padding-bottom:0 !important;
+  overflow:hidden !important;
+  height:100% !important;
+  position:fixed;
+  inset:0;
+  width:100%;
+}
+body.noteMode .tabbar,
+body.noteMode nav.tabbar{display:none !important}
+body.noteMode .app{
+  padding:0 !important;
+  margin:0 !important;
+  max-width:none !important;
+  min-height:100% !important;
+  height:100% !important;
+  overflow:hidden !important;
+}
+#note-edit.screen.on{
+  display:block !important;
+  position:fixed !important;
+  top:0; left:0; right:0; bottom:0;
+  z-index:40;
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:#FAF7F2 !important;
+  overflow:hidden !important;
+  transform:none !important;
+}
+.noteEditShell{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  width:100%;
+  max-width:430px;
+  margin:0 auto;
+  background:#FAF7F2;
+  box-sizing:border-box;
+}
+.noteEditTop{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex:0 0 auto;
+  padding: env(safe-area-inset-top, 0px) 8px 4px;
+  background:#FAF7F2;
+  border-bottom:1px solid #E7E1EC;
+}
+.noteEditTop h1{
+  flex:1;
+  margin:0;
+  text-align:center;
+  font-size:.95rem;
+  font-weight:600;
+}
+.noteEditTop .iconBtn{
+  width:40px;height:40px;min-width:40px;min-height:40px;font-size:1.5rem;
+}
+.noteEditTop .filter{padding:7px 11px;font-size:.85rem}
+.noteEditScroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:4px 14px 8px;
+}
+.noteEditScroll .docMetaRow{
+  display:flex;align-items:center;gap:6px;margin:0;min-height:26px;
+}
+.noteEditScroll .autoSave{margin-left:auto;font-size:.68rem;color:#8A7F92}
+.noteDeleteLink{border:none;background:transparent;color:#B56B7A;font:inherit;font-weight:600;font-size:.8rem;padding:2px 4px}
+.noteEditScroll .docTitle,
+#note-edit .docTitle{
+  display:block;width:100%;border:none !important;outline:none;background:transparent;
+  font:inherit;font-size:1.25rem;font-weight:700;padding:2px 0 4px;margin:0;line-height:1.2;
+}
+.noteEditScroll .docBody,
+#note-edit .docBody,
+#note-edit textarea.docBody{
+  display:block;width:100%;border:none !important;outline:none;background:transparent;
+  font:inherit;font-size:1rem;line-height:1.45;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  resize:none !important;
+  padding:0 !important;margin:0 !important;
+  field-sizing:content;
+}
+.noteEditScroll .noteImage{margin:4px 0;max-height:120px;border-radius:12px;width:100%;object-fit:cover}
+.noteFmtBarFixed{
+  flex:0 0 auto;
+  display:flex;gap:6px;flex-wrap:wrap;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  border-top:1px solid #E7E1EC;
+  background:#fff;
+}
+.noteFmtBarFixed button{
+  border:1px solid #E7E1EC;background:#FAF7F2;border-radius:10px;
+  padding:8px 10px;min-height:40px;font:inherit;font-weight:700;color:#5B4B6E;
+}
+
+/* ===== v16 (nóv 2026) ===== */
+/* Logo: stærra, gegnsætt, sami litur og síðan */
+.top.brandTop{justify-content:center;margin:2px 0 30px;padding-top:calc(env(safe-area-inset-top,0px) + 6px)}
+.brandTop img.logoMain{display:block;width:min(256px,70vw);height:auto;background:transparent}
+/* Setja á heimaskjá — lokanlegur borði */
+.banner{position:relative;padding-right:44px}
+.banner .bannerClose{position:absolute;top:6px;right:6px;width:36px;height:36px;border:none;background:transparent;
+  color:var(--purple);font-size:1.3rem;line-height:1;cursor:pointer;border-radius:10px}
+.banner ol{margin:6px 0 0;padding-left:18px}
+.banner ol strong{display:inline;margin:0}
+/* Leit */
+.searchBox{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;margin:0 0 12px}
+.searchBox svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
+.searchBox input{border:none;outline:none;background:transparent;padding:0;font:inherit;width:100%;min-width:0}
+.searchBox .clearBtn{border:none;background:transparent;color:var(--muted);font-size:1.1rem;padding:2px 4px;cursor:pointer}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-top:0}
+.chips.scroll .chip{flex:0 0 auto;white-space:nowrap;padding:8px 12px;font-size:.85rem}
+/* Skref: texti brotnar í næstu línu í stað þess að hverfa */
+.layerRow{align-items:flex-start}
+.layerRow .layerNum{width:26px;min-width:26px;height:26px;margin-top:11px;border-radius:999px;background:var(--lavender);
+  color:var(--purple);display:grid;place-items:center;font-size:.78rem;font-weight:700}
+.layerRow textarea.field{min-height:46px;height:46px;resize:none;overflow:hidden;line-height:1.4;
+  white-space:pre-wrap;overflow-wrap:anywhere;field-sizing:content}
+.layerRow .iconBtn{width:40px;min-width:40px;height:46px;min-height:46px;font-size:1.3rem;color:var(--muted)}
+textarea.field.grow{resize:none;overflow:hidden;min-height:46px;line-height:1.4;field-sizing:content}
+/* Gormar (springs) */
+.dot{width:12px;height:12px;border-radius:999px;display:inline-block;flex-shrink:0;border:1px solid rgba(0,0,0,.12)}
+.dot.rauður{background:#D2555A}.dot.grænn{background:#4E9C6B}.dot.blár{background:#4F7FC8}.dot.gulur{background:#E8C14A}
+.dot.svartur{background:#2F2438}.dot.hvítur{background:#fff}
+.springs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1.5px solid var(--purple);
+  border-radius:12px;padding:8px 12px;margin:6px 0 8px;font-weight:700;color:var(--purple-deep)}
+.springs .lbl{font-size:.72rem;letter-spacing:.08em;color:var(--purple)}
+.springs .dots{display:inline-flex;gap:4px}
+/* Aðgerðir neðst á tíma */
+.bottomActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0 8px}
+.bottomActions .btnGhost{margin:0}
+.btnRow{display:flex;gap:8px;margin-top:4px}
+.btnRow .btnGhost{flex:1;margin-top:0}
+/* Æfingasafn-velja */
+.pickList{max-height:55vh;overflow-y:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.pickItem{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#FAF7F2;border-radius:14px;
+  padding:12px 14px;margin-bottom:8px;font:inherit;cursor:pointer;color:var(--text)}
+.pickItem strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--purple)}
+.sheetTitle{margin:0 0 10px;font-size:1.3rem;color:var(--purple)}
+/* Einkatímar */
+.clientAvatar{width:48px;height:48px;min-width:48px;border-radius:999px;background:var(--lavender);color:var(--purple);
+  display:grid;place-items:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.3rem}
+.infoCard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.infoCard .hint{margin-bottom:2px}
+.infoCard p{margin:0 0 10px;white-space:pre-line}
+.infoCard p:last-child{margin-bottom:0}
+.sessionCard .meta{display:flex;gap:8px;align-items:center}
+.emptyBox{text-align:center;padding:28px 18px;background:#fff;border:1.5px dashed var(--line);border-radius:var(--r);color:var(--muted)}
+.emptyBox h3{margin:0 0 6px;color:var(--purple);font-family:'Cormorant Garamond',serif;font-size:1.3rem}
+.emptyBox p{margin:0 0 14px}
+.emptyBox .submit{max-width:260px;margin:0 auto}
+/* Prófíll */
+.profileSection{margin:22px 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;color:var(--purple)}
+.profileNote{font-size:.85rem;color:var(--muted);margin:6px 2px 0}
+details.feedback{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-top:8px}
+details.feedback summary{cursor:pointer;font-weight:700;color:var(--purple)}
+details.feedback .comment{font-size:.9rem}
+.version{text-align:center;color:var(--muted);font-size:.75rem;margin:22px 0 4px}
+.toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-bottom));transform:translateX(-50%);background:var(--purple-deep);color:#fff;
+  padding:10px 16px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:90;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+</style>
+</head>
+<body>
+<script>
+(function () {
+  try {
+    var KEY = 'klassinn.sw.v16';
+    if (localStorage.getItem(KEY) === '1') return;
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.getRegistrations().then(function (regs) {
+      return Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+        var done = window.caches ? caches.keys().then(function (keys) {
+          return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+        }) : Promise.resolve();
+        return done.then(function () {
+          localStorage.setItem(KEY, '1');
+          location.reload();
+        });
+      });
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+
+<div class="app" id="app">
+  <div class="screen on" id="home">
+    <div class="banner hide" id="installBanner">
+      <button class="bannerClose" type="button" id="installClose" aria-label="Loka">×</button>
+      <strong>Setja Klassann á heimaskjá</strong>
+      <span id="installHint">Þá opnast hann eins og app. Opnaðu hann svo alltaf þaðan, því Safari geymir gögnin sér.</span>
+      <ol id="installSteps">
+        <li><strong>iPhone:</strong> opna í Safari → Deila <span aria-hidden="true">⬆︎</span> → „Bæta við heimaskjá“.</li>
+        <li><strong>Android:</strong> Chrome → ⋮ → „Setja á heimaskjá“.</li>
+      </ol>
+      <button class="submit" type="button" id="installBtn" style="display:none;margin-top:10px">Setja á heimaskjá</button>
+    </div>
+    <div class="top brandTop">
+      <img class="logoMain" src="./logo-klassinn-v2.png" alt="KLASSINN — fyrir þjálfarann" />
+    </div>
+    <div class="actions">
+      <button class="action" type="button" id="findClassBtn"><div class="actionCircle"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><span>Finna tíma</span></button>
+      <button class="action" type="button" data-go="exercises"><div class="actionCircle"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 9.5v5M19 9.5v5M7.5 12h9M4 8.5h2.5v7H4V8.5zm13.5 0H20v7h-2.5V8.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span>Finna æfingu</span></button>
+      <button class="action" type="button" data-go="clients"><div class="actionCircle"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 19c1.8-3 4.2-4.5 7-4.5s5.2 1.5 7 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div><span>Einkatímar</span></button>
+    </div>
+    <div class="row">
+      <h2 class="serif">MÍNIR TÍMAR</h2>
+      <span class="badge" id="classCount">0</span>
+      <div class="spacer"></div>
+      <div class="filterWrap">
+        <button class="filter" type="button" id="classFilterBtn">Allt ▾</button>
+        <div class="filterMenu" id="classFilterMenu"></div>
+      </div>
+      <button class="fab" type="button" aria-label="Nýr tími" data-go="class-new">+</button>
+    </div>
+    <div class="searchBox hide" id="classSearchWrap">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="classSearch" type="search" placeholder="Leita að tíma, æfingu eða áhaldi" autocomplete="off" />
+      <button type="button" class="clearBtn" id="classSearchClose" aria-label="Loka leit">×</button>
+    </div>
+    <div id="homeClassList"></div>
+  </div>
+
+  <div class="screen" id="profile">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="home" aria-label="Til baka">‹</button>
+      <h1 class="serif">Prófíllinn minn</h1>
+      <div style="width:40px"></div>
+    </div>
+    <div class="avatar" id="profileAvatar"><svg width="56" height="56" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/><path d="M5 19.5c1.8-3.2 4.1-4.8 7-4.8s5.2 1.6 7 4.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+    <label class="label" for="pfName">NAFN</label>
+    <input class="field" id="pfName" autocomplete="name" placeholder="Nafnið þitt" />
+    <label class="label" for="pfEmail">NETFANG</label>
+    <input class="field" id="pfEmail" type="email" autocomplete="email" inputmode="email" placeholder="netfang@dæmi.is" />
+    <label class="label" for="pfStudio">STÖÐ / STÚDÍÓ</label>
+    <input class="field" id="pfStudio" placeholder="t.d. Hreyfing, World Class…" />
+    <p class="profileNote" id="pfSaved">Vistast sjálfkrafa á símanum.</p>
+
+    <div class="profileSection">YFIRLIT</div>
+    <div class="infoCard" id="pfStats"></div>
+
+    <div class="profileSection">AFRIT AF GÖGNUM</div>
+    <p class="profileNote" style="margin-top:0">Allt er geymt í þessum síma. Vistaðu afrit reglulega (t.d. í Skrár/iCloud) svo ekkert tapist ef skipt er um síma.</p>
+    <p class="banner" id="pfWhere" style="padding-right:14px;margin:8px 0"></p>
+    <div class="btnRow">
+      <button class="btnGhost" type="button" id="backupBtn">⬇︎ Vista afrit</button>
+      <button class="btnGhost" type="button" id="restoreBtn">⬆︎ Setja inn afrit</button>
+    </div>
+    <input type="file" id="restoreInput" accept="application/json,.json" class="hide" />
+
+    <div class="profileSection">ÁBENDINGAR</div>
+    <details class="feedback" id="comments">
+      <summary>Senda ábendingu um appið</summary>
+      <form id="form">
+        <label for="who">Nafn</label>
+        <input id="who" required placeholder="t.d. nafnið þitt" />
+        <label for="about">Um hvað?</label>
+        <select id="about">
+          <option>Almennt / look</option>
+          <option>Forsíða</option>
+          <option>Prófíll</option>
+          <option>Tími</option>
+          <option>Æfingar</option>
+          <option>Nótur</option>
+          <option>Einkatímar</option>
+          <option>Litir / logo</option>
+          <option>Annað</option>
+        </select>
+        <label for="msg">Athugasemd</label>
+        <textarea id="msg" required placeholder="Hvað finnst þér? Hvað mætti laga?"></textarea>
+        <button class="submit" type="submit">Vista ábendingu</button>
+      </form>
+      <div class="list" id="list"></div>
+      <button class="submit" type="button" id="export" style="background:var(--purple-deep)">Afrita allar ábendingar</button>
+    </details>
+
+    <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
+    <p class="version">KLASSINN · útgáfa 16</p>
+  </div>
+
+    
+  <div class="screen" id="class-new">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="home" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="classFormTitle">Nýr tími</h1>
+      <button class="filter" type="button" id="classFormSave">✓ Vista</button>
+    </div>
+    <p class="banner hide" id="cfDraftNote" style="padding-right:14px">Þú varst að vinna í þessum tíma. Allt sem þú skrifaðir er hér. Ýttu á <strong style="display:inline">Vista</strong> þegar tíminn er tilbúinn.</p>
+    <label class="label">HEITI TÍMA</label>
+    <input class="field" id="cfTitle" placeholder="t.d. Reformer tími 9" />
+    <label class="label">STIG</label>
+    <div class="chips" id="cfLevel">
+      <button type="button" class="chip on" data-val="Byrjandi">Byrjandi</button>
+      <button type="button" class="chip" data-val="Miðstig">Miðstig</button>
+      <button type="button" class="chip" data-val="Lengra komnir">Lengra komnir</button>
+      <button type="button" class="chip" data-val="Allir">Allir</button>
+    </div>
+    <label class="label">LENGD (MÍN)</label>
+    <input class="field" id="cfDuration" inputmode="numeric" value="45" />
+    <label class="label">💙 TEGUND TÍMA</label>
+    <div class="chips" id="cfTypes">
+      <button type="button" class="chip" data-val="Dýna">Dýna</button>
+      <button type="button" class="chip on" data-val="Reformer">Reformer</button>
+      <button type="button" class="chip" data-val="Yoga">Yoga</button>
+      <button type="button" class="chip" data-val="Styrktaræfing">Styrktaræfing</button>
+      <button type="button" class="chip" data-val="HIIT">HIIT</button>
+      <button type="button" class="chip" data-val="HOT pilates">HOT pilates</button>
+      <button type="button" class="chip" data-val="Hot HIIT">Hot HIIT</button>
+      <button type="button" class="chip" data-val="Hópatími">Hópatími</button>
+    </div>
+    <label class="label">🎒 ÁHÖLD</label>
+    <div class="chips" id="cfProps">
+      <button type="button" class="chip" data-val="Bolti">Bolti</button>
+      <button type="button" class="chip" data-val="Teygja">Teygja</button>
+      <button type="button" class="chip" data-val="Lóð">Lóð</button>
+      <button type="button" class="chip" data-val="Magic Circle">Magic Circle</button>
+      <button type="button" class="chip" data-val="Reformer-kassi">Reformer-kassi</button>
+      <button type="button" class="chip" data-val="Jumpboard">Jumpboard</button>
+      <button type="button" class="chip" data-val="Ökklalóð">Ökklalóð</button>
+      <button type="button" class="chip" data-val="Jógakubbur">Jógakubbur</button>
+      <button type="button" class="chip" data-val="Annað">Annað</button>
+    </div>
+    <label class="label">LÝSING</label>
+    <textarea class="area" id="cfDesc" placeholder="Stutt yfirlit yfir tímann..."></textarea>
+    <label class="label">🎵 SPILUNARLISTI</label>
+    <input class="field" id="cfPlaylist" placeholder="Límdu Spotify/Apple Music slóð eða heiti" />
+    <label class="label">☀️ UPPHITUN</label>
+    <textarea class="area" id="cfWarmup" placeholder="t.d.&#10;Footwork&#10;Single leg / hendur"></textarea>
+    <label class="label">🎯 ÆFINGAR / FLOW</label>
+    <div id="cfMoves"></div>
+    <div class="btnRow">
+      <button class="btnGhost" type="button" id="cfAddMove">+ Ný æfing</button>
+      <button class="btnGhost" type="button" id="cfPickMove">+ Úr æfingasafni</button>
+    </div>
+    <label class="label">🌙 NIÐURKÆLING</label>
+    <textarea class="area" id="cfCooldown" placeholder="Lýstu niðurkælingu..."></textarea>
+    <button class="submit" type="button" id="classFormSave2" style="margin-top:14px">Vista tíma</button>
+    <button class="btnGhost danger hide" type="button" id="cfDelete">🗑 Eyða tíma</button>
+  </div>
+
+  <div class="screen" id="class">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="home" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="classTitle">Tími</h1>
+      <button class="filter" type="button" id="classEditBtn">✎ Breyta</button>
+    </div>
+    <div class="teachBanner" id="teachBanner">Kennsluútlit — haltu þessu opnu á meðan þú kennir. Allur tíminn sést hér að neðan.</div>
+    <div class="meta" id="classMeta">✨ Pilates • Reformer</div>
+    <h2 class="serif" id="className" style="margin:6px 0;font-size:1.8rem">Reformer tími 8</h2>
+    <p class="muted" id="classInfo">60 mín • Byrjendur</p>
+    <div id="classPropsWrap" class="hide">
+      <h3 class="blockLabel">🎒 ÁHÖLD</h3>
+      <div class="chips" id="classProps"></div>
+    </div>
+    <h3 class="blockLabel">☀️ UPPHITUN</h3>
+    <div class="card" style="cursor:default"><div class="cardBody"><div class="muted pre" id="classWarmup">Footwork
+Single leg / hendur</div></div></div>
+    <h3 class="blockLabel">🎯 ÆFINGAR</h3>
+    <div id="classMoves"></div>
+    <div id="classCooldownWrap" class="hide">
+      <h3 class="blockLabel">🌙 NIÐURKÆLING</h3>
+      <div class="card" style="cursor:default"><div class="cardBody"><div class="muted pre" id="classCooldown"></div></div></div>
+    </div>
+    <div id="classDescWrap" class="hide">
+      <h3 class="blockLabel">LÝSING</h3>
+      <p id="classDesc" class="muted"></p>
+    </div>
+    <div id="classPlaylistWrap" class="hide">
+      <h3 class="blockLabel">🎵 SPILUNARLISTI</h3>
+      <p id="classPlaylist" class="muted"></p>
+    </div>
+    <div class="bottomActions">
+      <button class="btnGhost" type="button" id="classDuplicateBtn">⧉ Afrita tíma</button>
+      <button class="btnGhost danger" type="button" id="classDeleteBtn">🗑 Eyða tíma</button>
+    </div>
+  </div>
+
+  <div class="screen" id="exercises">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="home" aria-label="Til baka">‹</button>
+      <h1 class="serif">Æfingar</h1>
+      <button class="fab" type="button" data-go="exercise-edit" data-ex="new" aria-label="Ný æfing">+</button>
+    </div>
+    <div class="searchBox">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="exSearch" type="search" placeholder="Leita að æfingu" autocomplete="off" />
+    </div>
+    <div class="chips scroll" id="exFilter"></div>
+    <div id="exerciseList"></div>
+  </div>
+
+  <div class="screen" id="exercise-edit">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="exercises" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="exEditTitle">Breyta æfingu</h1>
+      <button class="filter" type="button" id="exSaveBtn">Vista</button>
+    </div>
+    <label class="label">HEITI</label>
+    <input class="field" id="exName" value="Core á hlið" />
+    <label class="label">STIG</label>
+    <input type="hidden" id="exLevel" value="Miðstig" />
+    <div class="chips" id="exLevelChips">
+      <button type="button" class="chip" data-val="Byrjandi">Byrjandi</button>
+      <button type="button" class="chip" data-val="Miðstig">Miðstig</button>
+      <button type="button" class="chip" data-val="Lengra komnir">Lengra komnir</button>
+      <button type="button" class="chip" data-val="Allir">Allir</button>
+    </div>
+    <label class="label">TEGUND</label>
+    <div class="chips" id="exTypes">
+      <button type="button" class="chip" data-val="Dýna">Dýna</button>
+      <button type="button" class="chip on" data-val="Reformer">Reformer</button>
+      <button type="button" class="chip" data-val="Yoga">Yoga</button>
+      <button type="button" class="chip" data-val="Styrktaræfing">Styrktaræfing</button>
+      <button type="button" class="chip" data-val="HIIT">HIIT</button>
+      <button type="button" class="chip" data-val="HOT pilates">HOT pilates</button>
+      <button type="button" class="chip" data-val="Hot HIIT">Hot HIIT</button>
+      <button type="button" class="chip" data-val="Hópatími">Hópatími</button>
+    </div>
+    <input type="hidden" id="exEquip" value="Reformer" />
+    <div id="exSpringsWrap">
+      <label class="label" for="exSprings">GORMAR (SPRINGS)</label>
+      <input class="field" id="exSprings" placeholder="t.d. 1 rauður + 1 blár" autocomplete="off" />
+    </div>
+    <label class="label">UPPSETNING</label>
+    <textarea class="area" id="exSetup">Shortbox við hlið. Sitja í átt að böndum.</textarea>
+    <label class="label">SKREF (eitt í línu)</label>
+    <textarea class="area" id="exSteps">Halla aftur og upp
+Row
+Olnbogi í hné</textarea>
+    <label class="label">ATHUGASEMDIR</label>
+    <textarea class="area" id="exNotes">Passa öxlina á bandahendi.</textarea>
+    <button class="submit" type="button" id="exSaveBtn2" style="margin-top:14px">Vista æfingu</button>
+    <p class="muted" id="exSavedMsg" style="display:none;text-align:center;color:var(--purple)">✓ Vistað</p>
+    <button class="btnGhost danger hide" type="button" id="exDeleteBtn">🗑 Eyða æfingu</button>
+  </div>
+
+  <div class="screen" id="clients">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="home" aria-label="Til baka">‹</button>
+      <h1 class="serif">Einkatímar</h1>
+      <button class="fab" type="button" id="clientNewBtn" aria-label="Nýr viðskiptavinur">+</button>
+    </div>
+    <div class="searchBox" id="clientSearchWrap">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="clientSearch" type="search" placeholder="Leita að viðskiptavini" autocomplete="off" />
+    </div>
+    <div id="clientList"></div>
+  </div>
+
+  <div class="screen" id="client">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="clients" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="clientTitle">Viðskiptavinur</h1>
+      <button class="filter" type="button" id="clientEditBtn">✎ Breyta</button>
+    </div>
+    <div id="clientInfo"></div>
+    <div class="row" style="margin-top:18px">
+      <h2 class="serif" style="font-size:1.25rem">EINKATÍMAR</h2>
+      <span class="badge" id="sessionCount">0</span>
+      <div class="spacer"></div>
+      <button class="fab" type="button" id="sessionNewBtn" aria-label="Nýr einkatími">+</button>
+    </div>
+    <div id="sessionList"></div>
+  </div>
+
+  <div class="screen" id="client-edit">
+    <div class="head">
+      <button class="iconBtn back" type="button" id="clientEditBack" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="clientFormTitle">Nýr viðskiptavinur</h1>
+      <button class="filter" type="button" id="clientSaveBtn">✓ Vista</button>
+    </div>
+    <label class="label" for="clName">NAFN</label>
+    <input class="field" id="clName" placeholder="Fullt nafn" autocomplete="off" />
+    <label class="label" for="clPhone">SÍMI</label>
+    <input class="field" id="clPhone" type="tel" inputmode="tel" placeholder="valfrjálst" autocomplete="off" />
+    <label class="label" for="clEmail">NETFANG</label>
+    <input class="field" id="clEmail" type="email" inputmode="email" placeholder="valfrjálst" autocomplete="off" />
+    <label class="label" for="clGoals">🎯 MARKMIÐ</label>
+    <textarea class="area" id="clGoals" placeholder="Hvað vill viðkomandi ná fram?"></textarea>
+    <label class="label" for="clHealth">🩹 MEIÐSLI / HEILSA</label>
+    <textarea class="area" id="clHealth" placeholder="t.d. bakmeiðsli, meðganga, hné…"></textarea>
+    <label class="label" for="clNotes">ATHUGASEMDIR</label>
+    <textarea class="area" id="clNotes" placeholder="Annað sem gott er að muna"></textarea>
+    <button class="submit" type="button" id="clientSaveBtn2" style="margin-top:14px">Vista</button>
+    <button class="btnGhost danger hide" type="button" id="clientDeleteBtn">🗑 Eyða viðskiptavini</button>
+  </div>
+
+  <div class="screen" id="session">
+    <div class="head">
+      <button class="iconBtn back" type="button" id="sessionBack" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="sessionFormTitle">Nýr einkatími</h1>
+      <button class="filter" type="button" id="sessionSaveBtn">✓ Vista</button>
+    </div>
+    <p class="meta" id="sessionClientName" style="text-align:center;margin:-8px 0 6px"></p>
+    <label class="label" for="ssDate">DAGSETNING</label>
+    <input class="field" id="ssDate" type="date" />
+    <label class="label" for="ssPlace">STAÐUR</label>
+    <input class="field" id="ssPlace" placeholder="t.d. Studio 1" autocomplete="off" />
+    <label class="label" for="ssFocus">FÓKUS</label>
+    <input class="field" id="ssFocus" placeholder="t.d. bak og core" autocomplete="off" />
+    <label class="label" for="ssMoves">🎯 ÆFINGAR (ein í línu)</label>
+    <textarea class="area" id="ssMoves" placeholder="Fótavinna – 1 rauður + 1 blár&#10;Hundraðið"></textarea>
+    <button class="btnGhost" type="button" id="ssPickMove" style="margin-top:0">+ Úr æfingasafni</button>
+    <label class="label" for="ssNotes">HVERNIG GEKK? / NÆST</label>
+    <textarea class="area" id="ssNotes" placeholder="Hvað gekk vel, hvað á að vinna með næst…"></textarea>
+    <button class="submit" type="button" id="sessionSaveBtn2" style="margin-top:14px">Vista einkatíma</button>
+    <button class="btnGhost danger hide" type="button" id="sessionDeleteBtn">🗑 Eyða einkatíma</button>
+  </div>
+
+  <div class="screen" id="notes">
+    <div class="notesHead">
+      <h1 class="serif">Nótur</h1>
+      <button class="fab" type="button" id="noteNewBtn" aria-label="Ný nóta" style="width:44px;height:44px;min-width:44px;min-height:44px;font-size:1.4rem">+</button>
+    </div>
+    <div class="notesSearch">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="noteSearch" type="search" placeholder="Leita í nótum" autocomplete="off" />
+    </div>
+    <div class="noteFilters" id="noteFilters">
+      <button type="button" class="chip on" data-cat="Allar">Allar</button>
+      <button type="button" class="chip" data-cat="Æfingar">Æfingar</button>
+      <button type="button" class="chip" data-cat="Viðskiptavinir">Viðskiptavinir</button>
+      <button type="button" class="chip" data-cat="Hugmyndir">Hugmyndir</button>
+      <button type="button" class="chip" data-cat="Einkamál">Einkamál</button>
+    </div>
+    <div id="notesList"></div>
+  </div>
+
+  <div class="screen" id="note-edit">
+    <div class="noteEditShell">
+      <div class="noteEditTop">
+        <button class="iconBtn back" type="button" id="noteBackBtn" aria-label="Til baka">‹</button>
+        <h1 class="serif" id="noteEditTitle">Ný nóta</h1><!-- build:note-v12 -->
+        <button class="filter" type="button" id="noteSaveBtn">Vista</button>
+      </div>
+      <div class="noteEditScroll">
+        <div class="docMetaRow">
+          <button type="button" class="noteTag tag-hugmyndir" id="noteCatBtn">Hugmyndir</button>
+          <button type="button" class="noteStar" id="noteStarBtn" aria-label="Stjörnumerkja">☆</button>
+          <button type="button" class="noteDeleteLink hide" id="noteDeleteBtn">Eyða</button>
+          <span class="autoSave" id="noteAutoSave"></span>
+        </div>
+        <input class="docTitle" id="noteTitle" placeholder="Titill…" />
+        <img id="noteImagePreview" class="noteImage hide" alt="" />
+        <textarea class="docBody" id="noteBody" placeholder="Byrjaðu að skrifa hér…"></textarea>
+      </div>
+      <div class="noteFmtBar noteFmtBarFixed">
+        <button type="button" data-fmt="bullet">• Listi</button>
+        <button type="button" data-fmt="number">1. Listi</button>
+        <button type="button" id="noteAttachBtn">🖼 Mynd</button>
+        <button type="button" id="noteMicBtn">🎙 Rödd</button>
+      </div>
+      <input type="file" id="noteFileInput" accept="image/*" class="hide" />
+    </div>
+  </div>
+</div><!-- /app -->
+
+<div class="sheetOverlay" id="noteSheet" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-label="Ný nóta">
+    <div class="sheetHandle"></div>
+    <button type="button" class="sheetBtn" data-new="text"><span class="icon">✎</span> Textanóta</button>
+    <button type="button" class="sheetBtn" data-new="camera"><span class="icon">📷</span> Ljósmynd</button>
+    <button type="button" class="sheetBtn" data-new="gallery"><span class="icon">🖼</span> Mynd úr safni</button>
+    <button type="button" class="sheetBtn" data-new="voice"><span class="icon">🎙</span> Raddnóta</button>
+    <button type="button" class="sheetCancel" id="noteSheetCancel">Hætta við</button>
+  </div>
+</div>
+
+<div class="timerOverlay" id="timerOverlay" aria-hidden="true">
+  <div class="timerCard">
+    <div class="timerPhase" id="timerPhase">VINNA</div>
+    <div class="timerDigits" id="timerDigits">0:45</div>
+    <div class="timerSub" id="timerSub">45 sek on · 15 sek off</div>
+    <div class="timerActions">
+      <button type="button" class="ghost" id="timerPauseBtn">Pása</button>
+      <button type="button" class="primary" id="timerStopBtn">Stöðva</button>
+    </div>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Aðalvalmynd">
+  <button class="tab on" type="button" data-go="home">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mínir tímar
+  </button>
+  <button class="tab" type="button" data-go="exercises">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Finna æfingu
+  </button>
+  <button class="tab" type="button" data-go="notes">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M7 4h10a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 9h6M9 13h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Nótur
+  </button>
+  <button class="tab" type="button" data-go="profile">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 19c1.8-3 4.2-4.5 7-4.5s5.2 1.5 7 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Prófíll
+  </button>
+</nav>
+
+<div class="sheetOverlay" id="pickSheet" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-label="Velja úr æfingasafni">
+    <div class="sheetHandle"></div>
+    <h2 class="serif sheetTitle">Æfingasafnið</h2>
+    <div class="searchBox">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="pickSearch" type="search" placeholder="Leita" autocomplete="off" />
+    </div>
+    <div class="pickList" id="pickList"></div>
+    <button type="button" class="sheetCancel" id="pickCancel">Loka</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  // Bust old broken SW that could return null (Safari black-screen error).
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    Promise.all(regs.map((r) => r.update())).catch(() => {});
+  });
+  navigator.serviceWorker.register('./sw.js?v=16').catch(() => {});
+}
+const screens = document.querySelectorAll('.screen');
+const tabs = document.querySelectorAll('.tab');
+
+const STORE_KEY = 'klassinn.preview.data.v1';
+const DEFAULT_CLASSES = {
+  reformer8: {
+    title: 'Tími',
+    meta: '✨ Reformer',
+    name: 'Reformer tími 8',
+    info: '60 mín • Byrjendur',
+    warmup: 'Footwork\nSingle leg / hendur',
+    cooldown: 'Stretching\nÖndun',
+    props: ['Reformer-kassi'],
+    description: 'Klassískur reformer tími með áherslu á core.',
+    playlist: '',
+    level: 'Byrjandi',
+    duration: 60,
+    types: ['Reformer'],
+    moves: [
+      { ex: 'side', meta: '1 · Langt core flow', name: 'Core á hlið', setup: 'Shortbox við hlið. Sitja í átt að böndum.', props: 'Shortbox', notes: 'Passa öxlina.', steps: ['Halla aftur og upp', 'Row', 'Olnbogi í hné'] },
+      { ex: 'hundred', meta: '2 · Core', name: 'Hundraðið', steps: ['Lyfta höfði', 'Pulsa hendur'] }
+    ]
+  },
+  weights: {
+    title: 'Tími',
+    meta: '✨ Reformer',
+    name: 'Reformer tími með lóð',
+    info: '60 mín • Millistig',
+    warmup: 'Footwork með lóðum\nArm circles',
+    cooldown: '',
+    props: ['Lóð'],
+    description: '',
+    playlist: '',
+    level: 'Millistig',
+    duration: 60,
+    types: ['Reformer'],
+    moves: [
+      { ex: 'side', meta: '1 · Efri líkami', name: 'Core á hlið', steps: ['Halla aftur', 'Row með lóð'] }
+    ]
+  },
+  mat: {
+    title: 'Tími',
+    meta: '✨ Dýna',
+    name: 'Matwork core',
+    info: '45 mín • Byrjendur',
+    warmup: 'Öndun\nPelvic curl',
+    cooldown: 'Child pose',
+    props: [],
+    description: '',
+    playlist: '',
+    level: 'Byrjandi',
+    duration: 45,
+    types: ['Dýna'],
+    moves: [
+      { ex: 'hundred', meta: '1 · Classic', name: 'Hundraðið', steps: ['100 púlsar'] }
+    ]
+  }
+};
+
+const DEFAULT_EXERCISES = {
+  side: {
+    title: 'Breyta æfingu',
+    name: 'Core á hlið',
+    level: 'Miðstig',
+    equip: 'Reformer',
+    setup: 'Shortbox við hlið. Sitja í átt að böndum.',
+    steps: 'Halla aftur og upp\nRow\nOlnbogi í hné',
+    notes: 'Passa öxlina á bandahendi.'
+  },
+  hundred: {
+    title: 'Breyta æfingu',
+    name: 'Hundraðið',
+    level: 'Byrjandi',
+    equip: 'Dýna',
+    setup: 'Liggið á bakinu, hendur meðfram líkama.',
+    steps: 'Lyfta höfði og herðum\nPulsa hendur\nHalda core stöðugu',
+    notes: '100 púlsar.'
+  },
+  new: {
+    title: 'Ný æfing',
+    name: '',
+    level: 'Byrjandi',
+    equip: 'Reformer',
+    setup: '',
+    steps: '',
+    notes: ''
+  }
+};
+
+let CLASSES = JSON.parse(JSON.stringify(DEFAULT_CLASSES));
+let EXERCISES = JSON.parse(JSON.stringify(DEFAULT_EXERCISES));
+let currentClassKey = 'reformer8';
+let currentExerciseKey = 'side';
+
+function loadStore() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (!raw || typeof raw !== 'object') return;
+    if (raw.classes && typeof raw.classes === 'object') {
+      CLASSES = raw.classes;
+    }
+    if (raw.exercises && typeof raw.exercises === 'object') {
+      // Vistað safn er heildarsafnið (sjálfgefnu æfingarnar eru þar ef þeim var ekki eytt).
+      EXERCISES = Object.assign({}, raw.exercises, {
+        new: JSON.parse(JSON.stringify(DEFAULT_EXERCISES.new)),
+      });
+    }
+  } catch (e) {}
+}
+
+function persistStore() {
+  try {
+    const exercises = {};
+    Object.keys(EXERCISES).forEach((k) => {
+      if (k === 'new') return;
+      exercises[k] = EXERCISES[k];
+    });
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      classes: CLASSES,
+      exercises: exercises,
+      savedAt: new Date().toISOString(),
+    }));
+  } catch (e) {
+    console.warn('Klassinn: gat ekki vistað í localStorage', e);
+  }
+}
+
+loadStore();
+
+function escapeText(s) {
+  return String(s || '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+}
+
+// ---- Gormar (springs) ----
+const SPRING_COLORS = [
+  { key: 'rauður', one: 'rauður', many: 'rauðir', re: /rauð/ },
+  { key: 'grænn', one: 'grænn', many: 'grænir', re: /græn/ },
+  { key: 'blár', one: 'blár', many: 'bláir', re: /blá/ },
+  { key: 'gulur', one: 'gulur', many: 'gulir', re: /gul/ },
+];
+function springDotsHtml(text) {
+  const t = String(text || '').toLowerCase();
+  const dots = [];
+  // "2 rauðir + 1 blár" -> 2 rauðar doppur og 1 blá
+  t.split(/[+,&]|\bog\b/).forEach((part) => {
+    const col = SPRING_COLORS.find((c) => c.re.test(part));
+    if (!col) return;
+    const n = Math.min(5, Math.max(1, Number((part.match(/(\d+)/) || [])[1]) || 1));
+    for (let i = 0; i < n; i++) dots.push(`<span class="dot ${col.key}"></span>`);
+  });
+  return dots.join('');
+}
+function springsViewHtml(text) {
+  if (!String(text || '').trim()) return '';
+  return `<div class="springs"><span class="lbl">GORMAR</span><span class="dots">${springDotsHtml(text)}</span><span>${escapeText(text)}</span></div>`;
+}
+function isReformerClassForm() {
+  return !!document.querySelector('#cfTypes .chip.on[data-val="Reformer"]');
+}
+function autoGrow(el) {
+  if (!el || el.tagName !== 'TEXTAREA') return;
+  el.style.height = 'auto';
+  el.style.height = Math.max(46, el.scrollHeight + 2) + 'px';
+}
+document.addEventListener('input', (e) => {
+  if (e.target.matches && e.target.matches('textarea.grow, .layerRow textarea')) autoGrow(e.target);
+});
+
+function fillClass(key) {
+  if (!CLASSES[key]) key = Object.keys(CLASSES)[0];
+  currentClassKey = key;
+  const c = CLASSES[currentClassKey];
+  if (!c) { go('home'); return; }
+  document.getElementById('classTitle').textContent = c.title || 'Tími';
+  document.getElementById('classMeta').textContent = c.meta;
+  document.getElementById('className').textContent = c.name;
+  document.getElementById('classInfo').textContent = c.info;
+  document.getElementById('classWarmup').textContent = c.warmup || '—';
+
+  const propsWrap = document.getElementById('classPropsWrap');
+  const propsBox = document.getElementById('classProps');
+  const props = c.props || [];
+  if (props.length) {
+    propsWrap.classList.remove('hide');
+    propsBox.innerHTML = props.map((p) => `<span class="chip on" style="cursor:default">${escapeText(p)}</span>`).join('');
+  } else {
+    propsWrap.classList.add('hide');
+    propsBox.innerHTML = '';
+  }
+
+  const box = document.getElementById('classMoves');
+  const moves = c.moves || [];
+  if (!moves.length) {
+    box.innerHTML = '<p class="muted">Engar æfingar skráðar. Ýttu á ✎ Breyta til að bæta við.</p>';
+  } else {
+    box.innerHTML = moves.map((m, idx) => {
+      const steps = m.steps || (m.layers || []).map((l) => (typeof l === 'string' ? l : l.text)).filter(Boolean);
+      const setup = m.setup ? `<div class="setup"><strong>Uppsetning:</strong><p class="pre">${escapeText(m.setup)}</p></div>` : '';
+      const moveProps = m.props ? `<p class="muted">Áhöld: ${escapeText(m.props)}</p>` : '';
+      const notes = m.notes ? `<p class="muted">${escapeText(m.notes)}</p>` : '';
+      const stepsHtml = steps.length
+        ? `<ol class="steps">${steps.map((s) => `<li>${escapeText(s)}</li>`).join('')}</ol>`
+        : '';
+      return `<div class="flow">
+        <div class="flowHead">
+          <span class="num">${idx + 1}</span>
+          <h3 class="flowTitle serif">${escapeText(m.name || 'Ónefnd æfing')}</h3>
+        </div>
+        ${springsViewHtml(m.springs)}${setup}${moveProps}${stepsHtml}${notes}
+        ${m.useTimer ? `<button type="button" class="timerFab" data-start-timer="${Number(m.timerOn||45)}" data-off="${Number(m.timerOff||15)}" data-label="${escapeText(m.name || '')}">▶ Ræsa timer (${Number(m.timerOn||45)}/${Number(m.timerOff||15)})</button>` : `<button type="button" class="timerFab" data-enable-timer="${idx}" style="border-style:dashed">＋ Nota timer í æfingu</button>`}
+      </div>`;
+    }).join('');
+  }
+
+  const cdWrap = document.getElementById('classCooldownWrap');
+  const cd = document.getElementById('classCooldown');
+  if (c.cooldown) {
+    cdWrap.classList.remove('hide');
+    cd.textContent = c.cooldown;
+  } else {
+    cdWrap.classList.add('hide');
+    cd.textContent = '';
+  }
+
+  const descWrap = document.getElementById('classDescWrap');
+  const desc = document.getElementById('classDesc');
+  if (c.description || c.notes) {
+    descWrap.classList.remove('hide');
+    desc.textContent = c.description || c.notes;
+  } else {
+    descWrap.classList.add('hide');
+    desc.textContent = '';
+  }
+
+  const plWrap = document.getElementById('classPlaylistWrap');
+  const pl = document.getElementById('classPlaylist');
+  if (c.playlist) {
+    plWrap.classList.remove('hide');
+    pl.textContent = c.playlist;
+  } else {
+    plWrap.classList.add('hide');
+    pl.textContent = '';
+  }
+}
+
+function fillExercise(key) {
+  currentExerciseKey = key || 'new';
+  const ex = EXERCISES[currentExerciseKey] || EXERCISES.new || EXERCISES.side;
+  document.getElementById('exEditTitle').textContent = ex.title || (currentExerciseKey === 'new' ? 'Ný æfing' : 'Breyta æfingu');
+  document.getElementById('exName').value = ex.name || '';
+  document.getElementById('exLevel').value = ex.level || 'Byrjandi';
+  document.getElementById('exEquip').value = ex.equip || 'Reformer';
+  document.getElementById('exSetup').value = ex.setup || '';
+  document.getElementById('exSteps').value = ex.steps || '';
+  document.getElementById('exNotes').value = ex.notes || '';
+  document.getElementById('exSprings').value = ex.springs || '';
+  const msg = document.getElementById('exSavedMsg');
+  if (msg) msg.style.display = 'none';
+  document.querySelectorAll('#exTypes .chip').forEach((c) => {
+    c.classList.toggle('on', c.dataset.val === (ex.equip || 'Reformer'));
+  });
+  document.querySelectorAll('#exLevelChips .chip').forEach((c) => {
+    c.classList.toggle('on', c.dataset.val === (ex.level || 'Byrjandi'));
+  });
+  document.getElementById('exDeleteBtn')?.classList.toggle('hide', currentExerciseKey === 'new');
+  syncExSpringsVisibility();
+}
+function syncExSpringsVisibility() {
+  const eq = document.getElementById('exEquip').value;
+  const has = (document.getElementById('exSprings').value || '').trim();
+  document.getElementById('exSpringsWrap')?.classList.toggle('hide', eq !== 'Reformer' && !has);
+}
+
+let lastScreen = 'home';
+let editingClassId = null;
+let formMoves = [];
+
+function uid() {
+  return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function emptyMove() {
+  return { id: uid(), name: '', setup: '', props: '', springs: '', notes: '', useTimer: false, timerOn: 45, timerOff: 15, layers: [{ id: uid(), text: '' }] };
+}
+
+function setChipGroup(groupId, selected, multi) {
+  const vals = Array.isArray(selected) ? selected : [selected];
+  document.querySelectorAll('#' + groupId + ' .chip').forEach((c) => {
+    c.classList.toggle('on', vals.includes(c.dataset.val));
+  });
+}
+
+function renderMovesEditor() {
+  const box = document.getElementById('cfMoves');
+  if (!formMoves.length) formMoves = [emptyMove()];
+  box.innerHTML = formMoves.map((move, index) => {
+    const layers = (move.layers && move.layers.length) ? move.layers : [{ id: uid(), text: '' }];
+    move.layers = layers;
+    const layerRows = layers.map((layer, li) => `
+      <div class="layerRow" data-move="${index}" data-layer="${li}">
+        <span class="layerNum">${li + 1}</span>
+        <textarea class="field" rows="1" data-field="layer" placeholder="Skref ${li + 1}">${escapeText(layer.text || '')}</textarea>
+        <button type="button" class="iconBtn" data-act="del-layer" aria-label="Eyða skrefi">×</button>
+      </div>`).join('');
+    const showSprings = isReformerClassForm() || (move.springs || '').trim();
+    const springsBlock = showSprings
+      ? `<input class="field" data-field="springs" placeholder="Gormar (springs)" value="${escapeText(move.springs || '')}" autocomplete="off" />
+      <div style="height:8px"></div>` : '';
+    return `<div class="moveBox" data-move-index="${index}">
+      <div class="moveHead">
+        <span>≡ ÆFING ${index + 1}</span>
+        <span class="moveHeadActions">
+          <button type="button" class="textBtn" data-act="up">↑</button>
+          <button type="button" class="textBtn" data-act="down">↓</button>
+          <button type="button" class="textBtn danger" data-act="del-move">Eyða</button>
+        </span>
+      </div>
+      <input class="field" data-field="name" placeholder="Heiti æfingar / flow" value="${escapeText(move.name || '')}" />
+      <div style="height:8px"></div>
+      ${springsBlock}
+      <textarea class="area" data-field="setup" placeholder="Uppsetning (set up)...">${escapeText(move.setup || '')}</textarea>
+      <p class="label">Skref / lög</p>
+      ${layerRows}
+      <button type="button" class="textBtn" data-act="add-layer">+ Bæta við skrefi</button>
+      <div style="height:8px"></div>
+      <input class="field" data-field="props" placeholder="Áhöld (valfrjálst)" value="${escapeText(move.props || '')}" />
+      <div style="height:8px"></div>
+      <div class="timerToggle">
+        <button type="button" class="${move.useTimer ? 'on' : ''}" data-act="toggle-timer">${move.useTimer ? '✓ Nota timer í æfingu' : 'Nota timer í æfingu'}</button>
+      </div>
+      ${move.useTimer ? `<div class="timerRow">
+        <label>HIIT</label>
+        <input type="number" min="1" data-field="timerOn" value="${Number(move.timerOn || 45)}" aria-label="Sekúndur on" />
+        <span class="muted">on</span>
+        <input type="number" min="1" data-field="timerOff" value="${Number(move.timerOff || 15)}" aria-label="Sekúndur off" />
+        <span class="muted">off</span>
+        <button type="button" class="timerStart" data-act="start-timer">▶ Timer</button>
+      </div>` : ''}
+      <textarea class="area" data-field="notes" placeholder="Athugasemdir">${escapeText(move.notes || '')}</textarea>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('.layerRow textarea').forEach(autoGrow);
+}
+
+function syncMovesFromDom() {
+  const boxes = [...document.querySelectorAll('#cfMoves .moveBox')];
+  formMoves = boxes.map((box, index) => {
+    const prev = formMoves[index] || emptyMove();
+    const name = box.querySelector('[data-field="name"]')?.value || '';
+    const setup = box.querySelector('[data-field="setup"]')?.value || '';
+    const props = box.querySelector('[data-field="props"]')?.value || '';
+    const notes = box.querySelector('[data-field="notes"]')?.value || '';
+    const springsEl = box.querySelector('[data-field="springs"]');
+    const springs = springsEl ? springsEl.value : (prev.springs || '');
+    const useTimer = !!prev.useTimer;
+    const timerOn = Number(box.querySelector('[data-field="timerOn"]')?.value || prev.timerOn || 45);
+    const timerOff = Number(box.querySelector('[data-field="timerOff"]')?.value || prev.timerOff || 15);
+    const layers = [...box.querySelectorAll('.layerRow')].map((row, li) => ({
+      id: (prev.layers && prev.layers[li] && prev.layers[li].id) || uid(),
+      text: row.querySelector('[data-field="layer"]')?.value || '',
+    }));
+    return { id: prev.id || uid(), ex: prev.ex, name, setup, props, springs, notes, useTimer, timerOn, timerOff, layers };
+  });
+}
+
+function resetClassForm(existing, keepDraft) {
+  classFormDirty = false;
+  if (!keepDraft) clearClassDraft();
+  document.getElementById('cfDraftNote')?.classList.add('hide');
+  editingClassId = existing ? existing.id : null;
+  document.getElementById('classFormTitle').textContent = existing ? 'Breyta tíma' : 'Nýr tími';
+  document.getElementById('cfTitle').value = existing ? existing.name : '';
+  document.getElementById('cfDuration').value = existing ? String(existing.duration || 45) : '45';
+  document.getElementById('cfWarmup').value = existing ? (existing.warmup || '') : '';
+  document.getElementById('cfDesc').value = existing ? (existing.description || existing.notes || '') : '';
+  document.getElementById('cfPlaylist').value = existing ? (existing.playlist || '') : '';
+  document.getElementById('cfCooldown').value = existing ? (existing.cooldown || '') : '';
+  setChipGroup('cfLevel', existing ? existing.level : 'Byrjandi', false);
+  setChipGroup('cfTypes', existing && existing.types ? existing.types : ['Reformer'], true);
+  setChipGroup('cfProps', existing && existing.props ? existing.props : [], true);
+  document.getElementById('cfDelete')?.classList.toggle('hide', !existing);
+
+  if (existing && existing.moves && existing.moves.length) {
+    formMoves = existing.moves.map((m) => ({
+      id: m.id || uid(),
+      ex: m.ex,
+      name: m.name || '',
+      setup: m.setup || '',
+      props: m.props || '',
+      springs: m.springs || '',
+      notes: m.notes || '',
+      useTimer: !!m.useTimer,
+      timerOn: m.timerOn || 45,
+      timerOff: m.timerOff || 15,
+      layers: (m.layers && m.layers.length)
+        ? m.layers.map((l) => ({ id: (l && l.id) || uid(), text: typeof l === 'string' ? l : (l.text || '') }))
+        : (m.steps || ['']).map((s) => ({ id: uid(), text: s })),
+    }));
+  } else {
+    formMoves = [emptyMove()];
+  }
+  renderMovesEditor();
+}
+
+function go(id, exKey, classKey) {
+  const current = [...screens].find((s) => s.classList.contains('on'));
+  if (current && current.id === 'note-edit' && id !== 'note-edit') {
+    try { clearTimeout(noteSaveTimer); persistCurrentNote(false); } catch (e) {}
+  }
+  if (current && current.id !== id) lastScreen = current.id;
+  screens.forEach((s) => s.classList.toggle('on', s.id === id));
+  const tabId = (id === 'exercise-edit') ? 'exercises'
+    : (id === 'note-edit') ? 'notes'
+    : (['class', 'class-new', 'clients', 'client', 'client-edit', 'session'].includes(id)) ? 'home'
+    : id;
+  tabs.forEach((t) => t.classList.toggle('on', t.dataset.go === tabId));
+  if (id === 'class') fillClass(classKey || currentClassKey);
+  if (id === 'class-new') resetClassForm(null);
+  if (id === 'exercise-edit') fillExercise(exKey || 'new');
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('[data-go]').forEach((el) => {
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    const classKey = el.dataset.classId || undefined;
+    go(el.dataset.go, el.dataset.ex, classKey);
+  });
+});
+function saveExercise() {
+  const onType = document.querySelector('#exTypes .chip.on');
+  if (onType) document.getElementById('exEquip').value = onType.dataset.val || 'Reformer';
+  const onLevel = document.querySelector('#exLevelChips .chip.on');
+  if (onLevel) document.getElementById('exLevel').value = onLevel.dataset.val;
+  const current = {
+    title: 'Breyta æfingu',
+    name: (document.getElementById('exName').value || '').trim() || 'Ónefnd æfing',
+    level: document.getElementById('exLevel').value || 'Byrjandi',
+    equip: document.getElementById('exEquip').value || 'Reformer',
+    springs: document.getElementById('exSprings').value || '',
+    setup: document.getElementById('exSetup').value || '',
+    steps: document.getElementById('exSteps').value || '',
+    notes: document.getElementById('exNotes').value || '',
+    updatedAt: new Date().toISOString(),
+  };
+  let id = currentExerciseKey;
+  if (!id || id === 'new') id = 'ex' + Date.now();
+  EXERCISES[id] = current;
+  currentExerciseKey = id;
+  persistStore();
+  renderExercises();
+  toast('Æfing vistuð ✓');
+  const backTo = lastScreen === 'class' ? 'class' : 'exercises';
+  go(backTo);
+}
+document.querySelectorAll('#exLevelChips .chip').forEach((chip) => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#exLevelChips .chip').forEach((c) => c.classList.toggle('on', c === chip));
+    document.getElementById('exLevel').value = chip.dataset.val;
+  });
+});
+document.getElementById('exDeleteBtn')?.addEventListener('click', () => {
+  const id = currentExerciseKey;
+  if (!id || id === 'new' || !EXERCISES[id]) return;
+  if (!confirm(`Eyða æfingunni „${EXERCISES[id].name || 'Ónefnd æfing'}“ úr safninu?\n\nHún helst inni í tímum sem nota hana.`)) return;
+  delete EXERCISES[id];
+  persistStore();
+  toast('Æfingu eytt');
+  go('exercises');
+});
+document.getElementById('exSaveBtn').addEventListener('click', saveExercise);
+document.getElementById('exSaveBtn2').addEventListener('click', saveExercise);
+
+function commitClassForm() {
+  syncMovesFromDom();
+  const title = (document.getElementById('cfTitle').value || '').trim() || 'Ónefndur tími';
+  const level = document.querySelector('#cfLevel .chip.on')?.dataset.val || 'Byrjandi';
+  const duration = Number(document.getElementById('cfDuration').value) || 45;
+  const types = [...document.querySelectorAll('#cfTypes .chip.on')].map((c) => c.dataset.val);
+  const props = [...document.querySelectorAll('#cfProps .chip.on')].map((c) => c.dataset.val);
+  const warmup = document.getElementById('cfWarmup').value;
+  const description = document.getElementById('cfDesc').value;
+  const playlist = document.getElementById('cfPlaylist').value;
+  const cooldown = document.getElementById('cfCooldown').value;
+  const typeLabel = types.length ? types.join(' • ') : 'Tími';
+  const id = editingClassId || ('c' + Date.now());
+
+  const moves = formMoves
+    .map((m, idx) => {
+      const layers = (m.layers || []).filter((l) => (l.text || '').trim());
+      const steps = layers.map((l) => l.text.trim());
+      return {
+        id: m.id || uid(),
+        ex: m.ex || '',
+        meta: (idx + 1) + ' · ' + (m.name || 'Æfing'),
+        name: m.name || 'Ónefnd æfing',
+        setup: m.setup || '',
+        props: m.props || '',
+        springs: (m.springs || '').trim(),
+        notes: m.notes || '',
+        useTimer: !!m.useTimer,
+        timerOn: m.timerOn || 45,
+        timerOff: m.timerOff || 15,
+        layers,
+        steps,
+      };
+    })
+    .filter((m) => m.name !== 'Ónefnd æfing' || m.steps.length || m.setup || m.springs || m.notes);
+
+  CLASSES[id] = {
+    id,
+    title: 'Tími',
+    meta: '✨ ' + typeLabel,
+    name: title,
+    info: duration + ' mín • ' + level,
+    warmup: warmup || '—',
+    description,
+    notes: description,
+    playlist,
+    cooldown,
+    level,
+    duration,
+    types,
+    props,
+    moves,
+    updatedAt: new Date().toISOString(),
+  };
+
+  // Keep newest classes first in object order for list rendering.
+  const ordered = { [id]: CLASSES[id] };
+  Object.keys(CLASSES).forEach((k) => {
+    if (k !== id) ordered[k] = CLASSES[k];
+  });
+  CLASSES = ordered;
+
+  editingClassId = id;
+  currentClassKey = id;
+  persistStore();
+  clearClassDraft();
+  renderHomeClasses();
+  renderFilterMenu();
+  toast('Tími vistaður ✓');
+  return id;
+}
+function saveClassForm() {
+  const id = commitClassForm();
+  go('class', undefined, id);
+}
+// Er eitthvað skrifað í formið? (tómt nýtt form er ekki vistað)
+function classFormHasContent() {
+  syncMovesFromDom();
+  if (editingClassId) return true;
+  const txt = ['cfTitle', 'cfWarmup', 'cfDesc', 'cfPlaylist', 'cfCooldown'].some((k) => (document.getElementById(k).value || '').trim());
+  const moves = formMoves.some((m) => [m.name, m.setup, m.springs, m.notes, m.props].some((v) => (v || '').trim())
+    || (m.layers || []).some((l) => (l.text || '').trim()));
+  return txt || moves;
+}
+
+document.querySelectorAll('#cfLevel .chip, #cfTypes .chip, #cfProps .chip').forEach((chip) => {
+  chip.addEventListener('click', () => {
+    const group = chip.parentElement;
+    if (group.id === 'cfLevel') {
+      group.querySelectorAll('.chip').forEach((c) => c.classList.remove('on'));
+      chip.classList.add('on');
+    } else {
+      chip.classList.toggle('on');
+    }
+    // Reformer kveikt/slökkt → sýna/fela gorma-línu í æfingum
+    if (group.id === 'cfTypes' && chip.dataset.val === 'Reformer') {
+      syncMovesFromDom();
+      renderMovesEditor();
+    }
+  });
+});
+
+document.getElementById('cfAddMove').addEventListener('click', () => {
+  syncMovesFromDom();
+  formMoves.push(emptyMove());
+  renderMovesEditor();
+});
+
+document.getElementById('cfMoves').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-act]');
+  if (!btn) return;
+  const box = btn.closest('.moveBox');
+  if (!box) return;
+  const index = Number(box.dataset.moveIndex);
+  syncMovesFromDom();
+  const act = btn.dataset.act;
+  if (act === 'up' && index > 0) {
+    [formMoves[index - 1], formMoves[index]] = [formMoves[index], formMoves[index - 1]];
+  } else if (act === 'down' && index < formMoves.length - 1) {
+    [formMoves[index + 1], formMoves[index]] = [formMoves[index], formMoves[index + 1]];
+  } else if (act === 'del-move') {
+    formMoves.splice(index, 1);
+    if (!formMoves.length) formMoves = [emptyMove()];
+  } else if (act === 'toggle-timer') {
+    formMoves[index].useTimer = !formMoves[index].useTimer;
+    if (formMoves[index].useTimer) {
+      formMoves[index].timerOn = formMoves[index].timerOn || 45;
+      formMoves[index].timerOff = formMoves[index].timerOff || 15;
+    }
+  } else if (act === 'add-layer') {
+    formMoves[index].layers = formMoves[index].layers || [];
+    formMoves[index].layers.push({ id: uid(), text: '' });
+  } else if (act === 'del-layer') {
+    const row = btn.closest('.layerRow');
+    const li = Number(row.dataset.layer);
+    formMoves[index].layers.splice(li, 1);
+    if (!formMoves[index].layers.length) formMoves[index].layers = [{ id: uid(), text: '' }];
+  }
+  renderMovesEditor();
+});
+
+document.getElementById('classFormSave').addEventListener('click', saveClassForm);
+document.getElementById('classFormSave2').addEventListener('click', saveClassForm);
+
+document.getElementById('classEditBtn').addEventListener('click', () => {
+  const key = currentClassKey || Object.keys(CLASSES)[0];
+  const existing = CLASSES[key];
+  if (!existing) return;
+  existing.id = key;
+  go('class-new');
+  resetClassForm(existing);
+});
+
+function deleteClass(key) {
+  const c = CLASSES[key];
+  if (!c) return;
+  if (!confirm(`Eyða tímanum „${c.name || 'Ónefndur tími'}“?\n\nÞetta er ekki hægt að afturkalla.`)) return;
+  delete CLASSES[key];
+  editingClassId = null;
+  currentClassKey = Object.keys(CLASSES)[0];
+  persistStore();
+  clearClassDraft();
+  toast('Tíma eytt');
+  go('home');
+}
+
+// ===== Drög: tími sem verið er að búa til vistast jafnóðum =====
+// Áður týndust æfingar ef appinu var lokað (eða síminn lokaði því) áður en ýtt var á „Vista“.
+var CLASS_DRAFT_KEY = 'klassinn.preview.classDraft.v1';
+var classFormDirty = false;
+var classDraftTimer = null;
+function classFormState() {
+  syncMovesFromDom();
+  return {
+    editingClassId,
+    title: document.getElementById('cfTitle').value,
+    duration: document.getElementById('cfDuration').value,
+    level: document.querySelector('#cfLevel .chip.on')?.dataset.val || 'Byrjandi',
+    types: [...document.querySelectorAll('#cfTypes .chip.on')].map((c) => c.dataset.val),
+    props: [...document.querySelectorAll('#cfProps .chip.on')].map((c) => c.dataset.val),
+    description: document.getElementById('cfDesc').value,
+    playlist: document.getElementById('cfPlaylist').value,
+    warmup: document.getElementById('cfWarmup').value,
+    cooldown: document.getElementById('cfCooldown').value,
+    moves: JSON.parse(JSON.stringify(formMoves)),
+    at: new Date().toISOString(),
+  };
+}
+function classFormOpen() {
+  return document.getElementById('class-new').classList.contains('on');
+}
+function saveClassDraft() {
+  clearTimeout(classDraftTimer);
+  if (!classFormDirty || !classFormOpen()) return;
+  try { localStorage.setItem(CLASS_DRAFT_KEY, JSON.stringify(classFormState())); } catch (e) {}
+}
+function scheduleClassDraft() {
+  classFormDirty = true;
+  clearTimeout(classDraftTimer);
+  classDraftTimer = setTimeout(saveClassDraft, 300);
+}
+function clearClassDraft() {
+  classFormDirty = false;
+  clearTimeout(classDraftTimer);
+  try { localStorage.removeItem(CLASS_DRAFT_KEY); } catch (e) {}
+}
+function restoreClassDraft() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(CLASS_DRAFT_KEY) || 'null'); } catch (e) {}
+  if (!d || typeof d !== 'object') return false;
+  const existing = d.editingClassId && CLASSES[d.editingClassId] ? Object.assign({}, CLASSES[d.editingClassId], { id: d.editingClassId }) : null;
+  go('class-new');
+  resetClassForm(existing, true);
+  document.getElementById('cfTitle').value = d.title || '';
+  document.getElementById('cfDuration').value = d.duration || '45';
+  document.getElementById('cfDesc').value = d.description || '';
+  document.getElementById('cfPlaylist').value = d.playlist || '';
+  document.getElementById('cfWarmup').value = d.warmup || '';
+  document.getElementById('cfCooldown').value = d.cooldown || '';
+  setChipGroup('cfLevel', d.level || 'Byrjandi', false);
+  setChipGroup('cfTypes', d.types || [], true);
+  setChipGroup('cfProps', d.props || [], true);
+  formMoves = (Array.isArray(d.moves) && d.moves.length) ? d.moves : [emptyMove()];
+  renderMovesEditor();
+  classFormDirty = true;
+  document.getElementById('cfDraftNote')?.classList.remove('hide');
+  return true;
+}
+(function wireClassDraft() {
+  const screen = document.getElementById('class-new');
+  screen.addEventListener('input', scheduleClassDraft);
+  screen.addEventListener('click', (e) => {
+    if (e.target.closest('.chip, [data-act], #cfAddMove')) setTimeout(scheduleClassDraft, 0);
+  });
+  // Vista strax þegar appinu er lokað eða skipt yfir í annað app
+  window.addEventListener('pagehide', saveClassDraft);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveClassDraft(); });
+})();
+document.getElementById('classDeleteBtn')?.addEventListener('click', () => deleteClass(currentClassKey));
+document.getElementById('cfDelete')?.addEventListener('click', () => { if (editingClassId) deleteClass(editingClassId); });
+document.getElementById('classDuplicateBtn')?.addEventListener('click', () => {
+  const src = CLASSES[currentClassKey];
+  if (!src) return;
+  const id = 'c' + Date.now();
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = id;
+  copy.name = (src.name || 'Tími') + ' (afrit)';
+  copy.updatedAt = new Date().toISOString();
+  (copy.moves || []).forEach((m) => { m.id = uid(); });
+  CLASSES = Object.assign({ [id]: copy }, CLASSES);
+  persistStore();
+  toast('Tími afritaður ✓');
+  go('class', undefined, id);
+});
+
+// ---- Æfingasafn: velja æfingu inn í tíma eða einkatíma ----
+let pickTarget = 'class';
+function exerciseToMove(ex, key) {
+  const steps = String(ex.steps || '').split('\n').map((s) => s.trim()).filter(Boolean);
+  return {
+    id: uid(), ex: key, name: ex.name || '', setup: ex.setup || '', props: '',
+    springs: ex.springs || '', notes: ex.notes || '', useTimer: false, timerOn: 45, timerOff: 15,
+    layers: (steps.length ? steps : ['']).map((t) => ({ id: uid(), text: t })),
+  };
+}
+function renderPickList() {
+  const q = (document.getElementById('pickSearch').value || '').trim().toLowerCase();
+  const items = Object.entries(EXERCISES).filter(([k]) => k !== 'new')
+    .filter(([, ex]) => !q || [ex.name, ex.equip, ex.level, ex.setup, ex.steps].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '', 'is'));
+  const box = document.getElementById('pickList');
+  box.innerHTML = items.length ? items.map(([k, ex]) => `
+    <button type="button" class="pickItem" data-pick="${escapeText(k)}">
+      <strong>${escapeText(ex.name || 'Ónefnd æfing')}</strong>
+      <span class="muted">${escapeText([ex.equip, ex.level, ex.springs ? 'Gormar: ' + ex.springs : ''].filter(Boolean).join(' • '))}</span>
+    </button>`).join('')
+    : '<p class="muted" style="text-align:center;padding:16px 0">Engin æfing fannst. Bættu æfingum í safnið undir „Finna æfingu“.</p>';
+}
+function openPickSheet(target) {
+  pickTarget = target;
+  document.getElementById('pickSearch').value = '';
+  renderPickList();
+  document.getElementById('pickSheet').classList.add('open');
+  document.getElementById('pickSheet').setAttribute('aria-hidden', 'false');
+}
+function closePickSheet() {
+  document.getElementById('pickSheet').classList.remove('open');
+  document.getElementById('pickSheet').setAttribute('aria-hidden', 'true');
+}
+document.getElementById('pickSearch').addEventListener('input', renderPickList);
+document.getElementById('pickCancel').addEventListener('click', closePickSheet);
+document.getElementById('pickSheet').addEventListener('click', (e) => { if (e.target.id === 'pickSheet') closePickSheet(); });
+document.getElementById('pickList').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-pick]');
+  if (!btn) return;
+  const key = btn.dataset.pick;
+  const ex = EXERCISES[key];
+  if (!ex) return;
+  if (pickTarget === 'class') {
+    syncMovesFromDom();
+    // Skipta út tómri byrjunaræfingu frekar en að bæta við fyrir neðan hana
+    const blank = (m) => !m.name.trim() && !m.setup.trim() && !(m.springs || '').trim() && !m.notes.trim() && !(m.layers || []).some((l) => (l.text || '').trim());
+    if (formMoves.length === 1 && blank(formMoves[0])) formMoves = [];
+    formMoves.push(exerciseToMove(ex, key));
+    renderMovesEditor();
+    scheduleClassDraft();
+    closePickSheet();
+    const boxes = document.querySelectorAll('#cfMoves .moveBox');
+    boxes[boxes.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    const ta = document.getElementById('ssMoves');
+    const line = (ex.name || 'Æfing') + (ex.springs ? ' – ' + ex.springs : '');
+    ta.value = (ta.value.trim() ? ta.value.replace(/\s+$/, '') + '\n' : '') + line;
+    autoGrow(ta);
+    closePickSheet();
+  }
+  toast('Bætt við: ' + (ex.name || 'æfing'));
+});
+document.getElementById('cfPickMove').addEventListener('click', () => openPickSheet('class'));
+
+// ---- Litlar tilkynningar ----
+let toastTimer = null;
+function toast(text) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+const INSTALL_DISMISS_KEY = 'klassinn.installBanner.closed';
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+let installDismissed = false;
+try { installDismissed = localStorage.getItem(INSTALL_DISMISS_KEY) === '1'; } catch (e) {}
+if (!isStandalone && !installDismissed) document.getElementById('installBanner').classList.remove('hide');
+document.getElementById('installClose').addEventListener('click', () => {
+  document.getElementById('installBanner').classList.add('hide');
+  try { localStorage.setItem(INSTALL_DISMISS_KEY, '1'); } catch (e) {}
+});
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+  document.getElementById('installSteps').classList.add('hide');
+});
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
+
+const KEY = 'klassinn.preview.comments.v2';
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+function escapeHtml(s) {
+  return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+}
+function render() {
+  const items = load();
+  const list = document.getElementById('list');
+  list.innerHTML = items.length ? items.map((c) =>
+    `<div class="comment"><strong>${escapeHtml(c.who)} · ${escapeHtml(c.about)}</strong>
+     <div class="when">${escapeHtml(c.when)}</div><div>${escapeHtml(c.msg)}</div></div>`
+  ).join('') : '<p class="muted">Engar ábendingar enn.</p>';
+}
+document.getElementById('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const who = document.getElementById('who').value.trim();
+  const about = document.getElementById('about').value;
+  const msg = document.getElementById('msg').value.trim();
+  if (!who || !msg) return;
+  const items = load();
+  items.unshift({ who, about, msg, when: new Date().toLocaleString('is-IS') });
+  localStorage.setItem(KEY, JSON.stringify(items));
+  document.getElementById('msg').value = '';
+  render();
+});
+document.getElementById('export').addEventListener('click', async () => {
+  const items = load();
+  const text = items.length
+    ? items.map((c) => `[${c.when}] ${c.who} (${c.about}):\n${c.msg}`).join('\n\n')
+    : 'Engar ábendingar.';
+  try { await navigator.clipboard.writeText(text); alert('Afritað — límdu í skilaboð.'); }
+  catch { prompt('Afritaðu:', text); }
+});
+render();
+
+
+const CLASS_TYPE_OPTIONS = ['Allt','Dýna','Reformer','Yoga','Styrktaræfing','HIIT','HOT pilates','Hot HIIT','Hópatími'];
+let classFilter = 'Allt';
+
+function classMatchesFilter(c, filter) {
+  if (!filter || filter === 'Allt') return true;
+  const types = c.types || [];
+  const hay = (types.join(' ') + ' ' + (c.meta||'') + ' ' + (c.name||'')).toLowerCase();
+  return types.includes(filter) || hay.includes(filter.toLowerCase());
+}
+
+function classUpdatedAt(c, id) {
+  if (c && c.updatedAt) return Date.parse(c.updatedAt) || 0;
+  const m = String(id).match(/^c(\d{10,})$/);
+  if (m) return Number(m[1]);
+  return 0;
+}
+
+function renderHomeClasses() {
+  const list = document.getElementById('homeClassList');
+  const badge = document.getElementById('classCount');
+  if (!list || !badge) return;
+  const all = Object.entries(CLASSES).sort((a, b) => classUpdatedAt(b[1], b[0]) - classUpdatedAt(a[1], a[0]));
+  badge.textContent = String(all.length);
+  const q = (document.getElementById('classSearch')?.value || '').trim().toLowerCase();
+  const filtered = all.filter(([,c]) => classMatchesFilter(c, classFilter))
+    .filter(([,c]) => !q || classSearchText(c).includes(q));
+  if (!all.length) {
+    list.innerHTML = `<div class="emptyBox"><h3>Engir tímar enn</h3><p>Búðu til fyrsta tímann þinn.</p>
+      <button class="submit" type="button" data-go="class-new">+ Nýr tími</button></div>`;
+  } else if (!filtered.length) {
+    list.innerHTML = `<p class="muted" style="padding:12px 0">${q ? 'Enginn tími fannst fyrir „' + escapeHtml(q) + '“.' : 'Enginn tími passar við síuna.'}</p>`;
+  } else list.innerHTML = filtered.map(([id,c]) => `
+    <button class="card hasThumb" type="button" data-go="class" data-class-id="${id}">
+      <img class="thumb" src="./thumb-purple.png" alt="" />
+      <div class="cardBody">
+        <div class="meta">${escapeHtml(c.meta || '')}</div>
+        <h3 class="serif">${escapeHtml(c.name || 'Ónefndur tími')}</h3>
+        <div class="muted">${escapeHtml(c.info || '')}</div>
+      </div>
+      <span class="chev">›</span>
+    </button>`).join('');
+  list.querySelectorAll('[data-go]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      go(el.dataset.go, el.dataset.ex, el.dataset.classId);
+    });
+  });
+}
+
+function classSearchText(c) {
+  const moves = (c.moves || []).map((m) => [m.name, m.springs, m.props, (m.steps || []).join(' ')].join(' ')).join(' ');
+  return [c.name, c.meta, c.info, (c.types || []).join(' '), (c.props || []).join(' '), c.description, c.warmup, c.cooldown, moves]
+    .join(' ').toLowerCase();
+}
+let exFilter = 'Allt';
+function renderExFilter() {
+  const box = document.getElementById('exFilter');
+  if (!box) return;
+  const used = new Set(Object.entries(EXERCISES).filter(([k]) => k !== 'new').map(([, ex]) => ex.equip).filter(Boolean));
+  const opts = ['Allt', ...CLASS_TYPE_OPTIONS.filter((t) => t !== 'Allt' && used.has(t))];
+  if (!opts.includes(exFilter)) exFilter = 'Allt';
+  box.innerHTML = opts.map((t) => `<button type="button" class="chip ${t === exFilter ? 'on' : ''}" data-exf="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('');
+  box.classList.toggle('hide', opts.length < 3);
+}
+function renderExercises() {
+  const list = document.getElementById('exerciseList');
+  if (!list) return;
+  renderExFilter();
+  const q = (document.getElementById('exSearch')?.value || '').trim().toLowerCase();
+  const all = Object.entries(EXERCISES).filter(([k]) => k !== 'new');
+  const items = all
+    .filter(([, ex]) => exFilter === 'Allt' || ex.equip === exFilter)
+    .filter(([, ex]) => !q || [ex.name, ex.equip, ex.level, ex.springs, ex.setup, ex.steps, ex.notes].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '', 'is'));
+  if (!all.length) {
+    list.innerHTML = '<p class="muted" style="padding:12px 0">Engar æfingar enn. Ýttu á + til að bæta við.</p>';
+    return;
+  }
+  if (!items.length) {
+    list.innerHTML = '<p class="muted" style="padding:12px 0">Engin æfing fannst.</p>';
+    return;
+  }
+  list.innerHTML = items.map(([id, ex]) => {
+    const sub = ex.springs ? 'Gormar: ' + ex.springs : (String(ex.setup || ex.steps || '').split('\n')[0] || '');
+    return `
+    <button class="card" type="button" data-go="exercise-edit" data-ex="${escapeHtml(id)}">
+      <div class="cardBody">
+        <div class="meta">${escapeHtml((ex.equip || 'Æfing') + (ex.level ? ' • ' + ex.level : ''))}</div>
+        <h3 class="serif">${escapeHtml(ex.name || 'Ónefnd æfing')}</h3>
+        ${sub ? `<div class="muted">${ex.springs ? `<span class="dots" style="display:inline-flex;gap:3px;vertical-align:middle;margin-right:6px">${springDotsHtml(ex.springs)}</span>` : ''}${escapeHtml(sub)}</div>` : ''}
+      </div>
+      <span class="chev">›</span>
+    </button>`;
+  }).join('');
+  list.querySelectorAll('[data-go]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      go(el.dataset.go, el.dataset.ex);
+    });
+  });
+}
+
+function renderFilterMenu() {
+  const menu = document.getElementById('classFilterMenu');
+  const btn = document.getElementById('classFilterBtn');
+  if (!menu || !btn) return;
+  menu.innerHTML = CLASS_TYPE_OPTIONS.map((t) =>
+    `<button type="button" class="${t===classFilter?'on':''}" data-filter="${t}">${t}</button>`
+  ).join('');
+  btn.textContent = classFilter + ' ▾';
+  menu.querySelectorAll('button').forEach((b) => {
+    b.addEventListener('click', () => {
+      classFilter = b.dataset.filter;
+      menu.classList.remove('open');
+      renderFilterMenu();
+      renderHomeClasses();
+    });
+  });
+}
+
+document.getElementById('classFilterBtn')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('classFilterMenu')?.classList.toggle('open');
+});
+document.addEventListener('click', () => document.getElementById('classFilterMenu')?.classList.remove('open'));
+document.getElementById('findClassBtn')?.addEventListener('click', () => {
+  const wrap = document.getElementById('classSearchWrap');
+  wrap.classList.remove('hide');
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => document.getElementById('classSearch').focus(), 50);
+});
+document.getElementById('classSearch')?.addEventListener('input', renderHomeClasses);
+document.getElementById('classSearchClose')?.addEventListener('click', () => {
+  document.getElementById('classSearch').value = '';
+  document.getElementById('classSearchWrap').classList.add('hide');
+  renderHomeClasses();
+});
+document.getElementById('exSearch')?.addEventListener('input', renderExercises);
+document.getElementById('exFilter')?.addEventListener('click', (e) => {
+  const chip = e.target.closest('[data-exf]');
+  if (!chip) return;
+  exFilter = chip.dataset.exf;
+  renderExercises();
+});
+
+
+// Notes — redesigned from wife mockup + HIIT timer
+const NOTES_KEY = 'klassinn.preview.notes.v3';
+const NOTES_KEY_OLD = ['klassinn.preview.notes.v2', 'klassinn.preview.notes.v2', 'klassinn.preview.notes.v2'];
+const NOTE_CATS = ['Æfingar', 'Hugmyndir', 'Viðskiptavinir', 'Einkamál'];
+const NOTE_TAG = {
+  'Æfingar': 'tag-aefingar',
+  'Hugmyndir': 'tag-hugmyndir',
+  'Viðskiptavinir': 'tag-vidskiptavinir',
+  'Einkamál': 'tag-einkamal',
+};
+let editingNoteId = null;
+let noteSaveTimer = null;
+let noteFilter = 'Allar';
+let draftCat = 'Hugmyndir';
+let draftStar = false;
+let draftImage = '';
+let draftVoice = '';
+let noteCaptureMode = 'gallery';
+
+function loadNotes() {
+  try {
+    let items = JSON.parse(localStorage.getItem(NOTES_KEY) || 'null');
+    if (!items) {
+      let old = [];
+      for (const k of NOTES_KEY_OLD) {
+        try { old = JSON.parse(localStorage.getItem(k) || '[]'); if (old && old.length) break; } catch {}
+      }
+      items = (old || []).map((n) => ({
+        id: n.id,
+        title: n.title || 'Ónefnd nóta',
+        body: n.body || '',
+        category: n.category || 'Hugmyndir',
+        starred: !!n.starred,
+        image: n.image || '',
+        voice: n.voice || '',
+        updated: n.updated || '',
+        updatedAt: n.updatedAt || new Date().toISOString(),
+      }));
+      if (items.length) localStorage.setItem(NOTES_KEY, JSON.stringify(items));
+    }
+    return items || [];
+  } catch { return []; }
+}
+function saveNotes(items) {
+  try {
+    localStorage.setItem(NOTES_KEY, JSON.stringify(items));
+    return true;
+  } catch (e) {
+    // Quota (often large images) — retry without media once.
+    try {
+      const slim = items.map((n) => ({ ...n, image: n.image && n.image.length > 200000 ? '' : (n.image || ''), voice: n.voice && n.voice.length > 200000 ? '' : (n.voice || '') }));
+      localStorage.setItem(NOTES_KEY, JSON.stringify(slim));
+      const el = document.getElementById('noteAutoSave');
+      if (el) el.textContent = 'Vistað (mynd/rödd stytt vegna pláss)';
+      return true;
+    } catch (e2) {
+      const el = document.getElementById('noteAutoSave');
+      if (el) el.textContent = 'Gat ekki vistað — pláss á símanum';
+      console.warn('Klassinn notes save failed', e2);
+      return false;
+    }
+  }
+}
+
+function formatNoteDate(iso) {
+  try {
+    const d = new Date(iso);
+    if (!Number.isNaN(d.getTime())) return d.toLocaleDateString('is-IS', { day: 'numeric', month: 'short' });
+  } catch {}
+  return '';
+}
+
+function renderNotes() {
+  const box = document.getElementById('notesList');
+  if (!box) return;
+  const q = (document.getElementById('noteSearch')?.value || '').trim().toLowerCase();
+  let items = loadNotes().slice().sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+  items.sort((a, b) => (b.starred === a.starred ? 0 : b.starred ? 1 : -1));
+  if (noteFilter !== 'Allar') items = items.filter((n) => n.category === noteFilter);
+  if (q) items = items.filter((n) => ((n.title || '') + ' ' + (n.body || '')).toLowerCase().includes(q));
+
+  if (!items.length) {
+    box.innerHTML = `<div class="noteEmpty">
+      <h3 class="serif">Engar nótur enn</h3>
+      <p>Skrifaðu hugmyndir, flow eða áminningar — flokkað og auðvelt að finna.</p>
+      <button class="submit" type="button" id="noteEmptyCreate">+ Ný nóta</button>
+    </div>`;
+    document.getElementById('noteEmptyCreate')?.addEventListener('click', openNoteSheet);
+    return;
+  }
+
+  box.innerHTML = items.map((n) => `
+    <button class="noteCard" type="button" data-note-id="${n.id}">
+      <div class="noteCardMain">
+        <h3>${escapeHtml(n.title || 'Ónefnd nóta')}</h3>
+        <div class="noteCardMeta">
+          <span class="noteTag ${NOTE_TAG[n.category] || 'tag-hugmyndir'}">${escapeHtml(n.category || 'Hugmyndir')}</span>
+          <span class="noteDate">${escapeHtml(formatNoteDate(n.updatedAt || n.updated))}</span>
+        </div>
+        <div class="preview">${escapeHtml((n.body || '').slice(0, 140))}${(n.body || '').length > 140 ? '…' : ''}</div>
+      </div>
+      <span class="noteStar" data-star="${n.id}" aria-label="Stjarna">${n.starred ? '★' : '☆'}</span>
+    </button>`).join('');
+
+  box.querySelectorAll('.noteCard').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-star]')) return;
+      openNote(el.dataset.noteId);
+    });
+  });
+  box.querySelectorAll('[data-star]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-star');
+      const items = loadNotes();
+      const i = items.findIndex((x) => x.id === id);
+      if (i < 0) return;
+      items[i].starred = !items[i].starred;
+      saveNotes(items);
+      renderNotes();
+    });
+  });
+}
+
+function openNoteSheet() {
+  document.getElementById('noteSheet')?.classList.add('open');
+  document.getElementById('noteSheet')?.setAttribute('aria-hidden', 'false');
+}
+function closeNoteSheet() {
+  document.getElementById('noteSheet')?.classList.remove('open');
+  document.getElementById('noteSheet')?.setAttribute('aria-hidden', 'true');
+}
+
+function syncNoteMetaUi() {
+  const catBtn = document.getElementById('noteCatBtn');
+  if (catBtn) {
+    catBtn.textContent = draftCat;
+    catBtn.className = 'noteTag ' + (NOTE_TAG[draftCat] || 'tag-hugmyndir');
+  }
+  const starBtn = document.getElementById('noteStarBtn');
+  if (starBtn) starBtn.textContent = draftStar ? '★' : '☆';
+}
+function syncNoteImageUi() {
+  const img = document.getElementById('noteImagePreview');
+  if (!img) return;
+  if (draftImage) { img.src = draftImage; img.classList.remove('hide'); }
+  else { img.removeAttribute('src'); img.classList.add('hide'); }
+}
+function syncNoteVoiceUi() {
+  let bar = document.getElementById('noteVoiceBar');
+  if (!draftVoice) { bar?.remove(); return; }
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'noteVoiceBar';
+    bar.className = 'voiceBar';
+    document.getElementById('noteBody')?.before(bar);
+  }
+  bar.innerHTML = `<button type="button" id="noteVoicePlay" aria-label="Spila">▶</button><div class="voiceWave"></div><span class="muted">Raddnóta</span>`;
+  document.getElementById('noteVoicePlay')?.addEventListener('click', () => {
+    const a = new Audio(draftVoice);
+    a.play().catch(() => alert('Gat ekki spilað upptöku.'));
+  });
+}
+
+function openNote(id, opts = {}) {
+  closeNoteSheet();
+  const items = loadNotes();
+  const n = id ? items.find((x) => x.id === id) : null;
+  editingNoteId = n ? n.id : null;
+  draftCat = n?.category || opts.category || 'Hugmyndir';
+  draftStar = !!(n && n.starred);
+  draftImage = n?.image || opts.image || '';
+  draftVoice = n?.voice || '';
+  document.getElementById('noteEditTitle').textContent = n ? 'Nóta' : 'Ný nóta';
+  document.getElementById('noteTitle').value = n ? (n.title || '') : (opts.title || '');
+  document.getElementById('noteBody').value = n ? (n.body || '') : '';
+  setTimeout(growNoteBody, 0);
+  document.getElementById('noteDeleteBtn')?.classList.toggle('hide', !n);
+  document.getElementById('noteAutoSave').textContent = '';
+  syncNoteMetaUi();
+  syncNoteImageUi();
+  syncNoteVoiceUi();
+go('note-edit');
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const sc = document.querySelector('#note-edit .noteEditScroll');
+    if (sc) sc.scrollTop = 0;
+    const el = document.getElementById((n && n.title) || opts.focusBody ? 'noteBody' : 'noteTitle');
+    try { el?.focus({ preventScroll: true }); } catch { el?.focus(); }
+  });
+  if (opts.capture) {
+    noteCaptureMode = opts.capture;
+    setTimeout(() => {
+      const input = document.getElementById('noteFileInput');
+      if (!input) return;
+      if (opts.capture === 'camera') input.setAttribute('capture', 'environment');
+      else input.removeAttribute('capture');
+      input.click();
+    }, 200);
+  }
+  if (opts.voice) setTimeout(recordVoiceNote, 250);
+}
+
+function persistCurrentNote(andLeave) {
+  const title = (document.getElementById('noteTitle').value || '').trim() || 'Ónefnd nóta';
+  const body = document.getElementById('noteBody').value || '';
+  if (!editingNoteId && !body.trim() && !draftImage && !draftVoice && title === 'Ónefnd nóta') {
+    if (andLeave) go('notes');
+    return;
+  }
+  const items = loadNotes();
+  const nowIso = new Date().toISOString();
+  const nowLabel = new Date().toLocaleString('is-IS');
+  const payload = {
+    title, body, category: draftCat, starred: draftStar,
+    image: draftImage, voice: draftVoice, updated: nowLabel, updatedAt: nowIso,
+  };
+  if (editingNoteId) {
+    const i = items.findIndex((x) => x.id === editingNoteId);
+    if (i >= 0) items[i] = { ...items[i], ...payload };
+  } else {
+    editingNoteId = 'n' + Date.now();
+    items.unshift({ id: editingNoteId, ...payload });
+    document.getElementById('noteDeleteBtn')?.classList.remove('hide');
+    document.getElementById('noteEditTitle').textContent = 'Nóta';
+  }
+  saveNotes(items);
+  document.getElementById('noteAutoSave').textContent = 'Vistað · ' + nowLabel;
+  if (andLeave) { go('notes'); renderNotes(); }
+}
+function scheduleNoteSave() {
+  document.getElementById('noteAutoSave').textContent = 'Vista…';
+  clearTimeout(noteSaveTimer);
+  noteSaveTimer = setTimeout(() => persistCurrentNote(false), 450);
+}
+function insertNoteFmt(kind) {
+  const ta = document.getElementById('noteBody');
+  if (!ta) return;
+  const start = ta.selectionStart || 0;
+  const end = ta.selectionEnd || 0;
+  const prefix = kind === 'number' ? '1. ' : '– ';
+  const before = ta.value.slice(0, start);
+  const after = ta.value.slice(end);
+  const needNl = before && !before.endsWith('\n');
+  ta.value = before + (needNl ? '\n' : '') + prefix + after;
+  const pos = start + (needNl ? 1 : 0) + prefix.length;
+  ta.focus();
+  ta.setSelectionRange(pos, pos);
+  scheduleNoteSave();
+}
+async function recordVoiceNote() {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    alert('Raddupptaka er ekki studd í þessum vafrara.');
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const rec = new MediaRecorder(stream);
+    const chunks = [];
+    rec.ondataavailable = (e) => chunks.push(e.data);
+    rec.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      const reader = new FileReader();
+      reader.onload = () => { draftVoice = reader.result; syncNoteVoiceUi(); scheduleNoteSave(); };
+      reader.readAsDataURL(blob);
+    };
+    rec.start();
+    document.getElementById('noteAutoSave').textContent = 'Tekur upp… ýttu aftur á Rödd til að stöðva';
+    const mic = document.getElementById('noteMicBtn');
+    const stop = () => {
+      if (rec.state !== 'inactive') rec.stop();
+      mic?.removeEventListener('click', stop);
+    };
+    mic?.addEventListener('click', stop, { once: true });
+  } catch {
+    alert('Gat ekki opnað hljóðnema. Athugaðu leyfi í stillingum.');
+  }
+}
+
+document.getElementById('noteNewBtn')?.addEventListener('click', openNoteSheet);
+document.getElementById('noteSheetCancel')?.addEventListener('click', closeNoteSheet);
+document.getElementById('noteSheet')?.addEventListener('click', (e) => { if (e.target.id === 'noteSheet') closeNoteSheet(); });
+document.querySelectorAll('#noteSheet [data-new]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const kind = btn.getAttribute('data-new');
+    if (kind === 'text') openNote(null);
+    else if (kind === 'camera') openNote(null, { capture: 'camera', focusBody: true });
+    else if (kind === 'gallery') openNote(null, { capture: 'gallery', focusBody: true });
+    else if (kind === 'voice') openNote(null, { voice: true, focusBody: true });
+  });
+});
+
+window.addEventListener('pagehide', () => { try { clearTimeout(noteSaveTimer); persistCurrentNote(false); } catch (e) {} });
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    try { clearTimeout(noteSaveTimer); persistCurrentNote(false); } catch (e) {}
+  }
+});
+document.getElementById('noteSaveBtn')?.addEventListener('click', () => persistCurrentNote(true));
+document.getElementById('noteBackBtn')?.addEventListener('click', () => persistCurrentNote(true));
+document.getElementById('noteTitle')?.addEventListener('input', scheduleNoteSave);
+document.getElementById('noteBody')?.addEventListener('input', scheduleNoteSave);
+
+function growNoteBody() {
+  const ta = document.getElementById('noteBody');
+  if (!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(120, ta.scrollHeight) + 'px';
+}
+document.getElementById('noteBody')?.addEventListener('input', growNoteBody);
+
+document.getElementById('noteBody')?.addEventListener('input', growNoteBody);
+document.getElementById('noteSearch')?.addEventListener('input', renderNotes);
+document.getElementById('noteFilters')?.addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  noteFilter = chip.dataset.cat || 'Allar';
+  document.querySelectorAll('#noteFilters .chip').forEach((c) => c.classList.toggle('on', c === chip));
+  renderNotes();
+});
+document.getElementById('noteCatBtn')?.addEventListener('click', () => {
+  const i = NOTE_CATS.indexOf(draftCat);
+  draftCat = NOTE_CATS[(i + 1) % NOTE_CATS.length];
+  syncNoteMetaUi();
+  scheduleNoteSave();
+});
+document.getElementById('noteStarBtn')?.addEventListener('click', () => {
+  draftStar = !draftStar;
+  syncNoteMetaUi();
+  scheduleNoteSave();
+});
+document.querySelectorAll('#note-edit [data-fmt]').forEach((btn) => {
+  btn.addEventListener('click', () => insertNoteFmt(btn.getAttribute('data-fmt')));
+});
+document.getElementById('noteAttachBtn')?.addEventListener('click', () => {
+  noteCaptureMode = 'gallery';
+  const input = document.getElementById('noteFileInput');
+  input?.removeAttribute('capture');
+  input?.click();
+});
+document.getElementById('noteMicBtn')?.addEventListener('click', recordVoiceNote);
+document.getElementById('noteFileInput')?.addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { draftImage = reader.result; syncNoteImageUi(); scheduleNoteSave(); };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+document.getElementById('noteDeleteBtn')?.addEventListener('click', () => {
+  if (!editingNoteId) return;
+  if (!confirm('Eyða þessari nótu?')) return;
+  saveNotes(loadNotes().filter((x) => x.id !== editingNoteId));
+  editingNoteId = null;
+  go('notes');
+  renderNotes();
+});
+
+
+document.addEventListener('click', (e) => {
+  const enableBtn = e.target.closest('[data-enable-timer]');
+  if (!enableBtn) return;
+  const idx = Number(enableBtn.getAttribute('data-enable-timer'));
+  const key = currentClassKey;
+  const c = CLASSES[key];
+  if (!c || !c.moves || !c.moves[idx]) return;
+  c.moves[idx].useTimer = true;
+  c.moves[idx].timerOn = c.moves[idx].timerOn || 45;
+  c.moves[idx].timerOff = c.moves[idx].timerOff || 15;
+  c.updatedAt = new Date().toISOString();
+  persistStore();
+  fillClass(key);
+});
+
+// HIIT timer
+let timerState = null;
+let timerInterval = null;
+function fmtTimer(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
+function renderTimerUi() {
+  if (!timerState) return;
+  const overlay = document.getElementById('timerOverlay');
+  document.getElementById('timerPhase').textContent = timerState.phase === 'on' ? 'VINNA' : 'HVÍLD';
+  document.getElementById('timerDigits').textContent = fmtTimer(timerState.remaining);
+  document.getElementById('timerSub').textContent =
+    `${timerState.onSec} sek on · ${timerState.offSec} sek off · umferð ${timerState.round}` +
+    (timerState.label ? ' · ' + timerState.label : '');
+  overlay.classList.toggle('onPhase', timerState.phase === 'on');
+  overlay.classList.toggle('offPhase', timerState.phase === 'off');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  const pauseBtn = document.getElementById('timerPauseBtn');
+  if (pauseBtn) pauseBtn.textContent = timerState.paused ? 'Halda áfram' : 'Pása';
+}
+function tickTimer() {
+  if (!timerState || timerState.paused) return;
+  timerState.remaining -= 1;
+  if (timerState.remaining <= 0) {
+    if (timerState.phase === 'on') {
+      timerState.phase = 'off';
+      timerState.remaining = timerState.offSec;
+      try { navigator.vibrate?.(80); } catch {}
+    } else {
+      timerState.phase = 'on';
+      timerState.remaining = timerState.onSec;
+      timerState.round += 1;
+      try { navigator.vibrate?.([40, 40, 40]); } catch {}
+    }
+  }
+  renderTimerUi();
+}
+function startHiitTimer(onSec, offSec, label) {
+  clearInterval(timerInterval);
+  const on = Math.max(1, Number(onSec) || 45);
+  const off = Math.max(1, Number(offSec) || 15);
+  timerState = { onSec: on, offSec: off, phase: 'on', remaining: on, round: 1, paused: false, label: label || '' };
+  renderTimerUi();
+  timerInterval = setInterval(tickTimer, 1000);
+}
+function stopHiitTimer() {
+  clearInterval(timerInterval);
+  timerState = null;
+  const overlay = document.getElementById('timerOverlay');
+  overlay?.classList.remove('open', 'onPhase', 'offPhase');
+  overlay?.setAttribute('aria-hidden', 'true');
+}
+document.getElementById('timerPauseBtn')?.addEventListener('click', () => {
+  if (!timerState) return;
+  timerState.paused = !timerState.paused;
+  renderTimerUi();
+});
+document.getElementById('timerStopBtn')?.addEventListener('click', stopHiitTimer);
+document.addEventListener('click', (e) => {
+  const tbtn = e.target.closest('[data-start-timer]');
+  if (tbtn) {
+    startHiitTimer(tbtn.getAttribute('data-start-timer'), tbtn.getAttribute('data-off'), tbtn.getAttribute('data-label'));
+    return;
+  }
+  const act = e.target.closest('[data-act="start-timer"]');
+  if (act) {
+    const box = act.closest('.moveBox, .moveCard, [data-move-index]');
+    const onSec = box?.querySelector('[data-field="timerOn"]')?.value || 45;
+    const offSec = box?.querySelector('[data-field="timerOff"]')?.value || 15;
+    const name = box?.querySelector('[data-field="name"]')?.value || '';
+    startHiitTimer(onSec, offSec, name);
+  }
+});
+
+// Exercise type chips
+document.querySelectorAll('#exTypes .chip').forEach((chip) => {
+  chip.addEventListener('click', () => {
+    chip.parentElement.querySelectorAll('.chip').forEach((c) => c.classList.remove('on'));
+    chip.classList.add('on');
+    document.getElementById('exEquip').value = chip.dataset.val;
+    syncExSpringsVisibility();
+  });
+});
+
+// ===== Einkatímar: viðskiptavinir + tímar =====
+const CLIENTS_KEY = 'klassinn.preview.clients.v1';
+let currentClientId = null;
+let editingSessionId = null;
+let clientFormReturn = 'clients';
+function loadClients() {
+  try { const v = JSON.parse(localStorage.getItem(CLIENTS_KEY) || '[]'); return Array.isArray(v) ? v : []; } catch { return []; }
+}
+function saveClients(items) {
+  try { localStorage.setItem(CLIENTS_KEY, JSON.stringify(items)); return true; }
+  catch (e) { alert('Gat ekki vistað — pláss á símanum.'); return false; }
+}
+function initials(name) {
+  return String(name || '?').trim().split(/\s+/).slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join('') || '?';
+}
+const IS_MONTHS = ['jan.', 'feb.', 'mars', 'apríl', 'maí', 'júní', 'júlí', 'ágúst', 'sept.', 'okt.', 'nóv.', 'des.'];
+function fmtDate(d) {
+  if (!d) return '';
+  const t = new Date(d + (String(d).length === 10 ? 'T12:00:00' : ''));
+  if (Number.isNaN(t.getTime())) return String(d);
+  const y = t.getFullYear() === new Date().getFullYear() ? '' : ' ' + t.getFullYear();
+  return t.getDate() + '. ' + IS_MONTHS[t.getMonth()] + y;
+}
+function todayIso() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function lastSession(c) {
+  return (c.sessions || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+}
+function renderClients() {
+  const box = document.getElementById('clientList');
+  const q = (document.getElementById('clientSearch').value || '').trim().toLowerCase();
+  const all = loadClients();
+  document.getElementById('clientSearchWrap').classList.toggle('hide', all.length < 4);
+  const items = all.filter((c) => !q || [c.name, c.goals, c.health, c.notes].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => (lastSession(b)?.date || b.createdAt || '').localeCompare(lastSession(a)?.date || a.createdAt || ''));
+  if (!all.length) {
+    box.innerHTML = `<div class="emptyBox"><h3>Engir viðskiptavinir enn</h3>
+      <p>Skráðu einkaviðskiptavini, markmið þeirra og hvern einkatíma.</p>
+      <button class="submit" type="button" data-client-new>+ Nýr viðskiptavinur</button></div>`;
+    return;
+  }
+  if (!items.length) { box.innerHTML = '<p class="muted" style="padding:12px 0">Enginn fannst.</p>'; return; }
+  box.innerHTML = items.map((c) => {
+    const last = lastSession(c);
+    const n = (c.sessions || []).length;
+    const sub = [n + (n === 1 ? ' einkatími' : ' einkatímar'), last ? 'síðast ' + fmtDate(last.date) : '', c.health ? c.health.split('\n')[0] : '']
+      .filter(Boolean).join(' • ');
+    return `<button class="card" type="button" data-client="${escapeHtml(c.id)}">
+      <span class="clientAvatar">${escapeHtml(initials(c.name))}</span>
+      <div class="cardBody">
+        <h3 class="serif">${escapeHtml(c.name || 'Ónefndur')}</h3>
+        <div class="muted">${escapeHtml(sub)}</div>
+      </div>
+      <span class="chev">›</span>
+    </button>`;
+  }).join('');
+}
+function openClient(id) {
+  currentClientId = id;
+  go('client');
+}
+function renderClient() {
+  const c = loadClients().find((x) => x.id === currentClientId);
+  if (!c) { go('clients'); return; }
+  document.getElementById('clientTitle').textContent = c.name || 'Viðskiptavinur';
+  const rows = [
+    ['SÍMI', c.phone ? `<a href="tel:${escapeHtml(c.phone.replace(/\s/g, ''))}" style="color:var(--purple)">${escapeHtml(c.phone)}</a>` : ''],
+    ['NETFANG', c.email ? `<a href="mailto:${escapeHtml(c.email)}" style="color:var(--purple)">${escapeHtml(c.email)}</a>` : ''],
+    ['🎯 MARKMIÐ', escapeHtml(c.goals || '')],
+    ['🩹 MEIÐSLI / HEILSA', escapeHtml(c.health || '')],
+    ['ATHUGASEMDIR', escapeHtml(c.notes || '')],
+  ].filter(([, v]) => v);
+  document.getElementById('clientInfo').innerHTML = rows.length
+    ? `<div class="infoCard">${rows.map(([k, v]) => `<div class="hint">${k}</div><p>${v}</p>`).join('')}</div>`
+    : `<p class="muted">Engar upplýsingar skráðar. Ýttu á ✎ Breyta til að bæta við markmiðum og heilsu.</p>`;
+  const sessions = (c.sessions || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  document.getElementById('sessionCount').textContent = String(sessions.length);
+  document.getElementById('sessionList').innerHTML = sessions.length ? sessions.map((s) => {
+    const moves = String(s.moves || '').split('\n').map((x) => x.trim()).filter(Boolean);
+    return `<button class="card sessionCard" type="button" data-session="${escapeHtml(s.id)}" style="display:block">
+      <div class="meta">${escapeHtml(fmtDate(s.date))}${s.place ? ' • ' + escapeHtml(s.place) : ''}</div>
+      <h3 class="serif">${escapeHtml(s.focus || 'Einkatími')}</h3>
+      ${moves.length ? `<div class="muted">${escapeHtml(moves.slice(0, 3).join(' · '))}${moves.length > 3 ? ' · +' + (moves.length - 3) : ''}</div>` : ''}
+      ${s.notes ? `<div class="muted" style="margin-top:4px;font-style:italic">${escapeHtml(s.notes.split('\n')[0])}</div>` : ''}
+    </button>`;
+  }).join('') : `<div class="emptyBox"><h3>Enginn einkatími enn</h3><p>Skráðu fyrsta einkatímann.</p>
+      <button class="submit" type="button" data-session-new>+ Nýr einkatími</button></div>`;
+}
+function openClientForm(id) {
+  const c = id ? loadClients().find((x) => x.id === id) : null;
+  clientFormReturn = c ? 'client' : 'clients';
+  currentClientId = c ? c.id : null;
+  go('client-edit');
+  document.getElementById('clientFormTitle').textContent = c ? 'Breyta' : 'Nýr viðskiptavinur';
+  document.getElementById('clName').value = c?.name || '';
+  document.getElementById('clPhone').value = c?.phone || '';
+  document.getElementById('clEmail').value = c?.email || '';
+  document.getElementById('clGoals').value = c?.goals || '';
+  document.getElementById('clHealth').value = c?.health || '';
+  document.getElementById('clNotes').value = c?.notes || '';
+  document.getElementById('clientDeleteBtn').classList.toggle('hide', !c);
+  if (!c) setTimeout(() => document.getElementById('clName').focus(), 50);
+}
+function saveClientForm() {
+  const name = document.getElementById('clName').value.trim();
+  if (!name) { alert('Skrifaðu nafn.'); document.getElementById('clName').focus(); return; }
+  const items = loadClients();
+  const data = {
+    name,
+    phone: document.getElementById('clPhone').value.trim(),
+    email: document.getElementById('clEmail').value.trim(),
+    goals: document.getElementById('clGoals').value,
+    health: document.getElementById('clHealth').value,
+    notes: document.getElementById('clNotes').value,
+    updatedAt: new Date().toISOString(),
+  };
+  let id = currentClientId;
+  const i = id ? items.findIndex((x) => x.id === id) : -1;
+  if (i >= 0) items[i] = { ...items[i], ...data };
+  else { id = 'cl' + Date.now(); items.unshift({ id, createdAt: data.updatedAt, sessions: [], ...data }); }
+  if (!saveClients(items)) return;
+  toast('Vistað ✓');
+  openClient(id);
+}
+function openSessionForm(id) {
+  const c = loadClients().find((x) => x.id === currentClientId);
+  if (!c) return;
+  const s = id ? (c.sessions || []).find((x) => x.id === id) : null;
+  editingSessionId = s ? s.id : null;
+  go('session');
+  document.getElementById('sessionFormTitle').textContent = s ? 'Einkatími' : 'Nýr einkatími';
+  document.getElementById('sessionClientName').textContent = c.name || '';
+  const prev = lastSession(c);
+  document.getElementById('ssDate').value = s?.date || todayIso();
+  document.getElementById('ssPlace').value = s ? (s.place || '') : (prev?.place || '');
+  document.getElementById('ssFocus').value = s?.focus || '';
+  document.getElementById('ssMoves').value = s?.moves || '';
+  document.getElementById('ssNotes').value = s?.notes || '';
+  document.getElementById('sessionDeleteBtn').classList.toggle('hide', !s);
+  ['ssMoves', 'ssNotes'].forEach((k) => autoGrow(document.getElementById(k)));
+}
+function saveSessionForm() {
+  const items = loadClients();
+  const c = items.find((x) => x.id === currentClientId);
+  if (!c) return;
+  c.sessions = c.sessions || [];
+  const data = {
+    date: document.getElementById('ssDate').value || todayIso(),
+    place: document.getElementById('ssPlace').value.trim(),
+    focus: document.getElementById('ssFocus').value.trim(),
+    moves: document.getElementById('ssMoves').value,
+    notes: document.getElementById('ssNotes').value,
+    updatedAt: new Date().toISOString(),
+  };
+  const i = editingSessionId ? c.sessions.findIndex((x) => x.id === editingSessionId) : -1;
+  if (i >= 0) c.sessions[i] = { ...c.sessions[i], ...data };
+  else c.sessions.push({ id: 's' + Date.now(), ...data });
+  c.updatedAt = data.updatedAt;
+  if (!saveClients(items)) return;
+  toast('Einkatími vistaður ✓');
+  go('client');
+}
+document.getElementById('clientSearch').addEventListener('input', renderClients);
+document.getElementById('clientNewBtn').addEventListener('click', () => openClientForm(null));
+document.getElementById('clientList').addEventListener('click', (e) => {
+  if (e.target.closest('[data-client-new]')) { openClientForm(null); return; }
+  const card = e.target.closest('[data-client]');
+  if (card) openClient(card.dataset.client);
+});
+document.getElementById('clientEditBtn').addEventListener('click', () => openClientForm(currentClientId));
+document.getElementById('clientEditBack').addEventListener('click', () => go(clientFormReturn));
+document.getElementById('clientSaveBtn').addEventListener('click', saveClientForm);
+document.getElementById('clientSaveBtn2').addEventListener('click', saveClientForm);
+document.getElementById('clientDeleteBtn').addEventListener('click', () => {
+  const items = loadClients();
+  const c = items.find((x) => x.id === currentClientId);
+  if (!c) return;
+  const n = (c.sessions || []).length;
+  if (!confirm(`Eyða „${c.name}“${n ? ' og ' + n + (n === 1 ? ' einkatíma' : ' einkatímum') : ''}?\n\nÞetta er ekki hægt að afturkalla.`)) return;
+  saveClients(items.filter((x) => x.id !== c.id));
+  currentClientId = null;
+  toast('Eytt');
+  go('clients');
+});
+document.getElementById('sessionNewBtn').addEventListener('click', () => openSessionForm(null));
+document.getElementById('sessionList').addEventListener('click', (e) => {
+  if (e.target.closest('[data-session-new]')) { openSessionForm(null); return; }
+  const card = e.target.closest('[data-session]');
+  if (card) openSessionForm(card.dataset.session);
+});
+document.getElementById('sessionBack').addEventListener('click', () => go('client'));
+document.getElementById('sessionSaveBtn').addEventListener('click', saveSessionForm);
+document.getElementById('sessionSaveBtn2').addEventListener('click', saveSessionForm);
+document.getElementById('ssPickMove').addEventListener('click', () => openPickSheet('session'));
+document.getElementById('sessionDeleteBtn').addEventListener('click', () => {
+  const items = loadClients();
+  const c = items.find((x) => x.id === currentClientId);
+  if (!c || !editingSessionId) return;
+  if (!confirm('Eyða þessum einkatíma?')) return;
+  c.sessions = (c.sessions || []).filter((s) => s.id !== editingSessionId);
+  saveClients(items);
+  editingSessionId = null;
+  toast('Einkatíma eytt');
+  go('client');
+});
+['ssMoves', 'ssNotes', 'clGoals', 'clHealth', 'clNotes'].forEach((k) => document.getElementById(k)?.classList.add('grow'));
+
+// ===== Prófíll =====
+const PROFILE_KEY = 'klassinn.preview.profile.v1';
+const PROFILE_DEFAULT = { name: '', email: '', studio: '' };
+function loadProfile() {
+  try { return Object.assign({}, PROFILE_DEFAULT, JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}')); } catch { return { ...PROFILE_DEFAULT }; }
+}
+function renderProfile() {
+  const p = loadProfile();
+  document.getElementById('pfName').value = p.name || '';
+  document.getElementById('pfEmail').value = p.email || '';
+  document.getElementById('pfStudio').value = p.studio || '';
+  document.getElementById('profileAvatar').innerHTML = `<span class="serif" style="font-size:2.6rem;font-weight:700">${escapeHtml(initials(p.name))}</span>`;
+  document.getElementById('pfWhere').innerHTML = isStandalone
+    ? '📱 Þú ert í Klassa-appinu á heimaskjánum. Opnaðu Klassann alltaf þaðan, ekki úr Safari, því þar sjást önnur gögn.'
+    : '🧭 Þú ert í vafranum (Safari). Á iPhone geymir appið á heimaskjánum <strong style="display:inline">sín eigin gögn</strong>, aðskilin frá Safari. Notaðu alltaf sama staðinn, helst heimaskjáinn.';
+  const nClasses = Object.keys(CLASSES).length;
+  const nEx = Object.keys(EXERCISES).filter((k) => k !== 'new').length;
+  const clients = loadClients();
+  const nSessions = clients.reduce((s, c) => s + (c.sessions || []).length, 0);
+  const nNotes = loadNotes().length;
+  document.getElementById('pfStats').innerHTML = [
+    ['Tímar', nClasses], ['Æfingar í safni', nEx], ['Viðskiptavinir', clients.length], ['Einkatímar', nSessions], ['Nótur', nNotes],
+  ].map(([k, v]) => `<div style="display:flex;justify-content:space-between;padding:4px 0"><span>${k}</span><strong>${v}</strong></div>`).join('');
+}
+let profileSaveTimer = null;
+['pfName', 'pfEmail', 'pfStudio'].forEach((id) => {
+  document.getElementById(id).addEventListener('input', () => {
+    clearTimeout(profileSaveTimer);
+    profileSaveTimer = setTimeout(() => {
+      const p = { name: document.getElementById('pfName').value.trim(), email: document.getElementById('pfEmail').value.trim(), studio: document.getElementById('pfStudio').value.trim() };
+      try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
+      document.getElementById('profileAvatar').innerHTML = `<span class="serif" style="font-size:2.6rem;font-weight:700">${escapeHtml(initials(p.name))}</span>`;
+      document.getElementById('pfSaved').textContent = 'Vistað ✓';
+    }, 400);
+  });
+});
+
+// ===== Afrit (öryggisafrit í skrá) =====
+function collectBackup() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('klassinn.preview.')) data[k] = localStorage.getItem(k);
+  }
+  return { app: 'klassinn', version: 16, savedAt: new Date().toISOString(), data };
+}
+document.getElementById('backupBtn').addEventListener('click', async () => {
+  const json = JSON.stringify(collectBackup());
+  const name = 'Klassinn-afrit-' + todayIso() + '.json';
+  const file = new File([json], name, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Klassinn afrit' });
+      toast('Afrit tilbúið ✓');
+      return;
+    }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+  }
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  toast('Afrit vistað ✓');
+});
+document.getElementById('restoreBtn').addEventListener('click', () => document.getElementById('restoreInput').click());
+document.getElementById('restoreInput').addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      let b = JSON.parse(reader.result);
+      // Hrátt localStorage-afrit (JSON.stringify(localStorage)) úr gamla appinu
+      if (b && !b.app && Object.keys(b).some((k) => k.startsWith('klassinn.preview.'))) {
+        b = { app: 'klassinn', savedAt: null, data: b };
+      }
+      if (!b || b.app !== 'klassinn' || !b.data) throw new Error('ekki Klassinn-afrit');
+      const when = b.savedAt ? new Date(b.savedAt).toLocaleString('is-IS') : 'óþekkt';
+      if (!confirm(`Setja inn afrit frá ${when}?\n\nÞað kemur í stað núverandi gagna í þessum síma.`)) return;
+      const old = [];
+      for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('klassinn.preview.')) old.push(k); }
+      old.forEach((k) => localStorage.removeItem(k));
+      Object.entries(b.data).forEach(([k, v]) => { if (k.startsWith('klassinn.preview.')) localStorage.setItem(k, v); });
+      alert('Afrit sett inn. Appið endurhleðst.');
+      location.reload();
+    } catch (err) {
+      alert('Þetta er ekki gilt Klassinn-afrit.');
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Hook go() for notes + refresh home
+const _goOrig = go;
+go = function(id, exKey, classKey) {
+  if (id !== 'class-new' && classFormOpen() && classFormDirty) {
+    if (classFormHasContent()) commitClassForm();
+    else clearClassDraft();
+  }
+  _goOrig(id, exKey, classKey);
+  document.body.classList.toggle('noteMode', id === 'note-edit');
+  if (id === 'home') { try { renderFilterMenu(); renderHomeClasses(); } catch (e) {} }
+  if (id === 'exercises') { try { renderExercises(); } catch (e) {} }
+  if (id === 'clients') renderClients();
+  if (id === 'client') renderClient();
+  if (id === 'profile') { renderProfile(); render(); }
+  if (id === 'notes') renderNotes();
+  if (id === 'exercise-edit') {
+    const eq = document.getElementById('exEquip')?.value || 'Reformer';
+    document.querySelectorAll('#exTypes .chip').forEach((c) => c.classList.toggle('on', c.dataset.val === eq));
+  }
+};
+
+
+
+renderFilterMenu();
+renderHomeClasses();
+renderExercises();
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
+if (restoreClassDraft()) toast('Óvistaði tíminn þinn er kominn aftur');
+
+</script>
+</body>
+</html>

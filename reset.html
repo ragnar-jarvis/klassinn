@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="is">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KLASSINN — endurræsa</title>
+<body style="font-family:system-ui;padding:24px;background:#FAF7F2;color:#2F2438;max-width:420px;margin:0 auto">
+<h1>Endurræsi Klassinn…</h1>
+<p id="msg">Hreinsa gamla skyndiminninu…</p>
+<script>
+(async () => {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+    document.getElementById('msg').textContent = 'Tilbúið — opna Klassinn…';
+  } catch (e) {
+    document.getElementById('msg').textContent = 'Reyni að opna samt…';
+  }
+  setTimeout(() => { location.replace('./?fresh=' + Date.now()); }, 600);
+})();
+</script>
+</body>
+</html>
