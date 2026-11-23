@@ -256,6 +256,8 @@ textarea{min-height:100px;resize:vertical}
 .textBtn{border:none;background:transparent;color:var(--purple);font:inherit;font-weight:700;
   padding:8px 10px;min-height:44px;cursor:pointer;touch-action:manipulation}
 .textBtn.danger{color:#B56B7A}
+.ideaBtn{font-size:1.25rem;padding:6px 8px}
+.delMove{display:block;margin:6px 0 -6px auto;font-size:.85rem;min-height:40px}
 .layerRow{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 .layerRow .field{flex:1;margin:0}
 .blockLabel{font-size:.85rem;letter-spacing:.06em;color:var(--purple);margin:18px 0 8px}
@@ -721,7 +723,7 @@ details.feedback .comment{font-size:.9rem}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 18</p>
+    <p class="version">KLASSINN · útgáfa 19</p>
   </div>
 
     
@@ -1381,7 +1383,7 @@ function renderMovesEditor() {
         <span class="moveHeadActions">
           <button type="button" class="textBtn" data-act="up">↑</button>
           <button type="button" class="textBtn" data-act="down">↓</button>
-          <button type="button" class="textBtn danger" data-act="del-move">Eyða</button>
+          <button type="button" class="textBtn ideaBtn" data-act="pick-move" aria-label="Velja úr æfingasafni" title="Velja úr æfingasafni">💡</button>
         </span>
       </div>
       <input class="field" data-field="name" placeholder="Heiti æfingar / flow" value="${escapeText(move.name || '')}" />
@@ -1406,6 +1408,7 @@ function renderMovesEditor() {
         <button type="button" class="timerStart" data-act="start-timer">▶ Timer</button>
       </div>` : ''}
       <textarea class="area" data-field="notes" placeholder="Athugasemdir">${escapeText(move.notes || '')}</textarea>
+      <button type="button" class="textBtn danger delMove" data-act="del-move">Eyða æfingu</button>
     </div>`;
   }).join('');
   box.querySelectorAll('.layerRow textarea').forEach(autoGrow);
@@ -1689,6 +1692,9 @@ document.getElementById('cfMoves').addEventListener('click', (e) => {
   const index = Number(box.dataset.moveIndex);
   syncMovesFromDom();
   const act = btn.dataset.act;
+  if (act === 'pick-move') { openPickSheet('class', index); return; }
+  if (act === 'del-move' && !moveIsBlank(formMoves[index])
+      && !confirm(`Eyða „${formMoves[index].name || 'æfingu ' + (index + 1)}“ úr tímanum?`)) return;
   if (act === 'up' && index > 0) {
     [formMoves[index - 1], formMoves[index]] = [formMoves[index], formMoves[index - 1]];
   } else if (act === 'down' && index < formMoves.length - 1) {
@@ -1830,6 +1836,11 @@ document.getElementById('classDuplicateBtn')?.addEventListener('click', () => {
 
 // ---- Æfingasafn: velja æfingu inn í tíma eða einkatíma ----
 let pickTarget = 'class';
+let pickMoveIndex = null; // æfing sem ljósaperan var valin í, annars null = bæta aftast
+function moveIsBlank(m) {
+  return !m || (!(m.name || '').trim() && !(m.setup || '').trim() && !(m.springs || '').trim() && !(m.notes || '').trim()
+    && !(m.layers || []).some((l) => (l.text || '').trim()));
+}
 function exerciseToMove(ex, key) {
   const steps = String(ex.steps || '').split('\n').map((s) => s.trim()).filter(Boolean);
   return {
@@ -1873,11 +1884,12 @@ function showPickDetail(key) {
     ${steps.length ? `<ol class="steps">${steps.map((s) => `<li>${escapeText(s)}</li>`).join('')}</ol>` : ''}
     ${ex.notes ? `<p class="muted pre">${escapeText(ex.notes)}</p>` : ''}
     ${empty ? '<p class="muted">Engin lýsing skráð á þessa æfingu.</p>' : ''}
-    <button type="button" class="submit" data-pick-add="${escapeText(key)}">+ Bæta við ${pickTarget === 'class' ? 'tímann' : 'einkatímann'}</button>`;
+    <button type="button" class="submit" data-pick-add="${escapeText(key)}">${pickMoveIndex !== null ? 'Nota í æfingu ' + (pickMoveIndex + 1) : '+ Bæta við ' + (pickTarget === 'class' ? 'tímann' : 'einkatímann')}</button>`;
   pickShowDetail(true);
 }
-function openPickSheet(target) {
+function openPickSheet(target, moveIndex) {
   pickTarget = target;
+  pickMoveIndex = (target === 'class' && Number.isInteger(moveIndex)) ? moveIndex : null;
   document.getElementById('pickSearch').value = '';
   pickShowDetail(false);
   renderPickList();
@@ -1905,15 +1917,24 @@ function addPickedExercise(key) {
   if (!ex) return;
   if (pickTarget === 'class') {
     syncMovesFromDom();
-    // Skipta út tómri byrjunaræfingu frekar en að bæta við fyrir neðan hana
-    const blank = (m) => !m.name.trim() && !m.setup.trim() && !(m.springs || '').trim() && !m.notes.trim() && !(m.layers || []).some((l) => (l.text || '').trim());
-    if (formMoves.length === 1 && blank(formMoves[0])) formMoves = [];
-    formMoves.push(exerciseToMove(ex, key));
+    let target;
+    if (pickMoveIndex !== null && formMoves[pickMoveIndex]) {
+      // Ljósaperan: setja æfinguna úr safninu í þessa æfingu
+      const cur = formMoves[pickMoveIndex];
+      if (!moveIsBlank(cur) && !confirm(`Skipta „${cur.name || 'æfingu ' + (pickMoveIndex + 1)}“ út fyrir „${ex.name || 'æfingu'}“?`)) return;
+      const keepTimer = { useTimer: cur.useTimer, timerOn: cur.timerOn, timerOff: cur.timerOff };
+      formMoves[pickMoveIndex] = Object.assign(exerciseToMove(ex, key), keepTimer, { id: cur.id || uid() });
+      target = pickMoveIndex;
+    } else {
+      // Skipta út tómri byrjunaræfingu frekar en að bæta við fyrir neðan hana
+      if (formMoves.length === 1 && moveIsBlank(formMoves[0])) formMoves = [];
+      formMoves.push(exerciseToMove(ex, key));
+      target = formMoves.length - 1;
+    }
     renderMovesEditor();
     scheduleClassDraft();
     closePickSheet();
-    const boxes = document.querySelectorAll('#cfMoves .moveBox');
-    boxes[boxes.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('#cfMoves .moveBox')[target]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     const ta = document.getElementById('ssMoves');
     const line = (ex.name || 'Æfing') + (ex.springs ? ' – ' + ex.springs : '');
