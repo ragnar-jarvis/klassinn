@@ -244,7 +244,7 @@ textarea{min-height:100px;resize:vertical}
 .filterMenu button{display:block;width:100%;text-align:left;border:none;background:transparent;
   padding:12px 14px;border-radius:10px;font:inherit;font-weight:600;color:var(--text);cursor:pointer}
 .filterMenu button.on,.filterMenu button:active{background:var(--lavender);color:var(--purple)}
-.tabbar{grid-template-columns:repeat(4,1fr)}
+.tabbar{grid-template-columns:repeat(5,1fr)}
 .teachBanner{background:var(--lavender);border-radius:14px;padding:10px 12px;margin:0 0 14px;font-size:.88rem;color:var(--purple-deep)}
 .commentsIntro{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:.9rem}
 .commentsIntro strong{display:block;color:var(--purple);margin-bottom:4px}
@@ -665,6 +665,36 @@ body.loginMode{padding-bottom:0}
   .app{padding:36px 64px 56px}
 }
 
+
+/* ===== Vinir og hópar ===== */
+.tabLabel{position:relative;display:inline-flex;align-items:center;gap:4px}
+@media (max-width: 899px){ .tab{font-size:.66rem;padding:6px 1px;white-space:nowrap;letter-spacing:-.01em} }
+.tabBadge{min-width:17px;height:17px;padding:0 5px;border-radius:999px;background:#C2546A;color:#fff;
+  font-size:.66rem;font-weight:700;display:inline-grid;place-items:center;line-height:1}
+.friendCard{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.friendCard .cardBody{flex:1;min-width:0}
+.friendCard h3{margin:0;font-size:1.15rem}
+.friendCard .muted{font-size:.82rem}
+.miniBtn{border:none;border-radius:999px;padding:8px 12px;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;
+  background:var(--lavender);color:var(--purple);white-space:nowrap}
+.miniBtn.primary{background:var(--purple);color:#fff}
+.miniBtn.danger{background:#F6E3E6;color:#8B3A4A}
+.inlineForm{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:0 0 12px}
+.inlineForm .label{margin-top:0}
+.inlineForm .btnRow{margin-top:10px}
+.checkRow{display:flex;align-items:center;gap:10px;padding:8px 2px;font-weight:600}
+.checkRow input{width:20px;height:20px;margin:0;accent-color:var(--purple)}
+.memberChips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.memberChips .chip{cursor:default;padding:7px 11px;font-size:.82rem}
+.postCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.postCard .meta{margin-bottom:4px}
+.postCard h3{margin:0 0 8px;font-size:1.2rem}
+.sendSection{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--purple);margin:10px 2px 6px}
+@media (min-width: 900px){
+  .tabLabel{gap:8px}
+  #friends.on,#group.on{max-width:780px}
+}
+
 </style>
 </head>
 <body>
@@ -784,7 +814,7 @@ body.loginMode{padding-bottom:0}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 20</p>
+    <p class="version">KLASSINN · útgáfa 21</p>
   </div>
 
     
@@ -940,6 +970,7 @@ Olnbogi í hné</textarea>
     <label class="label">ATHUGASEMDIR</label>
     <textarea class="area" id="exNotes">Passa öxlina á bandahendi.</textarea>
     <button class="submit" type="button" id="exSaveBtn2" style="margin-top:14px">Vista æfingu</button>
+    <button class="btnGhost hide" type="button" id="exShareBtn">↗ Deila æfingu</button>
     <p class="muted" id="exSavedMsg" style="display:none;text-align:center;color:var(--purple)">✓ Vistað</p>
     <button class="btnGhost danger hide" type="button" id="exDeleteBtn">🗑 Eyða æfingu</button>
   </div>
@@ -1088,6 +1119,24 @@ Olnbogi í hné</textarea>
     </div>
   </div>
 
+  <div class="screen" id="friends">
+    <div class="head">
+      <div style="width:40px"></div>
+      <h1 class="serif">Vinir</h1>
+      <button class="iconBtn" type="button" id="friendsRefresh" aria-label="Uppfæra">↻</button>
+    </div>
+    <div id="friendsBody"></div>
+  </div>
+
+  <div class="screen" id="group">
+    <div class="head">
+      <button class="iconBtn back" type="button" data-go="friends" aria-label="Til baka">‹</button>
+      <h1 class="serif" id="groupTitle">Hópur</h1>
+      <div style="width:40px"></div>
+    </div>
+    <div id="groupBody"></div>
+  </div>
+
   <div class="screen" id="shared">
     <div class="head">
       <button class="iconBtn back" type="button" id="sharedClose" aria-label="Loka">‹</button>
@@ -1134,6 +1183,10 @@ Olnbogi í hné</textarea>
     <svg viewBox="0 0 24 24" fill="none"><path d="M7 4h10a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2V6a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 9h6M9 13h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     Nótur
   </button>
+  <button class="tab" type="button" data-go="friends">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8.5" r="3" stroke="currentColor" stroke-width="1.6"/><circle cx="16.5" cy="9.5" r="2.4" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 19c1.2-2.8 3.1-4.2 5.5-4.2s4.3 1.4 5.5 4.2M14.8 14.9c2.4-.3 4.3.9 5.4 3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <span class="tabLabel">Vinir<span class="tabBadge hide" id="friendsBadge">0</span></span>
+  </button>
   <button class="tab" type="button" data-go="profile">
     <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 19c1.8-3 4.2-4.5 7-4.5s5.2 1.5 7 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     Prófíll
@@ -1154,6 +1207,24 @@ Olnbogi í hné</textarea>
   </div>
 </div>
 
+<div class="sheetOverlay" id="sendSheet" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-label="Deila">
+    <div class="sheetHandle"></div>
+    <h2 class="serif sheetTitle" id="sendTitle">Deila</h2>
+    <div class="pickList" id="sendList"></div>
+    <button type="button" class="sheetCancel" id="sendCancel">Loka</button>
+  </div>
+</div>
+
+<div class="sheetOverlay" id="mineSheet" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-label="Senda í hópinn">
+    <div class="sheetHandle"></div>
+    <h2 class="serif sheetTitle">Senda í hópinn</h2>
+    <div class="pickList" id="mineList"></div>
+    <button type="button" class="sheetCancel" id="mineCancel">Loka</button>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1168,95 +1239,212 @@ const screens = document.querySelectorAll('.screen');
 const tabs = document.querySelectorAll('.tab');
 
 const STORE_KEY = 'klassinn.preview.data.v1';
+// Upphafstími fyrir nýja notendur: tími sem Díana bjó til (nóv. 2026), svo allir sjái hvernig þetta virkar
 const DEFAULT_CLASSES = {
-  reformer8: {
-    title: 'Tími',
-    meta: '✨ Reformer',
-    name: 'Reformer tími 8',
-    info: '60 mín • Byrjendur',
-    warmup: 'Footwork\nSingle leg / hendur',
-    cooldown: 'Stretching\nÖndun',
-    props: ['Reformer-kassi'],
-    description: 'Klassískur reformer tími með áherslu á core.',
-    playlist: '',
-    level: 'Byrjandi',
-    duration: 60,
-    types: ['Reformer'],
-    moves: [
-      { ex: 'side', meta: '1 · Langt core flow', name: 'Core á hlið', setup: 'Shortbox við hlið. Sitja í átt að böndum.', props: 'Shortbox', notes: 'Passa öxlina.', steps: ['Halla aftur og upp', 'Row', 'Olnbogi í hné'] },
-      { ex: 'hundred', meta: '2 · Core', name: 'Hundraðið', steps: ['Lyfta höfði', 'Pulsa hendur'] }
-    ]
-  },
-  weights: {
-    title: 'Tími',
-    meta: '✨ Reformer',
-    name: 'Reformer tími með lóð',
-    info: '60 mín • Millistig',
-    warmup: 'Footwork með lóðum\nArm circles',
-    cooldown: '',
-    props: ['Lóð'],
-    description: '',
-    playlist: '',
-    level: 'Millistig',
-    duration: 60,
-    types: ['Reformer'],
-    moves: [
-      { ex: 'side', meta: '1 · Efri líkami', name: 'Core á hlið', steps: ['Halla aftur', 'Row með lóð'] }
-    ]
-  },
-  mat: {
-    title: 'Tími',
-    meta: '✨ Dýna',
-    name: 'Matwork core',
-    info: '45 mín • Byrjendur',
-    warmup: 'Öndun\nPelvic curl',
-    cooldown: 'Child pose',
-    props: [],
-    description: '',
-    playlist: '',
-    level: 'Byrjandi',
-    duration: 45,
-    types: ['Dýna'],
-    moves: [
-      { ex: 'hundred', meta: '1 · Classic', name: 'Hundraðið', steps: ['100 púlsar'] }
+  "byrjun_reformer_loft": {
+    "id": "byrjun_reformer_loft",
+    "title": "Tími",
+    "meta": "✨ Reformer",
+    "name": "Reformer Løft",
+    "info": "55 mín • Miðstig",
+    "level": "Miðstig",
+    "duration": 55,
+    "types": [
+      "Reformer"
+    ],
+    "props": [
+      "Reformer-kassi"
+    ],
+    "warmup": "Footwork single leg 💙💛\nHendur í böndum core 💙💛",
+    "cooldown": "Teygja á í böndum",
+    "description": "Dæmatími frá Díönu. Svona lítur tími út í Klassanum: upphitun, æfingar með gormum, uppsetningu og skrefum, og niðurkæling. Ýttu á ✎ Breyta til að sjá hvernig hann er byggður, eða búðu til þinn eigin með +.",
+    "notes": "",
+    "playlist": "",
+    "moves": [
+      {
+        "id": "byrjun_m1",
+        "ex": "byrjun_curtseys",
+        "meta": "1 · Curtseys",
+        "name": "Curtseys",
+        "setup": "Kassi við hliðina á bekk, fótur nær vagni er á kassa og hinn við axlarpúða.",
+        "props": "Box",
+        "springs": "💙",
+        "notes": "",
+        "useTimer": false,
+        "timerOn": 45,
+        "timerOff": 15,
+        "layers": [
+          {
+            "id": "byrjun_m1_0",
+            "text": "Curtseys"
+          },
+          {
+            "id": "byrjun_m1_1",
+            "text": "+ scooter"
+          },
+          {
+            "id": "byrjun_m1_2",
+            "text": "Bara scooter"
+          },
+          {
+            "id": "byrjun_m1_3",
+            "text": "Snúa frá vagni, sami fótur við axlarpúða. Hliðar squat"
+          },
+          {
+            "id": "byrjun_m1_4",
+            "text": "+ scooter"
+          },
+          {
+            "id": "byrjun_m1_5",
+            "text": "Bara scooter"
+          },
+          {
+            "id": "byrjun_m1_6",
+            "text": "Shortbox. Sitja snúa að höfuðpúða. Swing"
+          },
+          {
+            "id": "byrjun_m1_7",
+            "text": "Swing / tricep"
+          },
+          {
+            "id": "byrjun_m1_8",
+            "text": "Bara tricep"
+          },
+          {
+            "id": "byrjun_m1_9",
+            "text": "Hálfur heimur"
+          },
+          {
+            "id": "byrjun_m1_10",
+            "text": "Stoppa í miðju. Hringir"
+          },
+          {
+            "id": "byrjun_m1_11",
+            "text": "Hinn hringurinn"
+          },
+          {
+            "id": "byrjun_m1_12",
+            "text": "Curtseys hinu megin"
+          }
+        ],
+        "steps": [
+          "Curtseys",
+          "+ scooter",
+          "Bara scooter",
+          "Snúa frá vagni, sami fótur við axlarpúða. Hliðar squat",
+          "+ scooter",
+          "Bara scooter",
+          "Shortbox. Sitja snúa að höfuðpúða. Swing",
+          "Swing / tricep",
+          "Bara tricep",
+          "Hálfur heimur",
+          "Stoppa í miðju. Hringir",
+          "Hinn hringurinn",
+          "Curtseys hinu megin"
+        ]
+      },
+      {
+        "id": "byrjun_m2",
+        "ex": "byrjun_longbox_core",
+        "meta": "2 · Longbox Core",
+        "name": "Longbox Core",
+        "setup": "Sitja á boxi með fætur á höfuðpúða",
+        "props": "Box",
+        "springs": "💛",
+        "notes": "",
+        "useTimer": false,
+        "timerOn": 45,
+        "timerOff": 15,
+        "layers": [
+          {
+            "id": "byrjun_m2_0",
+            "text": "Rúlla niður / upp"
+          },
+          {
+            "id": "byrjun_m2_1",
+            "text": "Rúlla niður / lyfta einum fæti í einu /upp"
+          },
+          {
+            "id": "byrjun_m2_2",
+            "text": "Rúlla niður - halda. Hjóla"
+          },
+          {
+            "id": "byrjun_m2_3",
+            "text": "Rúlla niður / upp"
+          },
+          {
+            "id": "byrjun_m2_4",
+            "text": "Rúlla niður / báðir upp og niður / upp"
+          },
+          {
+            "id": "byrjun_m2_5",
+            "text": "Rúlla niður - halda. Fætur út og inn"
+          },
+          {
+            "id": "byrjun_m2_6",
+            "text": "Rúlla niður / upp"
+          },
+          {
+            "id": "byrjun_m2_7",
+            "text": "Rúlla niður / bicep"
+          },
+          {
+            "id": "byrjun_m2_8",
+            "text": "Rúlla niður - halda. Bicep"
+          }
+        ],
+        "steps": [
+          "Rúlla niður / upp",
+          "Rúlla niður / lyfta einum fæti í einu /upp",
+          "Rúlla niður - halda. Hjóla",
+          "Rúlla niður / upp",
+          "Rúlla niður / báðir upp og niður / upp",
+          "Rúlla niður - halda. Fætur út og inn",
+          "Rúlla niður / upp",
+          "Rúlla niður / bicep",
+          "Rúlla niður - halda. Bicep"
+        ]
+      }
     ]
   }
 };
 
 const DEFAULT_EXERCISES = {
-  side: {
-    title: 'Breyta æfingu',
-    name: 'Core á hlið',
-    level: 'Miðstig',
-    equip: 'Reformer',
-    setup: 'Shortbox við hlið. Sitja í átt að böndum.',
-    steps: 'Halla aftur og upp\nRow\nOlnbogi í hné',
-    notes: 'Passa öxlina á bandahendi.'
+  "byrjun_curtseys": {
+    "title": "Breyta æfingu",
+    "name": "Curtseys",
+    "level": "Miðstig",
+    "equip": "Reformer",
+    "springs": "💙",
+    "setup": "Kassi við hliðina á bekk, fótur nær vagni er á kassa og hinn við axlarpúða.",
+    "steps": "Curtseys\n+ scooter\nBara scooter\nSnúa frá vagni, sami fótur við axlarpúða. Hliðar squat\n+ scooter\nBara scooter\nShortbox. Sitja snúa að höfuðpúða. Swing\nSwing / tricep\nBara tricep\nHálfur heimur\nStoppa í miðju. Hringir\nHinn hringurinn\nCurtseys hinu megin",
+    "notes": ""
   },
-  hundred: {
-    title: 'Breyta æfingu',
-    name: 'Hundraðið',
-    level: 'Byrjandi',
-    equip: 'Dýna',
-    setup: 'Liggið á bakinu, hendur meðfram líkama.',
-    steps: 'Lyfta höfði og herðum\nPulsa hendur\nHalda core stöðugu',
-    notes: '100 púlsar.'
+  "byrjun_longbox_core": {
+    "title": "Breyta æfingu",
+    "name": "Longbox Core",
+    "level": "Miðstig",
+    "equip": "Reformer",
+    "springs": "💛",
+    "setup": "Sitja á boxi með fætur á höfuðpúða",
+    "steps": "Rúlla niður / upp\nRúlla niður / lyfta einum fæti í einu /upp\nRúlla niður - halda. Hjóla\nRúlla niður / upp\nRúlla niður / báðir upp og niður / upp\nRúlla niður - halda. Fætur út og inn\nRúlla niður / upp\nRúlla niður / bicep\nRúlla niður - halda. Bicep",
+    "notes": ""
   },
-  new: {
-    title: 'Ný æfing',
-    name: '',
-    level: 'Byrjandi',
-    equip: 'Reformer',
-    setup: '',
-    steps: '',
-    notes: ''
+  "new": {
+    "title": "Ný æfing",
+    "name": "",
+    "level": "Byrjandi",
+    "equip": "Reformer",
+    "setup": "",
+    "steps": "",
+    "notes": ""
   }
 };
 
 let CLASSES = JSON.parse(JSON.stringify(DEFAULT_CLASSES));
 let EXERCISES = JSON.parse(JSON.stringify(DEFAULT_EXERCISES));
-let currentClassKey = 'reformer8';
-let currentExerciseKey = 'side';
+let currentClassKey = 'byrjun_reformer_loft';
+let currentExerciseKey = 'byrjun_curtseys';
 
 function loadStore() {
   try {
@@ -1429,6 +1617,7 @@ function fillExercise(key) {
     c.classList.toggle('on', c.dataset.val === (ex.level || 'Byrjandi'));
   });
   document.getElementById('exDeleteBtn')?.classList.toggle('hide', currentExerciseKey === 'new');
+  document.getElementById('exShareBtn')?.classList.toggle('hide', currentExerciseKey === 'new');
   syncExSpringsVisibility();
 }
 function syncExSpringsVisibility() {
@@ -1579,6 +1768,7 @@ function go(id, exKey, classKey) {
   const tabId = (id === 'exercise-edit') ? 'exercises'
     : (id === 'note-edit') ? 'notes'
     : (['class', 'class-new', 'clients', 'client', 'client-edit', 'session'].includes(id)) ? 'home'
+    : (id === 'group') ? 'friends'
     : id;
   tabs.forEach((t) => t.classList.toggle('on', t.dataset.go === tabId));
   if (id === 'class') fillClass(classKey || currentClassKey);
@@ -2983,6 +3173,7 @@ let profileSaveTimer = null;
       p.updatedAt = new Date().toISOString();
       try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
       scheduleSync();
+      if (cloudUser) registerDirectory();
       document.getElementById('profileAvatar').innerHTML = `<span class="serif" style="font-size:2.6rem;font-weight:700">${escapeHtml(initials(p.name))}</span>`;
       document.getElementById('pfSaved').textContent = 'Vistað ✓';
     }, 400);
@@ -3474,76 +3665,507 @@ function classPreviewHtml(c) {
     ${c.cooldown ? `<h3 class="blockLabel">🌙 NIÐURKÆLING</h3><div class="card" style="cursor:default"><div class="cardBody"><div class="muted pre">${escapeText(c.cooldown)}</div></div></div>` : ''}
     ${c.description ? `<h3 class="blockLabel">LÝSING</h3><p class="muted">${escapeText(c.description)}</p>` : ''}`;
 }
-document.getElementById('classShareBtn').addEventListener('click', async () => {
+// Hlekkur sem hver sem er getur opnað (t.d. vinkona sem er ekki enn með aðgang)
+async function shareLink(type, data, title) {
+  const id = randomId(20);
+  const fromName = myName();
+  const clean = JSON.parse(JSON.stringify(data));
+  delete clean.id;
+  await fb.m.setDoc(fb.m.doc(fb.db, 'shares', id), {
+    fromUid: cloudUser.uid, fromName, kind: type, json: JSON.stringify(clean), createdAt: Date.now(),
+  });
+  const url = location.origin + location.pathname + '#deila=' + id;
+  const what = type === 'class' ? 'tímanum' : 'æfingunni';
+  const text = `${fromName} deildi ${what} „${title}“ með þér í Klassanum.`;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Klassinn: ' + title, text, url }); }
+    catch (err) { if (!err || err.name !== 'AbortError') throw err; }
+  } else {
+    try { await navigator.clipboard.writeText(text + '\n' + url); alert('Hlekkurinn er afritaður. Límdu hann í skilaboð.'); }
+    catch (err) { prompt('Afritaðu hlekkinn:', url); }
+  }
+}
+document.getElementById('classShareBtn').addEventListener('click', () => {
   const c = CLASSES[currentClassKey];
-  if (!c) return;
-  if (!cloudUser) {
-    if (confirm('Til að deila tíma þarftu að vera skráð inn. Skrá inn núna?')) go('login');
-    return;
-  }
-  const btn = document.getElementById('classShareBtn');
-  btn.disabled = true; btn.textContent = 'Bý til hlekk…';
-  try {
-    const id = randomId(20);
-    const p = loadProfile();
-    const fromName = (p.name || '').trim() || (cloudUser.email || '').split('@')[0];
-    const data = JSON.parse(JSON.stringify(c));
-    delete data.id;
-    await fb.m.setDoc(fb.m.doc(fb.db, 'shares', id), {
-      fromUid: cloudUser.uid, fromName, kind: 'class', json: JSON.stringify(data), createdAt: Date.now(),
-    });
-    const url = location.origin + location.pathname + '#deila=' + id;
-    const text = `${fromName} deildi tímanum „${c.name || 'Tími'}“ með þér í Klassanum.`;
-    if (navigator.share) {
-      try { await navigator.share({ title: 'Klassinn: ' + (c.name || 'Tími'), text, url }); }
-      catch (err) { if (!err || err.name !== 'AbortError') throw err; }
-    } else {
-      try { await navigator.clipboard.writeText(text + '\n' + url); alert('Hlekkurinn er afritaður. Límdu hann í skilaboð til vinkonu þinnar.'); }
-      catch (err) { prompt('Afritaðu hlekkinn:', url); }
-    }
-  } catch (err) {
-    console.warn('Klassinn: deiling mistókst', err);
-    alert('Ekki tókst að deila tímanum. Athugaðu nettenginguna og reyndu aftur.');
-  } finally {
-    btn.disabled = false; btn.textContent = '↗ Deila';
-  }
+  if (c) openSendSheet('class', c, c.name || 'Tími');
 });
-let sharedClass = null;
+document.getElementById('exShareBtn').addEventListener('click', () => {
+  const ex = EXERCISES[currentExerciseKey];
+  if (ex && currentExerciseKey !== 'new') openSendSheet('exercise', ex, ex.name || 'Æfing');
+});
+// ---- Taka við tíma eða æfingu (úr hlekk, frá vini eða úr hópi) ----
+function exercisePreviewHtml(ex) {
+  const steps = String(ex.steps || '').split('\n').map((s) => s.trim()).filter(Boolean);
+  const meta = [ex.equip, ex.level].filter(Boolean).join(' • ');
+  return `<h2 class="serif" style="margin:6px 0;font-size:1.8rem">${escapeText(ex.name || 'Æfing')}</h2>
+    ${meta ? `<p class="meta">${escapeText(meta)}</p>` : ''}
+    ${springsViewHtml(ex.springs)}
+    ${ex.setup ? `<div class="setup"><strong>Uppsetning:</strong><p class="pre">${escapeText(ex.setup)}</p></div>` : ''}
+    ${steps.length ? `<ol class="steps">${steps.map((s) => `<li>${escapeText(s)}</li>`).join('')}</ol>` : ''}
+    ${ex.notes ? `<p class="muted pre">${escapeText(ex.notes)}</p>` : ''}`;
+}
+function addReceivedClass(data, fromName) {
+  const id = 'c' + Date.now();
+  const copy = Object.assign({}, data, { id, updatedAt: new Date().toISOString(), sharedFrom: fromName || '' });
+  (copy.moves || []).forEach((mv) => { mv.id = uid(); mv.ex = ''; });
+  CLASSES = Object.assign({ [id]: copy }, CLASSES);
+  const added = syncMovesToLibrary(CLASSES[id]);
+  persistStore();
+  toast('Tíminn er kominn í þína tíma ✓' + (added ? ` · ${added} ${added === 1 ? 'æfing' : 'æfingar'} í safnið` : ''));
+  return id;
+}
+function addReceivedExercise(data, fromName) {
+  const id = 'ex' + Date.now() + Math.random().toString(36).slice(2, 6);
+  EXERCISES[id] = Object.assign({}, data, { title: 'Breyta æfingu', updatedAt: new Date().toISOString(), sharedFrom: fromName || '' });
+  persistStore();
+  toast('Æfingin er komin í æfingasafnið ✓');
+  return id;
+}
+// item: { kind/type: 'class'|'exercise', json, fromName }, opts.onAdded(): t.d. eyða úr pósthólfi
+function showReceived(item, opts = {}) {
+  const kind = item.kind || item.type;
+  let data = null;
+  try { data = JSON.parse(item.json); } catch (e) {}
+  go('shared');
+  const body = document.getElementById('sharedBody');
+  if (!data) { body.innerHTML = '<p class="muted">Ekki tókst að opna þetta.</p>'; return; }
+  const isClass = kind === 'class';
+  const who = escapeHtml(item.fromName || 'Þjálfari');
+  body.innerHTML = `<div class="banner" style="padding-right:14px"><strong>${who} ${opts.verb || 'deildi'} ${isClass ? 'tíma' : 'æfingu'} með þér</strong>Skoðaðu ${isClass ? 'hann' : 'hana'} og bættu við ${isClass ? 'þína tíma' : 'æfingasafnið þitt'} ef þú vilt.</div>
+    ${isClass ? classPreviewHtml(data) : exercisePreviewHtml(data)}
+    <button class="submit" type="button" id="sharedAdd" style="margin-top:16px">${isClass ? '+ Bæta við mína tíma' : '+ Bæta við æfingasafnið'}</button>`;
+  document.getElementById('sharedAdd').addEventListener('click', async () => {
+    if (location.hash) history.replaceState(null, '', location.pathname);
+    if (isClass) {
+      const id = addReceivedClass(data, item.fromName);
+      if (opts.onAdded) await opts.onAdded();
+      go('class', undefined, id);
+    } else {
+      const id = addReceivedExercise(data, item.fromName);
+      if (opts.onAdded) await opts.onAdded();
+      go('exercise-edit', id);
+    }
+  });
+  sharedBackTo = opts.backTo || 'home';
+}
+let sharedBackTo = 'home';
 async function openSharedFromHash() {
   const m = (location.hash || '').match(/^#deila=([A-Za-z0-9]{10,40})$/);
   if (!m) return false;
   go('shared');
-  const body = document.getElementById('sharedBody');
-  body.innerHTML = '<p class="muted">Sæki tímann…</p>';
+  document.getElementById('sharedBody').innerHTML = '<p class="muted">Sæki…</p>';
   try {
     await loadFirebase();
     const snap = await fb.m.getDoc(fb.m.doc(fb.db, 'shares', m[1]));
     if (!snap.exists()) throw new Error('fannst ekki');
-    const d = snap.data();
-    sharedClass = JSON.parse(d.json);
-    body.innerHTML = `<div class="banner" style="padding-right:14px"><strong>${escapeHtml(d.fromName || 'Þjálfari')} deildi tíma með þér</strong>Skoðaðu hann og bættu honum við þína tíma ef þú vilt.</div>
-      ${classPreviewHtml(sharedClass)}
-      <button class="submit" type="button" id="sharedAdd" style="margin-top:16px">+ Bæta við mína tíma</button>`;
-    document.getElementById('sharedAdd').addEventListener('click', () => {
-      const id = 'c' + Date.now();
-      const copy = Object.assign({}, sharedClass, { id, updatedAt: new Date().toISOString(), sharedFrom: d.fromName || '' });
-      (copy.moves || []).forEach((mv) => { mv.id = uid(); mv.ex = ''; });
-      CLASSES = Object.assign({ [id]: copy }, CLASSES);
-      const added = syncMovesToLibrary(CLASSES[id]);
-      persistStore();
-      history.replaceState(null, '', location.pathname);
-      toast('Tíminn er kominn í þína tíma ✓' + (added ? ` · ${added} ${added === 1 ? 'æfing' : 'æfingar'} í safnið` : ''));
-      go('class', undefined, id);
-    });
+    showReceived(snap.data(), { backTo: 'home' });
   } catch (err) {
-    console.warn('Klassinn: gat ekki opnað deildan tíma', err);
-    body.innerHTML = '<p class="muted">Ekki tókst að opna tímann. Hlekkurinn gæti verið rangur eða netið niðri.</p>';
+    console.warn('Klassinn: gat ekki opnað deilt atriði', err);
+    document.getElementById('sharedBody').innerHTML = '<p class="muted">Ekki tókst að opna þetta. Hlekkurinn gæti verið rangur eða netið niðri.</p>';
   }
   return true;
 }
+
+// ---- Þjálfaravinir og hópar ----
+let friendsCache = [];   // [{uid, name, email, status}]
+let groupsCache = [];    // [{id, name, ownerUid, members, memberNames}]
+let inboxCache = [];     // [{id, type, fromUid, fromName, fromEmail, json, title, createdAt}]
+let currentGroupId = null;
+let mineTargetGroup = null;
+function myName() {
+  const p = loadProfile();
+  return (p.name || '').trim() || (cloudUser && cloudUser.displayName) || ((cloudUser && cloudUser.email) || '').split('@')[0] || 'Þjálfari';
+}
+function myEmail() { return ((cloudUser && cloudUser.email) || '').toLowerCase(); }
+async function registerDirectory() {
+  if (!fb || !cloudUser || !myEmail()) return;
+  try {
+    await fb.m.setDoc(fb.m.doc(fb.db, 'directory', myEmail()), { uid: cloudUser.uid, name: myName(), updatedAt: Date.now() });
+  } catch (e) { console.warn('Klassinn: netfangaskrá', e); }
+}
+async function loadFriendsData() {
+  if (!fb || !cloudUser) return;
+  const m = fb.m, me = cloudUser.uid;
+  const [fSnap, iSnap, gSnap] = await Promise.all([
+    m.getDocs(m.collection(fb.db, 'users', me, 'friends')),
+    m.getDocs(m.collection(fb.db, 'inbox', me, 'items')),
+    m.getDocs(m.query(m.collection(fb.db, 'groups'), m.where('members', 'array-contains', me))),
+  ]);
+  friendsCache = [];
+  fSnap.forEach((d) => friendsCache.push(Object.assign({ uid: d.id }, d.data())));
+  inboxCache = [];
+  iSnap.forEach((d) => inboxCache.push(Object.assign({ id: d.id }, d.data())));
+  groupsCache = [];
+  gSnap.forEach((d) => groupsCache.push(Object.assign({ id: d.id }, d.data())));
+  // Samþykktar vinabeiðnir: merkja vininn samþykktan og hreinsa úr pósthólfi
+  for (const it of inboxCache.filter((x) => x.type === 'friend-accept')) {
+    try {
+      await m.setDoc(m.doc(fb.db, 'users', me, 'friends', it.fromUid), { name: it.fromName || '', email: it.fromEmail || '', status: 'accepted', since: Date.now() });
+      await m.deleteDoc(m.doc(fb.db, 'inbox', me, 'items', it.id));
+      const f = friendsCache.find((x) => x.uid === it.fromUid);
+      if (f) f.status = 'accepted'; else friendsCache.push({ uid: it.fromUid, name: it.fromName, email: it.fromEmail, status: 'accepted' });
+      toast((it.fromName || 'Vinur') + ' samþykkti vinabeiðnina ✓');
+    } catch (e) {}
+  }
+  inboxCache = inboxCache.filter((x) => x.type !== 'friend-accept').sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  friendsCache.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'is'));
+  groupsCache.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'is'));
+  updateFriendsBadge();
+}
+function updateFriendsBadge() {
+  const b = document.getElementById('friendsBadge');
+  if (!b) return;
+  const n = cloudUser ? inboxCache.length : 0;
+  b.textContent = String(n);
+  b.classList.toggle('hide', !n);
+}
+async function refreshFriends(showErrors) {
+  try { await loadFriendsData(); }
+  catch (e) { console.warn('Klassinn: vinir', e); if (showErrors) toast(navigator.onLine ? 'Gat ekki sótt vini' : 'Engin nettenging'); }
+  if (document.querySelector('.screen.on')?.id === 'friends') renderFriends();
+  if (document.querySelector('.screen.on')?.id === 'group') renderGroup();
+}
+function inboxText(it) {
+  const who = `<strong>${escapeHtml(it.fromName || 'Þjálfari')}</strong>`;
+  if (it.type === 'friend-request') return `${who} vill verða þjálfaravinur þinn`;
+  if (it.type === 'class') return `${who} sendi þér tímann „${escapeHtml(it.title || '')}“`;
+  if (it.type === 'exercise') return `${who} sendi þér æfinguna „${escapeHtml(it.title || '')}“`;
+  return who;
+}
+let friendsForm = null; // 'add' | 'group' | null
+function renderFriends() {
+  const box = document.getElementById('friendsBody');
+  if (!cloudUser) {
+    box.innerHTML = `<div class="emptyBox"><h3>Þjálfaravinir</h3>
+      <p>Skráðu þig inn til að eignast þjálfaravini, senda þeim tíma og æfingar og stofna hópa.</p>
+      <button class="submit" type="button" data-fr="login">Skrá inn</button></div>`;
+    return;
+  }
+  const accepted = friendsCache.filter((f) => f.status === 'accepted');
+  const pending = friendsCache.filter((f) => f.status !== 'accepted');
+  const inbox = inboxCache.length ? inboxCache.map((it) => `
+    <div class="friendCard">
+      <div class="cardBody"><div>${inboxText(it)}</div><div class="muted">${escapeHtml(fmtDate(new Date(it.createdAt || Date.now()).toISOString().slice(0, 10)))}</div></div>
+      ${it.type === 'friend-request'
+        ? `<button class="miniBtn primary" type="button" data-fr="accept" data-id="${escapeHtml(it.id)}">Samþykkja</button>
+           <button class="miniBtn danger" type="button" data-fr="decline" data-id="${escapeHtml(it.id)}">Hafna</button>`
+        : `<button class="miniBtn primary" type="button" data-fr="view" data-id="${escapeHtml(it.id)}">Skoða</button>
+           <button class="miniBtn" type="button" data-fr="dismiss" data-id="${escapeHtml(it.id)}" aria-label="Fjarlægja">✕</button>`}
+    </div>`).join('') : '<p class="muted" style="margin:0 2px 8px">Ekkert nýtt.</p>';
+  const groups = groupsCache.map((g) => `
+    <button class="card" type="button" data-fr="group" data-id="${escapeHtml(g.id)}">
+      <span class="clientAvatar">👥</span>
+      <div class="cardBody"><h3 class="serif">${escapeHtml(g.name || 'Hópur')}</h3>
+        <div class="muted">${(g.members || []).length} í hópnum</div></div>
+      <span class="chev">›</span>
+    </button>`).join('');
+  const groupForm = friendsForm === 'group' ? `
+    <div class="inlineForm">
+      <label class="label" for="grName">HEITI HÓPS</label>
+      <input class="field" id="grName" placeholder="t.d. Reformer-kennarar" />
+      <p class="label" style="margin-top:12px">ÞJÁLFARAVINIR Í HÓPINN</p>
+      ${accepted.length ? accepted.map((f) => `<label class="checkRow"><input type="checkbox" value="${escapeHtml(f.uid)}" data-name="${escapeHtml(f.name || '')}" /> ${escapeHtml(f.name || f.email || '')}</label>`).join('')
+        : '<p class="muted">Bættu fyrst við þjálfaravinum. Þú getur líka stofnað hópinn núna og bætt við seinna.</p>'}
+      <div class="btnRow"><button class="btnGhost" type="button" data-fr="close-form">Hætta við</button><button class="submit" type="button" data-fr="create-group" style="margin-top:0">Stofna hóp</button></div>
+    </div>` : '';
+  const addForm = friendsForm === 'add' ? `
+    <div class="inlineForm">
+      <label class="label" for="frEmail">NETFANG ÞJÁLFARAVINAR</label>
+      <input class="field" id="frEmail" type="email" inputmode="email" autocomplete="off" placeholder="netfang sem hún notar í Klassanum" />
+      <p class="muted" style="font-size:.8rem;margin:6px 2px 0">Hún þarf að vera komin með aðgang að Klassanum. Hún fær beiðni sem hún samþykkir.</p>
+      <div class="btnRow"><button class="btnGhost" type="button" data-fr="close-form">Hætta við</button><button class="submit" type="button" data-fr="send-request" style="margin-top:0">Senda beiðni</button></div>
+    </div>` : '';
+  const friends = friendsCache.length ? friendsCache.map((f) => `
+    <div class="friendCard">
+      <span class="clientAvatar">${escapeHtml(initials(f.name || f.email))}</span>
+      <div class="cardBody"><h3 class="serif">${escapeHtml(f.name || f.email || '')}</h3>
+        <div class="muted">${f.status === 'accepted' ? escapeHtml(f.email || '') : 'Bíður samþykkis'}</div></div>
+      <button class="miniBtn" type="button" data-fr="remove-friend" data-id="${escapeHtml(f.uid)}" aria-label="Fjarlægja vin">✕</button>
+    </div>`).join('') : '<p class="muted" style="margin:0 2px 8px">Engir þjálfaravinir enn.</p>';
+  box.innerHTML = `
+    <div class="profileSection" style="margin-top:4px">BERST ÞÉR</div>${inbox}
+    <div class="row" style="margin:22px 0 8px"><div class="profileSection" style="margin:0">HÓPAR</div><div class="spacer"></div>
+      ${friendsForm === 'group' ? '' : '<button class="miniBtn" type="button" data-fr="open-group-form">+ Nýr hópur</button>'}</div>
+    ${groupForm}${groups || (friendsForm === 'group' ? '' : '<p class="muted" style="margin:0 2px 8px">Engir hópar enn.</p>')}
+    <div class="row" style="margin:22px 0 8px"><div class="profileSection" style="margin:0">ÞJÁLFARAVINIR</div><div class="spacer"></div>
+      ${friendsForm === 'add' ? '' : '<button class="miniBtn" type="button" data-fr="open-add-form">+ Bæta við vini</button>'}</div>
+    ${addForm}${friends}
+    ${pending.length ? '' : ''}`;
+  if (friendsForm === 'add') setTimeout(() => document.getElementById('frEmail')?.focus(), 30);
+  if (friendsForm === 'group') setTimeout(() => document.getElementById('grName')?.focus(), 30);
+}
+async function sendFriendRequest() {
+  const email = (document.getElementById('frEmail').value || '').trim().toLowerCase();
+  if (!email || !email.includes('@')) { toast('Skrifaðu netfang'); return; }
+  if (email === myEmail()) { toast('Þetta er þitt eigið netfang'); return; }
+  const m = fb.m, me = cloudUser.uid;
+  try {
+    const snap = await m.getDoc(m.doc(fb.db, 'directory', email));
+    if (!snap.exists()) { alert('Enginn þjálfari með netfangið ' + email + ' er kominn með aðgang að Klassanum.\n\nSendu henni hlekkinn á appið svo hún geti búið til aðgang, og reyndu svo aftur.'); return; }
+    const d = snap.data();
+    if (friendsCache.some((f) => f.uid === d.uid)) { toast('Hún er þegar á listanum'); return; }
+    await m.setDoc(m.doc(fb.db, 'users', me, 'friends', d.uid), { name: d.name || '', email, status: 'pending-out', since: Date.now() });
+    await m.addDoc(m.collection(fb.db, 'inbox', d.uid, 'items'), { type: 'friend-request', fromUid: me, fromName: myName(), fromEmail: myEmail(), createdAt: Date.now() });
+    friendsForm = null;
+    toast('Vinabeiðni send á ' + (d.name || email) + ' ✓');
+    await refreshFriends(true);
+  } catch (e) {
+    console.warn('Klassinn: vinabeiðni', e);
+    alert('Ekki tókst að senda vinabeiðnina. Athugaðu nettenginguna.');
+  }
+}
+async function acceptFriend(it) {
+  const m = fb.m, me = cloudUser.uid;
+  await m.setDoc(m.doc(fb.db, 'users', me, 'friends', it.fromUid), { name: it.fromName || '', email: it.fromEmail || '', status: 'accepted', since: Date.now() });
+  await m.addDoc(m.collection(fb.db, 'inbox', it.fromUid, 'items'), { type: 'friend-accept', fromUid: me, fromName: myName(), fromEmail: myEmail(), createdAt: Date.now() });
+  await m.deleteDoc(m.doc(fb.db, 'inbox', me, 'items', it.id));
+  toast('Þið eruð nú þjálfaravinir ✓');
+}
+async function removeInboxItem(id) {
+  await fb.m.deleteDoc(fb.m.doc(fb.db, 'inbox', cloudUser.uid, 'items', id));
+}
+async function createGroup() {
+  const name = (document.getElementById('grName').value || '').trim();
+  if (!name) { toast('Gefðu hópnum heiti'); return; }
+  const me = cloudUser.uid;
+  const picked = [...document.querySelectorAll('#friendsBody .inlineForm input[type=checkbox]:checked')];
+  const members = [me, ...picked.map((c) => c.value)];
+  const memberNames = { [me]: myName() };
+  picked.forEach((c) => { memberNames[c.value] = c.dataset.name || ''; });
+  try {
+    const ref = await fb.m.addDoc(fb.m.collection(fb.db, 'groups'), { name, ownerUid: me, members, memberNames, createdAt: Date.now() });
+    friendsForm = null;
+    toast('Hópurinn „' + name + '“ er stofnaður ✓');
+    await refreshFriends(true);
+    openGroup(ref.id);
+  } catch (e) {
+    console.warn('Klassinn: hópur', e);
+    alert('Ekki tókst að stofna hópinn. Athugaðu nettenginguna.');
+  }
+}
+document.getElementById('friendsBody').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-fr]');
+  if (!b) return;
+  const act = b.dataset.fr, id = b.dataset.id;
+  if (act === 'login') { go('login'); return; }
+  if (act === 'open-add-form') { friendsForm = 'add'; renderFriends(); return; }
+  if (act === 'open-group-form') { friendsForm = 'group'; renderFriends(); return; }
+  if (act === 'close-form') { friendsForm = null; renderFriends(); return; }
+  if (act === 'send-request') { await sendFriendRequest(); return; }
+  if (act === 'create-group') { await createGroup(); return; }
+  if (act === 'group') { openGroup(id); return; }
+  const it = inboxCache.find((x) => x.id === id);
+  try {
+    if (act === 'accept' && it) { await acceptFriend(it); await refreshFriends(true); }
+    else if (act === 'decline' && it) { await removeInboxItem(id); toast('Beiðni hafnað'); await refreshFriends(true); }
+    else if (act === 'dismiss' && it) { await removeInboxItem(id); await refreshFriends(true); }
+    else if (act === 'view' && it) {
+      showReceived(it, { verb: 'sendi', backTo: 'friends', onAdded: async () => { try { await removeInboxItem(it.id); } catch (err) {} refreshFriends(false); } });
+    } else if (act === 'remove-friend') {
+      const f = friendsCache.find((x) => x.uid === id);
+      if (!confirm('Fjarlægja ' + ((f && (f.name || f.email)) || 'vin') + ' af listanum?')) return;
+      await fb.m.deleteDoc(fb.m.doc(fb.db, 'users', cloudUser.uid, 'friends', id));
+      await refreshFriends(true);
+    }
+  } catch (err) {
+    console.warn('Klassinn: vinir', err);
+    alert('Ekki tókst að klára þetta. Athugaðu nettenginguna.');
+  }
+});
+document.getElementById('friendsRefresh').addEventListener('click', () => refreshFriends(true));
+
+// ---- Hópur ----
+let groupPosts = [];
+let groupForm = false;
+async function openGroup(id) {
+  currentGroupId = id;
+  groupForm = false;
+  go('group');
+  await loadGroupPosts();
+}
+async function loadGroupPosts() {
+  const m = fb.m;
+  document.getElementById('groupBody').innerHTML = '<p class="muted">Sæki…</p>';
+  try {
+    const snap = await m.getDocs(m.query(m.collection(fb.db, 'groups', currentGroupId, 'posts'), m.orderBy('createdAt', 'desc'), m.limit(60)));
+    groupPosts = [];
+    snap.forEach((d) => groupPosts.push(Object.assign({ id: d.id }, d.data())));
+  } catch (e) {
+    console.warn('Klassinn: hópfærslur', e);
+    groupPosts = [];
+  }
+  renderGroup();
+}
+function renderGroup() {
+  const g = groupsCache.find((x) => x.id === currentGroupId);
+  const box = document.getElementById('groupBody');
+  if (!g) { box.innerHTML = '<p class="muted">Hópurinn fannst ekki.</p>'; return; }
+  document.getElementById('groupTitle').textContent = g.name || 'Hópur';
+  const names = g.memberNames || {};
+  const members = (g.members || []).map((u) => `<span class="chip">${escapeHtml(u === cloudUser.uid ? 'Þú' : (names[u] || 'Þjálfari'))}</span>`).join('');
+  const candidates = friendsCache.filter((f) => f.status === 'accepted' && !(g.members || []).includes(f.uid));
+  const addForm = groupForm ? `<div class="inlineForm">
+      <p class="label">BÆTA ÞJÁLFARAVINUM Í HÓPINN</p>
+      ${candidates.length ? candidates.map((f) => `<label class="checkRow"><input type="checkbox" value="${escapeHtml(f.uid)}" data-name="${escapeHtml(f.name || '')}" /> ${escapeHtml(f.name || f.email || '')}</label>`).join('')
+        : '<p class="muted">Allir þjálfaravinir þínir eru þegar í hópnum.</p>'}
+      <div class="btnRow"><button class="btnGhost" type="button" data-gr="close-form">Hætta við</button>${candidates.length ? '<button class="submit" type="button" data-gr="add-members" style="margin-top:0">Bæta við</button>' : ''}</div>
+    </div>` : '';
+  const posts = groupPosts.length ? groupPosts.map((p) => `
+    <div class="postCard">
+      <div class="meta">${escapeHtml(p.fromUid === cloudUser.uid ? 'Þú' : (p.fromName || 'Þjálfari'))} · ${escapeHtml(fmtDate(new Date(p.createdAt || Date.now()).toISOString().slice(0, 10)))} · ${p.type === 'class' ? 'Tími' : 'Æfing'}</div>
+      <h3 class="serif">${escapeHtml(p.title || '')}</h3>
+      <div class="btnRow"><button class="miniBtn primary" type="button" data-gr="view" data-id="${escapeHtml(p.id)}">Skoða</button>
+        ${p.fromUid === cloudUser.uid || g.ownerUid === cloudUser.uid ? `<button class="miniBtn" type="button" data-gr="delete-post" data-id="${escapeHtml(p.id)}">Fjarlægja</button>` : ''}</div>
+    </div>`).join('') : '<p class="muted">Ekkert sent í hópinn enn. Byrjaðu á að senda tíma eða æfingu.</p>';
+  box.innerHTML = `
+    <div class="memberChips">${members}${groupForm ? '' : '<button class="miniBtn" type="button" data-gr="open-form">+ Bæta við</button>'}</div>
+    ${addForm}
+    <button class="submit" type="button" data-gr="send" style="margin:10px 0 16px">+ Senda tíma eða æfingu í hópinn</button>
+    ${posts}
+    <button class="btnGhost danger" type="button" data-gr="leave" style="margin-top:18px">Yfirgefa hópinn</button>`;
+}
+document.getElementById('groupBody').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-gr]');
+  if (!b) return;
+  const act = b.dataset.gr, id = b.dataset.id;
+  const m = fb.m;
+  const g = groupsCache.find((x) => x.id === currentGroupId);
+  try {
+    if (act === 'open-form') { groupForm = true; renderGroup(); }
+    else if (act === 'close-form') { groupForm = false; renderGroup(); }
+    else if (act === 'add-members') {
+      const picked = [...document.querySelectorAll('#groupBody .inlineForm input[type=checkbox]:checked')];
+      if (!picked.length) { toast('Veldu þjálfaravin'); return; }
+      const upd = { members: m.arrayUnion(...picked.map((c) => c.value)) };
+      picked.forEach((c) => { upd['memberNames.' + c.value] = c.dataset.name || ''; });
+      await m.updateDoc(m.doc(fb.db, 'groups', currentGroupId), upd);
+      groupForm = false;
+      toast('Bætt í hópinn ✓');
+      await refreshFriends(true);
+    } else if (act === 'send') { openMineSheet(currentGroupId); }
+    else if (act === 'view') {
+      const p = groupPosts.find((x) => x.id === id);
+      if (p) showReceived(p, { verb: 'sendi í hópinn', backTo: 'group' });
+    } else if (act === 'delete-post') {
+      if (!confirm('Fjarlægja úr hópnum?')) return;
+      await m.deleteDoc(m.doc(fb.db, 'groups', currentGroupId, 'posts', id));
+      await loadGroupPosts();
+    } else if (act === 'leave') {
+      if (!confirm('Yfirgefa hópinn „' + ((g && g.name) || '') + '“?')) return;
+      await m.updateDoc(m.doc(fb.db, 'groups', currentGroupId), { members: m.arrayRemove(cloudUser.uid) });
+      currentGroupId = null;
+      await refreshFriends(true);
+      go('friends');
+    }
+  } catch (err) {
+    console.warn('Klassinn: hópur', err);
+    alert('Ekki tókst að klára þetta. Athugaðu nettenginguna.');
+  }
+});
+async function postToGroup(gid, type, data, title) {
+  const clean = JSON.parse(JSON.stringify(data));
+  delete clean.id;
+  await fb.m.addDoc(fb.m.collection(fb.db, 'groups', gid, 'posts'), {
+    fromUid: cloudUser.uid, fromName: myName(), type, title, json: JSON.stringify(clean), createdAt: Date.now(),
+  });
+}
+async function sendToFriend(fuid, type, data, title) {
+  const clean = JSON.parse(JSON.stringify(data));
+  delete clean.id;
+  await fb.m.addDoc(fb.m.collection(fb.db, 'inbox', fuid, 'items'), {
+    type, fromUid: cloudUser.uid, fromName: myName(), fromEmail: myEmail(), title, json: JSON.stringify(clean), createdAt: Date.now(),
+  });
+}
+
+// ---- Velja úr mínu til að senda í hóp ----
+function openMineSheet(gid) {
+  mineTargetGroup = gid;
+  const classes = Object.entries(CLASSES).sort((a, b) => classUpdatedAt(b[1], b[0]) - classUpdatedAt(a[1], a[0]));
+  const exs = Object.entries(EXERCISES).filter(([k]) => k !== 'new').sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '', 'is'));
+  document.getElementById('mineList').innerHTML =
+    `<div class="sendSection">MÍNIR TÍMAR</div>` +
+    (classes.map(([k, c]) => `<button type="button" class="pickItem" data-mine="class" data-id="${escapeText(k)}"><strong>${escapeText(c.name || 'Tími')}</strong><span class="muted">${escapeText(c.info || '')}</span></button>`).join('') || '<p class="muted">Engir tímar.</p>') +
+    `<div class="sendSection">ÆFINGAR</div>` +
+    (exs.map(([k, ex]) => `<button type="button" class="pickItem" data-mine="exercise" data-id="${escapeText(k)}"><strong>${escapeText(ex.name || 'Æfing')}</strong><span class="muted">${escapeText([ex.equip, ex.level].filter(Boolean).join(' • '))}</span></button>`).join('') || '<p class="muted">Engar æfingar.</p>');
+  document.getElementById('mineSheet').classList.add('open');
+}
+function closeMineSheet() { document.getElementById('mineSheet').classList.remove('open'); }
+document.getElementById('mineCancel').addEventListener('click', closeMineSheet);
+document.getElementById('mineSheet').addEventListener('click', async (e) => {
+  if (e.target.id === 'mineSheet') { closeMineSheet(); return; }
+  const b = e.target.closest('[data-mine]');
+  if (!b) return;
+  const type = b.dataset.mine, key = b.dataset.id;
+  const data = type === 'class' ? CLASSES[key] : EXERCISES[key];
+  if (!data) return;
+  b.disabled = true;
+  try {
+    await postToGroup(mineTargetGroup, type, data, data.name || (type === 'class' ? 'Tími' : 'Æfing'));
+    closeMineSheet();
+    toast('Sent í hópinn ✓');
+    await loadGroupPosts();
+  } catch (err) {
+    console.warn('Klassinn: senda í hóp', err);
+    alert('Ekki tókst að senda í hópinn. Athugaðu nettenginguna.');
+  } finally { b.disabled = false; }
+});
+
+// ---- Deila: velja vin, hóp eða hlekk ----
+let sendPayload = null;
+async function openSendSheet(type, data, title) {
+  if (!cloudUser) {
+    if (confirm('Til að deila þarftu að vera skráð inn. Skrá inn núna?')) go('login');
+    return;
+  }
+  sendPayload = { type, data, title };
+  document.getElementById('sendTitle').textContent = 'Deila „' + title + '“';
+  document.getElementById('sendList').innerHTML = '<p class="muted">Sæki vini og hópa…</p>';
+  document.getElementById('sendSheet').classList.add('open');
+  try { await loadFriendsData(); } catch (e) {}
+  const accepted = friendsCache.filter((f) => f.status === 'accepted');
+  document.getElementById('sendList').innerHTML =
+    `<div class="sendSection">SENDA Á ÞJÁLFARAVIN</div>` +
+    (accepted.map((f) => `<button type="button" class="pickItem" data-send="friend" data-id="${escapeText(f.uid)}"><strong>${escapeText(f.name || f.email || '')}</strong><span class="muted">${escapeText(f.email || '')}</span></button>`).join('')
+      || '<p class="muted" style="margin:0 2px 8px">Engir þjálfaravinir enn. Bættu við undir „Vinir“.</p>') +
+    `<div class="sendSection">SENDA Í HÓP</div>` +
+    (groupsCache.map((g) => `<button type="button" class="pickItem" data-send="group" data-id="${escapeText(g.id)}"><strong>👥 ${escapeText(g.name || 'Hópur')}</strong><span class="muted">${(g.members || []).length} í hópnum</span></button>`).join('')
+      || '<p class="muted" style="margin:0 2px 8px">Engir hópar enn.</p>') +
+    `<div class="sendSection">EÐA</div>
+     <button type="button" class="pickItem" data-send="link"><strong>🔗 Senda hlekk</strong><span class="muted">T.d. í skilaboðum, líka til þeirra sem eru ekki í Klassanum</span></button>`;
+}
+function closeSendSheet() { document.getElementById('sendSheet').classList.remove('open'); }
+document.getElementById('sendCancel').addEventListener('click', closeSendSheet);
+document.getElementById('sendSheet').addEventListener('click', async (e) => {
+  if (e.target.id === 'sendSheet') { closeSendSheet(); return; }
+  const b = e.target.closest('[data-send]');
+  if (!b || !sendPayload) return;
+  const { type, data, title } = sendPayload;
+  b.disabled = true;
+  try {
+    if (b.dataset.send === 'friend') {
+      const f = friendsCache.find((x) => x.uid === b.dataset.id);
+      await sendToFriend(b.dataset.id, type, data, title);
+      closeSendSheet();
+      toast('Sent á ' + ((f && f.name) || 'vin') + ' ✓');
+    } else if (b.dataset.send === 'group') {
+      const g = groupsCache.find((x) => x.id === b.dataset.id);
+      await postToGroup(b.dataset.id, type, data, title);
+      closeSendSheet();
+      toast('Sent í ' + ((g && g.name) || 'hópinn') + ' ✓');
+    } else if (b.dataset.send === 'link') {
+      closeSendSheet();
+      await shareLink(type, data, title);
+    }
+  } catch (err) {
+    console.warn('Klassinn: deiling', err);
+    if (err && err.code === 'permission-denied' && b.dataset.send === 'friend') alert('Hún hefur ekki samþykkt vinabeiðnina þína ennþá.');
+    else alert('Ekki tókst að deila. Athugaðu nettenginguna og reyndu aftur.');
+  } finally { b.disabled = false; }
+});
+
 document.getElementById('sharedClose').addEventListener('click', () => {
-  history.replaceState(null, '', location.pathname);
-  go('home');
+  if (location.hash) history.replaceState(null, '', location.pathname);
+  go(sharedBackTo === 'group' && currentGroupId ? 'group' : sharedBackTo);
 });
 window.addEventListener('hashchange', () => { openSharedFromHash(); });
 
@@ -3567,6 +4189,8 @@ async function initCloud() {
       if (user.displayName && !loadProfile().name) writeJson(PROFILE_KEY, Object.assign({}, loadProfile(), { name: user.displayName, email: user.email, updatedAt: new Date().toISOString() }));
       if (cur === 'login') { go('home'); const first = (loadProfile().name || user.displayName || '').split(' ')[0]; toast(first ? 'Velkomin ' + first + ' ✓' : 'Skráð inn ✓'); }
       await syncNow('innskráning');
+      registerDirectory();
+      refreshFriends(false);
     } else {
       let skipped = false;
       try { skipped = localStorage.getItem(LOGIN_SKIP_KEY) === '1'; } catch (e) {}
@@ -3575,7 +4199,7 @@ async function initCloud() {
   });
   document.addEventListener('visibilitychange', () => {
     if (!cloudUser) return;
-    if (document.visibilityState === 'visible') syncNow('opnað');
+    if (document.visibilityState === 'visible') { syncNow('opnað'); refreshFriends(false); }
     else if (syncTimer) { clearTimeout(syncTimer); syncNow('lokað'); }
   });
   window.addEventListener('online', () => { if (cloudUser) syncNow('net komið'); });
@@ -3601,6 +4225,8 @@ go = function(id, exKey, classKey) {
   if (id === 'clients') renderClients();
   if (id === 'client') renderClient();
   if (id === 'profile') { renderProfile(); render(); renderAccount(); }
+  if (id === 'friends') { friendsForm = null; renderFriends(); if (cloudUser) refreshFriends(false); }
+  if (id === 'group') renderGroup();
   if (id === 'notes') renderNotes();
   if (id === 'exercise-edit') {
     const eq = document.getElementById('exEquip')?.value || 'Reformer';
