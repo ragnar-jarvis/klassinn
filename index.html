@@ -721,7 +721,7 @@ details.feedback .comment{font-size:.9rem}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 17</p>
+    <p class="version">KLASSINN · útgáfa 18</p>
   </div>
 
     
@@ -1047,11 +1047,12 @@ Olnbogi í hné</textarea>
   <div class="sheet" role="dialog" aria-label="Velja úr æfingasafni">
     <div class="sheetHandle"></div>
     <h2 class="serif sheetTitle">Æfingasafnið</h2>
-    <div class="searchBox">
+    <div class="searchBox" id="pickSearchWrap">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       <input id="pickSearch" type="search" placeholder="Leita" autocomplete="off" />
     </div>
     <div class="pickList" id="pickList"></div>
+    <div class="pickList hide" id="pickDetail"></div>
     <button type="button" class="sheetCancel" id="pickCancel">Loka</button>
   </div>
 </div>
@@ -1603,12 +1604,45 @@ function commitClassForm() {
 
   editingClassId = id;
   currentClassKey = id;
+  const addedToLibrary = syncMovesToLibrary(CLASSES[id]);
   persistStore();
   clearClassDraft();
   renderHomeClasses();
   renderFilterMenu();
-  toast('Tími vistaður ✓');
+  toast(addedToLibrary
+    ? `Tími vistaður ✓ · ${addedToLibrary} ${addedToLibrary === 1 ? 'æfing' : 'æfingar'} í safnið`
+    : 'Tími vistaður ✓');
   return id;
+}
+
+// ---- Æfingar sem búnar eru til í tíma fara líka í æfingasafnið ----
+// Ný æfing (heiti sem ekki er til í safninu) bætist við safnið; æfing með sama heiti
+// og er þegar í safninu er tengd við hana en safnið er ekki yfirskrifað.
+function normName(s) { return String(s || '').trim().toLowerCase(); }
+function syncMovesToLibrary(c) {
+  if (!c) return 0;
+  let added = 0;
+  const types = c.types || [];
+  const equip = types.includes('Reformer') ? 'Reformer' : (types[0] || 'Reformer');
+  (c.moves || []).forEach((m) => {
+    const name = (m.name || '').trim();
+    if (!name || name === 'Ónefnd æfing') return;
+    if (m.ex && EXERCISES[m.ex] && normName(EXERCISES[m.ex].name) === normName(name)) return;
+    const found = Object.keys(EXERCISES).find((k) => k !== 'new' && normName(EXERCISES[k].name) === normName(name));
+    if (found) { m.ex = found; return; }
+    const steps = (m.steps && m.steps.length)
+      ? m.steps
+      : (m.layers || []).map((l) => (typeof l === 'string' ? l : (l && l.text) || '')).filter((t) => t.trim());
+    const exId = 'ex' + Date.now() + Math.random().toString(36).slice(2, 6);
+    EXERCISES[exId] = {
+      title: 'Breyta æfingu', name, level: c.level || 'Byrjandi', equip,
+      springs: m.springs || '', setup: m.setup || '', steps: steps.join('\n'), notes: m.notes || '',
+      updatedAt: new Date().toISOString(),
+    };
+    m.ex = exId;
+    added++;
+  });
+  return added;
 }
 function saveClassForm() {
   const id = commitClassForm();
@@ -1817,9 +1851,35 @@ function renderPickList() {
     </button>`).join('')
     : '<p class="muted" style="text-align:center;padding:16px 0">Engin æfing fannst. Bættu æfingum í safnið undir „Finna æfingu“.</p>';
 }
+function pickShowDetail(on) {
+  document.getElementById('pickDetail').classList.toggle('hide', !on);
+  document.getElementById('pickList').classList.toggle('hide', on);
+  document.getElementById('pickSearchWrap').classList.toggle('hide', on);
+  document.getElementById('pickDetail').scrollTop = 0;
+}
+// Skoða æfinguna áður en henni er bætt við
+function showPickDetail(key) {
+  const ex = EXERCISES[key];
+  if (!ex) return;
+  const steps = String(ex.steps || '').split('\n').map((s) => s.trim()).filter(Boolean);
+  const meta = [ex.equip, ex.level].filter(Boolean).join(' • ');
+  const empty = !ex.setup && !steps.length && !ex.notes && !ex.springs;
+  document.getElementById('pickDetail').innerHTML = `
+    <button type="button" class="textBtn" data-pick-back style="padding-left:0">‹ Til baka í safnið</button>
+    <h3 class="serif flowTitle" style="font-size:1.5rem;margin:2px 0">${escapeText(ex.name || 'Ónefnd æfing')}</h3>
+    ${meta ? `<p class="meta" style="margin:0 0 6px">${escapeText(meta)}</p>` : ''}
+    ${springsViewHtml(ex.springs)}
+    ${ex.setup ? `<div class="setup"><strong>Uppsetning:</strong><p class="pre">${escapeText(ex.setup)}</p></div>` : ''}
+    ${steps.length ? `<ol class="steps">${steps.map((s) => `<li>${escapeText(s)}</li>`).join('')}</ol>` : ''}
+    ${ex.notes ? `<p class="muted pre">${escapeText(ex.notes)}</p>` : ''}
+    ${empty ? '<p class="muted">Engin lýsing skráð á þessa æfingu.</p>' : ''}
+    <button type="button" class="submit" data-pick-add="${escapeText(key)}">+ Bæta við ${pickTarget === 'class' ? 'tímann' : 'einkatímann'}</button>`;
+  pickShowDetail(true);
+}
 function openPickSheet(target) {
   pickTarget = target;
   document.getElementById('pickSearch').value = '';
+  pickShowDetail(false);
   renderPickList();
   document.getElementById('pickSheet').classList.add('open');
   document.getElementById('pickSheet').setAttribute('aria-hidden', 'false');
@@ -1833,8 +1893,14 @@ document.getElementById('pickCancel').addEventListener('click', closePickSheet);
 document.getElementById('pickSheet').addEventListener('click', (e) => { if (e.target.id === 'pickSheet') closePickSheet(); });
 document.getElementById('pickList').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-pick]');
-  if (!btn) return;
-  const key = btn.dataset.pick;
+  if (btn) showPickDetail(btn.dataset.pick);
+});
+document.getElementById('pickDetail').addEventListener('click', (e) => {
+  if (e.target.closest('[data-pick-back]')) { pickShowDetail(false); return; }
+  const add = e.target.closest('[data-pick-add]');
+  if (add) addPickedExercise(add.dataset.pickAdd);
+});
+function addPickedExercise(key) {
   const ex = EXERCISES[key];
   if (!ex) return;
   if (pickTarget === 'class') {
@@ -1856,7 +1922,7 @@ document.getElementById('pickList').addEventListener('click', (e) => {
     closePickSheet();
   }
   toast('Bætt við: ' + (ex.name || 'æfing'));
-});
+}
 document.getElementById('cfPickMove').addEventListener('click', () => openPickSheet('class'));
 
 // ---- Litlar tilkynningar ----
@@ -2885,6 +2951,15 @@ go = function(id, exKey, classKey) {
 renderFilterMenu();
 renderHomeClasses();
 renderExercises();
+// Einu sinni: æfingar sem búnar voru til inni í tímum fara líka í æfingasafnið
+try {
+  if (localStorage.getItem('klassinn.preview.exSync.v1') !== '1') {
+    let n = 0;
+    Object.values(CLASSES).forEach((c) => { n += syncMovesToLibrary(c); });
+    if (n) { persistStore(); renderExercises(); }
+    localStorage.setItem('klassinn.preview.exSync.v1', '1');
+  }
+} catch (e) {}
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
 if (restoreClassDraft()) toast('Óvistaði tíminn þinn er kominn aftur');
 
