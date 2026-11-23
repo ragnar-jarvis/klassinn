@@ -1,5 +1,5 @@
 /* Klassinn preview SW — network-first HTML, never return null. */
-const CACHE = 'klassinn-preview-v20';
+const CACHE = 'klassinn-preview-v23';
 const PRECACHE = [
   './manifest.webmanifest',
   './icon-192.png',
@@ -8,6 +8,7 @@ const PRECACHE = [
   './mark-k.png',
   './logo-header.png',
   './logo-klassinn-v2.png',
+  './logo-klassinn-da.png',
   './thumb-purple.png',
 ];
 

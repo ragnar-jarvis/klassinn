@@ -702,6 +702,15 @@ body.loginMode{padding-bottom:0}
 .langSwitch button{border:none;background:transparent;border-radius:999px;padding:8px 14px;font:inherit;font-size:.85rem;font-weight:700;color:var(--purple);cursor:pointer}
 .langSwitch button.on{background:#fff;color:var(--text);box-shadow:0 2px 6px rgba(47,36,56,.08)}
 
+
+.langLbl{align-self:center;font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--purple);padding:0 6px 0 8px}
+.langBig{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin:14px 0 0;padding:18px;border-radius:18px;
+  border:1.5px solid var(--line);background:#fff;font:inherit;font-size:1.15rem;font-weight:700;color:var(--text);cursor:pointer}
+.langBig:hover{border-color:var(--purple)}
+.langBig .flag{font-size:1.6rem;line-height:1}
+
+
+html[lang=da] .tabbar::before{background-image:url(./logo-klassinn-da.png)}
 </style>
 </head>
 <body>
@@ -824,7 +833,7 @@ body.loginMode{padding-bottom:0}
     </details>
 
     <p class="profileNote" style="text-align:center;margin-top:18px">Ef útlit virðist gamalt: <a href="./hreinsa.html" style="color:var(--purple);font-weight:700">Hreinsa skyndiminni</a></p>
-    <p class="version">KLASSINN · útgáfa 22</p>
+    <p class="version">KLASSINN · útgáfa 23</p>
   </div>
 
     
@@ -1104,9 +1113,18 @@ Olnbogi í hné</textarea>
       <input type="file" id="noteFileInput" accept="image/*" class="hide" />
     </div>
   </div>
+  <div class="screen" id="langPick" data-notr>
+    <div class="loginWrap">
+      <img class="logoMain" src="./logo-klassinn-v2.png" alt="KLASSINN" />
+      <h1 class="serif loginTitle">Vælg sprog<br><span style="font-size:.8em;color:var(--muted)">Veldu tungumál</span></h1>
+      <button class="langBig" type="button" data-pick-lang="da"><span class="flag">🇩🇰</span> Dansk</button>
+      <button class="langBig" type="button" data-pick-lang="is"><span class="flag">🇮🇸</span> Íslenska</button>
+    </div>
+  </div>
+
   <div class="screen" id="login">
     <div class="loginWrap">
-      <div class="langSwitch" data-notr><button type="button" data-lang="is">Íslenska</button><button type="button" data-lang="da">Dansk</button></div>
+      <div class="langSwitch" data-notr><span class="langLbl">Sprog · Tungumál</span><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="is">Íslenska</button></div>
       <img class="logoMain" src="./logo-klassinn-v2.png" alt="KLASSINN — fyrir þjálfarann" />
       <h1 class="serif loginTitle" id="liTitle">Skrá inn</h1>
       <p class="muted loginLead" id="liLead">Skráðu þig inn til að hafa tímana þína í síma og tölvu.</p>
@@ -1255,12 +1273,19 @@ const tabs = document.querySelectorAll('.tab');
 // Gögn notandans (heiti tíma, nótur o.s.frv.) eru ekki þýdd.
 // =====================================================================
 const LANG_KEY = 'klassinn.lang';
+let LANG_CHOSEN = false;
 const LANG = (() => {
-  try { const v = localStorage.getItem(LANG_KEY); if (v === 'is' || v === 'da') return v; } catch (e) {}
-  return /^da\b/i.test(navigator.language || '') ? 'da' : 'is';
+  try { const v = localStorage.getItem(LANG_KEY); if (v === 'is' || v === 'da') { LANG_CHOSEN = true; return v; } } catch (e) {}
+  let existing = false;
+  try { existing = !!(localStorage.getItem('klassinn.preview.data.v1') || localStorage.getItem('klassinn.preview.notes.v3')); } catch (e) {}
+  if (existing) return 'is';                       // núverandi notendur (t.d. Díana) halda íslensku
+  const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']);
+  return langs.some((l) => /^is\b/i.test(l)) ? 'is' : 'da';
 })();
 const LOCALE = LANG === 'da' ? 'da-DK' : 'is-IS';
 document.documentElement.lang = LANG;
+// Danskt logo („for træneren“) á dönsku
+if (LANG === 'da') document.querySelectorAll('img.logoMain').forEach((i) => { i.src = './logo-klassinn-da.png'; i.alt = 'KLASSINN – for træneren'; });
 function setLanguage(l) {
   try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
   location.reload();
@@ -2702,6 +2727,7 @@ function addPickedExercise(key) {
 document.getElementById('cfPickMove').addEventListener('click', () => openPickSheet('class'));
 
 // ---- Tungumálaval ----
+document.querySelectorAll('[data-pick-lang]').forEach((b) => b.addEventListener('click', () => setLanguage(b.dataset.pickLang)));
 document.querySelectorAll('.langSwitch [data-lang]').forEach((b) => {
   b.classList.toggle('on', b.dataset.lang === LANG);
   b.addEventListener('click', () => { if (b.dataset.lang !== LANG) setLanguage(b.dataset.lang); });
@@ -4689,7 +4715,7 @@ go = function(id, exKey, classKey) {
   }
   _goOrig(id, exKey, classKey);
   document.body.classList.toggle('noteMode', id === 'note-edit');
-  document.body.classList.toggle('loginMode', id === 'login');
+  document.body.classList.toggle('loginMode', id === 'login' || id === 'langPick');
   if (id === 'login') {
     const em = document.getElementById('liEmail');
     if (em && !em.value) em.value = loadProfile().email || '';
@@ -4724,8 +4750,12 @@ try {
   }
 } catch (e) {}
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
-if (restoreClassDraft()) toast('Óvistaði tíminn þinn er kominn aftur');
-initCloud();
+if (!LANG_CHOSEN && !/^#deila=/.test(location.hash) && !localStorage.getItem('klassinn.preview.data.v1')) {
+  go('langPick');   // fyrsta opnun: velja tungumál áður en nokkuð annað birtist
+} else {
+  if (restoreClassDraft()) toast('Óvistaði tíminn þinn er kominn aftur');
+  initCloud();
+}
 
 </script>
 </body>
