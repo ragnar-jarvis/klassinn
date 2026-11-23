@@ -21,7 +21,12 @@ Kennaraapp fyrir þjálfara: tímar, æfingasafn, einkatímar og nótur. Á ísl
 - Deiling: `shares/{id}` = `{ fromUid, fromName, kind, json, createdAt }`, hlekkur `#deila=<id>`.
 - Reglur: notandi les/skrifar bara `users/{eigið uid}`; `shares` má sækja eitt í einu (ekki lista),
   aðeins eigandi býr til/eyðir.
-- Prufuaðgangur fyrir prófanir er í `.env.prufa` (fer ekki á GitHub).
+- Vinir: `directory/{netfang}` = `{ uid, name }` (finna þjálfara, eitt í einu), `users/{uid}/friends/{vinur}` =
+  `{ name, email, status: pending-out|accepted }`, `inbox/{uid}/items` = vinabeiðnir og tímar/æfingar frá vinum
+  (aðeins samþykktir vinir mega senda efni).
+- Hópar: `groups/{gid}` = `{ name, ownerUid, members[], memberNames{} }`, færslur í `groups/{gid}/posts`.
+- Nýir notendur fá upphafstímann „Reformer Løft“ (tími Díönu) í `DEFAULT_CLASSES`.
+- Prufuaðgangar fyrir prófanir eru í `.env.prufa` (fer ekki á GitHub).
 
 ## Prófa á Mac
 
